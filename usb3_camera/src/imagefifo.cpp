@@ -30,6 +30,7 @@ bool ImageFifo::inFifo(ImageData *data)
 	{
 		return false;
 	}
+	
 }
 
 void ImageFifo::outFifo()
@@ -54,4 +55,13 @@ ImageData* ImageFifo::getFifoHead()
 	}
 
 		
+}
+
+void ImageFifo::emptyFifo()
+{
+	QMutexLocker locker(&m_mutex);
+	if (m_fifo.size() > 0)
+	{
+		m_fifo.clear();
+	}
 }

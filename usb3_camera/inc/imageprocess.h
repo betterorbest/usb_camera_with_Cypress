@@ -29,7 +29,12 @@ public:
 
 	void autoWhiteBalance(cv::Mat &src, cv::Mat &dst);
 
-	void dataToImage(unsigned char *data, int bytesPerPixel, int width, int height);
+	void dataToImage(unsigned char *data, int bitsPerPixel, int width, int height);
+
+	void setSavingPath(QString path);
+	void takeOriginalImage(const cv::Mat& image,  const QPixmap& pixmap);
+	void takeShowingImage(const QPixmap& pixmap);
+	void setTakingImageFlag(bool flag);
 
 signals:
 	void showImage(QPixmap image);
@@ -45,12 +50,14 @@ private:
 
 	QPixmap m_imageShow;
 	QImage m_image;
+	QString m_path;
 
 	bool m_saveOriginalDataFlag;
 	bool m_isColor;
 
 	bool m_imageProcessingFlag;
 	bool m_pauseFlag;
+	bool m_isTakingImage;
 };
 
 #endif

@@ -32,6 +32,20 @@ public slots:
 	void changeWidthTo8bitsPerPixel(bool flag);
 	
 	void changeImageToColor(bool flag);
+
+	void switchResolution(int index);
+	void setAnalogGain(int index);
+
+	void setRedGain(int gain);
+	void setGreenGain(int gain);
+	void setBlueGain(int gain);
+	void setGlobalGain(int gain);
+
+	void setExposureMode(bool isAuto);
+	void setExposureValue(int value);
+
+	void chooseSavingPath();
+	void takeImage();
 private:
 	Ui::MainWindowClass ui;
 
@@ -47,6 +61,8 @@ private:
 
 	int m_imageWidth;
 	int m_imageHeight;
+
+	bool m_isClosed;
 };
 
 #endif // MAINWINDOW_H

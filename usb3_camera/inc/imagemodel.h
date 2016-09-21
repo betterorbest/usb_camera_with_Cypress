@@ -25,8 +25,18 @@ public:
 
 	void changeWidthTo8bitsPerPixel(bool flag);
 	void changeImageToColor(bool flag);
+	void changeResolution(int width, int height, int req);
+	void changeResolution(int width, int height, int req, long sizePerXfer, int xferQueueSize, int timeOut);
 	
+	void sendSettingCommand(uchar u1, uchar u2, uchar u3, uchar u4);
+
+	void setSavingPath(QString path);
+	void takeImage();
 	void initialImageFifo();
+
+signals:
+	void resolutionChanged(int width, int height, int req, long sizePerXfer, int xferQueueSize, int timeOut);
+
 private:
 	CyDevice m_camera;
 	ImageProcess m_imageProcess;

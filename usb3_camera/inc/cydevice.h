@@ -21,6 +21,7 @@ public:
 	void disableReceving();
 	
 	bool sendControlCode(int code);
+	bool sendRequestCode(int code, uchar *buf, LONG bufLen);
 
 	void setWidth(int width);
 	void setHeight(int height);
@@ -29,15 +30,23 @@ public:
 
 	void changeWidthTo8bitsPerPixel();
 	void changeWidthTo16bitsPerPixel();
+
+	void changeResolution(int width, int height, int req);
+
+	void receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut);
+
+	bool isReceving();
+
 signals:
 	//void completeFrameTransmission(unsigned char *data);
 	void completeFrameTransmission();
 
 public slots:
 	void receiveData();
-
+	void changeResolution(int width, int height, int req, long sizePerXfer, int xferQueueSize, int timeOut);
 
 private:
+	int m_whichBuffer;
 	int m_height;
 	int m_width;
 	LONG m_size;
@@ -46,10 +55,10 @@ private:
 	int m_bufferSize;
 	bool m_recevingFlag;
 	//bool m_pauseFlag;
-	bool m_is8bitsPerPixel;
+	int m_bitsPerPixel;
 	bool m_widthPerPixelChanged;
 
-	QMutex mutex;
+	QMutex m_mutex;
 
 	CCyUSBDevice *m_device;
 	CCyUSBEndPoint *m_dataInEndPoint;

@@ -7,7 +7,7 @@ class ImageData
 {
 public:
 	uchar* m_data;
-	int m_bytesPerPixel;
+	int m_bitsPerPixel;
 	int m_imageHeight;
 	int m_imageWidth;
 };
@@ -20,8 +20,10 @@ public:
 
 	static bool inFifo(ImageData *imageData);
 	static void outFifo();
+	
 	static ImageData* getFifoHead();
 	static void setFifoSize(int size);
+	static void emptyFifo();
 
 private:
 	static QQueue<ImageData*> m_fifo;
