@@ -46,6 +46,7 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 
 			//DWORD end = GetTickCount();
 			//qDebug() << end - start;
+			//autoWhiteBalance(image, image);
 			QImage qImage = QImage(image.data, width, height, image.step, QImage::Format_RGB888);
 
 			//QImage qImage = QImage(data, m_imageWidth, m_imageHeight, QImage::Format_Grayscale8);
@@ -92,7 +93,6 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 				//m_imageData[i] = pow(data16bits[i], 0.66);
 				//m_imageData[i] = data16bits[i] >> 4;
 				m_imageData[i] = data16bits[i];
-
 			}
 
 			cv::Mat image8bits = cv::Mat(height, width, CV_8UC1, m_imageData);
@@ -147,9 +147,9 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 		break;
 	
 	}
-		/*********数据接收较慢时使用*******************/
-		/*m_image = QImage(m_imageData, m_imageWidth, m_imageHeight, QImage::Format_Grayscale8);
-		QtConcurrent::run(this, &ImageProcess::imageToPixmap, m_image);*/
+	/*********数据接收较慢时使用*******************/
+	/*m_image = QImage(m_imageData, m_imageWidth, m_imageHeight, QImage::Format_Grayscale8);
+	QtConcurrent::run(this, &ImageProcess::imageToPixmap, m_image);*/
 
 }
 
@@ -170,8 +170,6 @@ void ImageProcess::imageToPixmap(QImage &image)
 	//DWORD end = GetTickCount();
 	//qDebug() << end - start << "this is thread " << QThread::currentThreadId();
 	emit showImage(pixmap);
-	
-	
 }
 
 void ImageProcess::saveOriginalData(unsigned short *data)
@@ -323,13 +321,13 @@ void ImageProcess::autoWhiteBalance(cv::Mat &src, cv::Mat &dst)
 	//}
 
 	////确定像素阈值
-	//float threshold_ratio = 0.1;
+	//float thresholdRatio = 0.02;
 	//int threshold;
 	//int thresholdSum = 0;
 	//for (int i = 765; i > 0; --i)
 	//{
 	//	thresholdSum += histRGBSum[i];
-	//	if (thresholdSum >= 0.1 * src.total())
+	//	if (thresholdSum >= thresholdRatio * src.total())
 	//	{
 	//		threshold = i;
 	//		break;
@@ -352,6 +350,7 @@ void ImageProcess::autoWhiteBalance(cv::Mat &src, cv::Mat &dst)
 	//			averageRGB[2] += *(data + 2);
 	//			++amount;
 	//		}
+	//		data += 3;
 	//		++ptrRGBSum;
  //		}
 	//}

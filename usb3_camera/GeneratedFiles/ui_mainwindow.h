@@ -15,6 +15,7 @@
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>
+#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
@@ -37,7 +38,6 @@ public:
     QWidget *centralWidget;
     QHBoxLayout *horizontalLayout_3;
     QFrame *frame;
-    QVBoxLayout *verticalLayout_5;
     QVBoxLayout *verticalLayout;
     QPushButton *m_startButton;
     QPushButton *m_stopButton;
@@ -89,15 +89,22 @@ public:
     QHBoxLayout *horizontalLayout_12;
     QSlider *m_exposureSlider;
     QSpinBox *m_exposureSpinBox;
+    QGroupBox *groupBox_6;
+    QHBoxLayout *horizontalLayout_13;
     QGroupBox *groupBox_2;
     QHBoxLayout *horizontalLayout_2;
     QLabel *m_receiveRateLabel;
     QLabel *label_4;
+    QGroupBox *groupBox_7;
+    QHBoxLayout *horizontalLayout_14;
+    QLabel *label_6;
+    QLabel *label_3;
     QSpacerItem *verticalSpacer;
     QFrame *frame_2;
-    QVBoxLayout *verticalLayout_7;
     QVBoxLayout *verticalLayout_2;
     QHBoxLayout *horizontalLayout;
+    QFrame *m_showFrame;
+    QGridLayout *gridLayout;
     QLabel *m_showLabel;
     QSpacerItem *horizontalSpacer_2;
     QSpacerItem *verticalSpacer_2;
@@ -107,7 +114,33 @@ public:
     {
         if (MainWindowClass->objectName().isEmpty())
             MainWindowClass->setObjectName(QStringLiteral("MainWindowClass"));
-        MainWindowClass->resize(854, 875);
+        MainWindowClass->resize(937, 892);
+        MainWindowClass->setStyleSheet(QString::fromUtf8("QGroupBox {\n"
+"    border: 2px solid gray;\n"
+"    border-radius: 3px;\n"
+"	margin-top: 1ex;\n"
+"	padding-bottom: 4px;\n"
+"	padding-top: 7px;\n"
+"}\n"
+"\n"
+"QGroupBox::title {\n"
+"    subcontrol-origin: margin;\n"
+"    /*subcontrol-position: top center; /* position at the top center */\n"
+"    padding: 0 3px;\n"
+"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                      stop: 0 #rgb(244, 244, 244), stop: 1 #rgb(244, 244, 244));\n"
+"}\n"
+"\n"
+"QGroupBox#groupBox_6 {   /*\345\270\247\347\216\207\344\270\216\346\270\251\345\272\246\347\273\204\350\256\276\347\275\256\346\227\240\350\276\271\346\241\206*/\n"
+"	border: none;\n"
+"	margin-top: 0;\n"
+"	padding-top:0px;\n"
+"}\n"
+"\n"
+"QGroupBox#groupBox_6 {\n"
+"	padding: 0 0;\n"
+"\n"
+"}"));
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         horizontalLayout_3 = new QHBoxLayout(centralWidget);
@@ -120,17 +153,18 @@ public:
         frame->setMaximumSize(QSize(250, 16777215));
         frame->setFrameShape(QFrame::StyledPanel);
         frame->setFrameShadow(QFrame::Raised);
-        verticalLayout_5 = new QVBoxLayout(frame);
-        verticalLayout_5->setSpacing(6);
-        verticalLayout_5->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_5->setObjectName(QStringLiteral("verticalLayout_5"));
-        verticalLayout_5->setContentsMargins(0, 0, 5, 0);
-        verticalLayout = new QVBoxLayout();
-        verticalLayout->setSpacing(6);
+        verticalLayout = new QVBoxLayout(frame);
+        verticalLayout->setSpacing(7);
+        verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        verticalLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+        verticalLayout->setContentsMargins(0, 0, 5, 0);
         m_startButton = new QPushButton(frame);
         m_startButton->setObjectName(QStringLiteral("m_startButton"));
+        QFont font;
+        font.setPointSize(11);
+        font.setBold(true);
+        font.setWeight(75);
+        m_startButton->setFont(font);
         m_startButton->setFlat(false);
 
         verticalLayout->addWidget(m_startButton);
@@ -138,29 +172,44 @@ public:
         m_stopButton = new QPushButton(frame);
         m_stopButton->setObjectName(QStringLiteral("m_stopButton"));
         m_stopButton->setEnabled(false);
+        m_stopButton->setFont(font);
 
         verticalLayout->addWidget(m_stopButton);
 
         m_pauseButton = new QPushButton(frame);
         m_pauseButton->setObjectName(QStringLiteral("m_pauseButton"));
         m_pauseButton->setEnabled(false);
+        m_pauseButton->setFont(font);
 
         verticalLayout->addWidget(m_pauseButton);
 
         groupBox_5 = new QGroupBox(frame);
         groupBox_5->setObjectName(QStringLiteral("groupBox_5"));
+        QFont font1;
+        font1.setFamily(QStringLiteral("Aharoni"));
+        font1.setPointSize(11);
+        font1.setBold(true);
+        font1.setItalic(false);
+        font1.setWeight(75);
+        groupBox_5->setFont(font1);
         verticalLayout_6 = new QVBoxLayout(groupBox_5);
         verticalLayout_6->setSpacing(6);
         verticalLayout_6->setContentsMargins(11, 11, 11, 11);
         verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
         m_pathChoosingButton = new QPushButton(groupBox_5);
         m_pathChoosingButton->setObjectName(QStringLiteral("m_pathChoosingButton"));
+        QFont font2;
+        font2.setPointSize(9);
+        font2.setBold(false);
+        font2.setWeight(50);
+        m_pathChoosingButton->setFont(font2);
 
         verticalLayout_6->addWidget(m_pathChoosingButton);
 
         m_imageTakingButton = new QPushButton(groupBox_5);
         m_imageTakingButton->setObjectName(QStringLiteral("m_imageTakingButton"));
         m_imageTakingButton->setEnabled(false);
+        m_imageTakingButton->setFont(font2);
 
         verticalLayout_6->addWidget(m_imageTakingButton);
 
@@ -170,6 +219,7 @@ public:
         groupBox = new QGroupBox(frame);
         groupBox->setObjectName(QStringLiteral("groupBox"));
         groupBox->setEnabled(true);
+        groupBox->setFont(font);
         horizontalLayout_7 = new QHBoxLayout(groupBox);
         horizontalLayout_7->setSpacing(6);
         horizontalLayout_7->setContentsMargins(11, 11, 11, 11);
@@ -177,6 +227,8 @@ public:
         m_resolutionSwitching = new QComboBox(groupBox);
         m_resolutionSwitching->setObjectName(QStringLiteral("m_resolutionSwitching"));
         m_resolutionSwitching->setEnabled(false);
+        m_resolutionSwitching->setFont(font2);
+        m_resolutionSwitching->setAutoFillBackground(false);
         m_resolutionSwitching->setEditable(false);
 
         horizontalLayout_7->addWidget(m_resolutionSwitching);
@@ -187,18 +239,24 @@ public:
         m_bitsPerPixelChange = new QGroupBox(frame);
         m_bitsPerPixelChange->setObjectName(QStringLiteral("m_bitsPerPixelChange"));
         m_bitsPerPixelChange->setEnabled(false);
+        m_bitsPerPixelChange->setFont(font);
+        m_bitsPerPixelChange->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+        m_bitsPerPixelChange->setFlat(false);
         horizontalLayout_4 = new QHBoxLayout(m_bitsPerPixelChange);
-        horizontalLayout_4->setSpacing(6);
+        horizontalLayout_4->setSpacing(7);
         horizontalLayout_4->setContentsMargins(11, 11, 11, 11);
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
         m_8bitsChoosed = new QRadioButton(m_bitsPerPixelChange);
         m_8bitsChoosed->setObjectName(QStringLiteral("m_8bitsChoosed"));
+        m_8bitsChoosed->setFont(font2);
+        m_8bitsChoosed->setLayoutDirection(Qt::LeftToRight);
         m_8bitsChoosed->setChecked(true);
 
         horizontalLayout_4->addWidget(m_8bitsChoosed);
 
         m_12bitsChoosed = new QRadioButton(m_bitsPerPixelChange);
         m_12bitsChoosed->setObjectName(QStringLiteral("m_12bitsChoosed"));
+        m_12bitsChoosed->setFont(font2);
 
         horizontalLayout_4->addWidget(m_12bitsChoosed);
 
@@ -207,18 +265,23 @@ public:
 
         groupBox_4 = new QGroupBox(frame);
         groupBox_4->setObjectName(QStringLiteral("groupBox_4"));
+        groupBox_4->setFont(font);
+        groupBox_4->setFlat(false);
+        groupBox_4->setCheckable(false);
         horizontalLayout_5 = new QHBoxLayout(groupBox_4);
         horizontalLayout_5->setSpacing(6);
         horizontalLayout_5->setContentsMargins(11, 11, 11, 11);
         horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
         m_colorImageChoosed = new QRadioButton(groupBox_4);
         m_colorImageChoosed->setObjectName(QStringLiteral("m_colorImageChoosed"));
+        m_colorImageChoosed->setFont(font2);
         m_colorImageChoosed->setChecked(true);
 
         horizontalLayout_5->addWidget(m_colorImageChoosed);
 
         radioButton_2 = new QRadioButton(groupBox_4);
         radioButton_2->setObjectName(QStringLiteral("radioButton_2"));
+        radioButton_2->setFont(font2);
         radioButton_2->setChecked(false);
 
         horizontalLayout_5->addWidget(radioButton_2);
@@ -229,6 +292,7 @@ public:
         groupBox_3 = new QGroupBox(frame);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
         groupBox_3->setEnabled(true);
+        groupBox_3->setFont(font);
         horizontalLayout_6 = new QHBoxLayout(groupBox_3);
         horizontalLayout_6->setSpacing(6);
         horizontalLayout_6->setContentsMargins(11, 11, 11, 11);
@@ -236,6 +300,7 @@ public:
         m_analogGainSet = new QComboBox(groupBox_3);
         m_analogGainSet->setObjectName(QStringLiteral("m_analogGainSet"));
         m_analogGainSet->setEnabled(false);
+        m_analogGainSet->setFont(font2);
 
         horizontalLayout_6->addWidget(m_analogGainSet);
 
@@ -245,6 +310,7 @@ public:
         m_digitalGainSet = new QGroupBox(frame);
         m_digitalGainSet->setObjectName(QStringLiteral("m_digitalGainSet"));
         m_digitalGainSet->setEnabled(false);
+        m_digitalGainSet->setFont(font);
         verticalLayout_3 = new QVBoxLayout(m_digitalGainSet);
         verticalLayout_3->setSpacing(6);
         verticalLayout_3->setContentsMargins(11, 11, 11, 11);
@@ -254,6 +320,7 @@ public:
         horizontalLayout_11->setObjectName(QStringLiteral("horizontalLayout_11"));
         label_11 = new QLabel(m_digitalGainSet);
         label_11->setObjectName(QStringLiteral("label_11"));
+        label_11->setFont(font2);
 
         horizontalLayout_11->addWidget(label_11);
 
@@ -278,11 +345,13 @@ public:
 
         m_rGain = new QLabel(m_digitalGainSet);
         m_rGain->setObjectName(QStringLiteral("m_rGain"));
+        m_rGain->setFont(font2);
 
         horizontalLayout_11->addWidget(m_rGain);
 
         label_13 = new QLabel(m_digitalGainSet);
         label_13->setObjectName(QStringLiteral("label_13"));
+        label_13->setFont(font2);
 
         horizontalLayout_11->addWidget(label_13);
 
@@ -294,6 +363,7 @@ public:
         horizontalLayout_10->setObjectName(QStringLiteral("horizontalLayout_10"));
         label_8 = new QLabel(m_digitalGainSet);
         label_8->setObjectName(QStringLiteral("label_8"));
+        label_8->setFont(font2);
 
         horizontalLayout_10->addWidget(label_8);
 
@@ -315,11 +385,13 @@ public:
 
         m_gGain = new QLabel(m_digitalGainSet);
         m_gGain->setObjectName(QStringLiteral("m_gGain"));
+        m_gGain->setFont(font2);
 
         horizontalLayout_10->addWidget(m_gGain);
 
         label_10 = new QLabel(m_digitalGainSet);
         label_10->setObjectName(QStringLiteral("label_10"));
+        label_10->setFont(font2);
 
         horizontalLayout_10->addWidget(label_10);
 
@@ -331,6 +403,7 @@ public:
         horizontalLayout_9->setObjectName(QStringLiteral("horizontalLayout_9"));
         label_5 = new QLabel(m_digitalGainSet);
         label_5->setObjectName(QStringLiteral("label_5"));
+        label_5->setFont(font2);
 
         horizontalLayout_9->addWidget(label_5);
 
@@ -352,11 +425,13 @@ public:
 
         m_bGain = new QLabel(m_digitalGainSet);
         m_bGain->setObjectName(QStringLiteral("m_bGain"));
+        m_bGain->setFont(font2);
 
         horizontalLayout_9->addWidget(m_bGain);
 
         label_7 = new QLabel(m_digitalGainSet);
         label_7->setObjectName(QStringLiteral("label_7"));
+        label_7->setFont(font2);
 
         horizontalLayout_9->addWidget(label_7);
 
@@ -368,6 +443,7 @@ public:
         horizontalLayout_8->setObjectName(QStringLiteral("horizontalLayout_8"));
         label_2 = new QLabel(m_digitalGainSet);
         label_2->setObjectName(QStringLiteral("label_2"));
+        label_2->setFont(font2);
 
         horizontalLayout_8->addWidget(label_2);
 
@@ -389,11 +465,13 @@ public:
 
         m_globalGain = new QLabel(m_digitalGainSet);
         m_globalGain->setObjectName(QStringLiteral("m_globalGain"));
+        m_globalGain->setFont(font2);
 
         horizontalLayout_8->addWidget(m_globalGain);
 
         label = new QLabel(m_digitalGainSet);
         label->setObjectName(QStringLiteral("label"));
+        label->setFont(font2);
 
         horizontalLayout_8->addWidget(label);
 
@@ -406,18 +484,21 @@ public:
         m_exposureMode = new QGroupBox(frame);
         m_exposureMode->setObjectName(QStringLiteral("m_exposureMode"));
         m_exposureMode->setEnabled(false);
+        m_exposureMode->setFont(font);
         verticalLayout_4 = new QVBoxLayout(m_exposureMode);
         verticalLayout_4->setSpacing(6);
         verticalLayout_4->setContentsMargins(11, 11, 11, 11);
         verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
         m_autoExposure = new QRadioButton(m_exposureMode);
         m_autoExposure->setObjectName(QStringLiteral("m_autoExposure"));
+        m_autoExposure->setFont(font2);
         m_autoExposure->setChecked(true);
 
         verticalLayout_4->addWidget(m_autoExposure);
 
         m_manualExposure = new QRadioButton(m_exposureMode);
         m_manualExposure->setObjectName(QStringLiteral("m_manualExposure"));
+        m_manualExposure->setFont(font2);
 
         verticalLayout_4->addWidget(m_manualExposure);
 
@@ -440,6 +521,7 @@ public:
         m_exposureSpinBox = new QSpinBox(m_exposureMode);
         m_exposureSpinBox->setObjectName(QStringLiteral("m_exposureSpinBox"));
         m_exposureSpinBox->setEnabled(false);
+        m_exposureSpinBox->setFont(font2);
         m_exposureSpinBox->setMinimum(1);
         m_exposureSpinBox->setMaximum(92);
 
@@ -451,8 +533,16 @@ public:
 
         verticalLayout->addWidget(m_exposureMode);
 
-        groupBox_2 = new QGroupBox(frame);
+        groupBox_6 = new QGroupBox(frame);
+        groupBox_6->setObjectName(QStringLiteral("groupBox_6"));
+        horizontalLayout_13 = new QHBoxLayout(groupBox_6);
+        horizontalLayout_13->setSpacing(3);
+        horizontalLayout_13->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_13->setObjectName(QStringLiteral("horizontalLayout_13"));
+        horizontalLayout_13->setContentsMargins(0, 0, 0, 0);
+        groupBox_2 = new QGroupBox(groupBox_6);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
+        groupBox_2->setFont(font);
         horizontalLayout_2 = new QHBoxLayout(groupBox_2);
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
@@ -461,7 +551,7 @@ public:
         m_receiveRateLabel->setObjectName(QStringLiteral("m_receiveRateLabel"));
         m_receiveRateLabel->setLayoutDirection(Qt::LeftToRight);
         m_receiveRateLabel->setTextFormat(Qt::AutoText);
-        m_receiveRateLabel->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+        m_receiveRateLabel->setAlignment(Qt::AlignCenter);
 
         horizontalLayout_2->addWidget(m_receiveRateLabel);
 
@@ -472,14 +562,35 @@ public:
         horizontalLayout_2->addWidget(label_4);
 
 
-        verticalLayout->addWidget(groupBox_2);
+        horizontalLayout_13->addWidget(groupBox_2);
+
+        groupBox_7 = new QGroupBox(groupBox_6);
+        groupBox_7->setObjectName(QStringLiteral("groupBox_7"));
+        groupBox_7->setFont(font);
+        horizontalLayout_14 = new QHBoxLayout(groupBox_7);
+        horizontalLayout_14->setSpacing(6);
+        horizontalLayout_14->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_14->setObjectName(QStringLiteral("horizontalLayout_14"));
+        label_6 = new QLabel(groupBox_7);
+        label_6->setObjectName(QStringLiteral("label_6"));
+        label_6->setAlignment(Qt::AlignCenter);
+
+        horizontalLayout_14->addWidget(label_6);
+
+        label_3 = new QLabel(groupBox_7);
+        label_3->setObjectName(QStringLiteral("label_3"));
+
+        horizontalLayout_14->addWidget(label_3);
+
+
+        horizontalLayout_13->addWidget(groupBox_7);
+
+
+        verticalLayout->addWidget(groupBox_6);
 
         verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
         verticalLayout->addItem(verticalSpacer);
-
-
-        verticalLayout_5->addLayout(verticalLayout);
 
 
         horizontalLayout_3->addWidget(frame);
@@ -488,22 +599,32 @@ public:
         frame_2->setObjectName(QStringLiteral("frame_2"));
         frame_2->setFrameShape(QFrame::StyledPanel);
         frame_2->setFrameShadow(QFrame::Raised);
-        verticalLayout_7 = new QVBoxLayout(frame_2);
-        verticalLayout_7->setSpacing(7);
-        verticalLayout_7->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_7->setObjectName(QStringLiteral("verticalLayout_7"));
-        verticalLayout_7->setContentsMargins(0, 0, 0, 0);
-        verticalLayout_2 = new QVBoxLayout();
-        verticalLayout_2->setSpacing(6);
+        verticalLayout_2 = new QVBoxLayout(frame_2);
+        verticalLayout_2->setSpacing(4);
+        verticalLayout_2->setContentsMargins(11, 11, 11, 11);
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
+        verticalLayout_2->setContentsMargins(0, 0, 0, 0);
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        m_showLabel = new QLabel(frame_2);
+        m_showFrame = new QFrame(frame_2);
+        m_showFrame->setObjectName(QStringLiteral("m_showFrame"));
+        m_showFrame->setStyleSheet(QStringLiteral("background-color: rgb(130, 130, 130)"));
+        m_showFrame->setFrameShape(QFrame::StyledPanel);
+        m_showFrame->setFrameShadow(QFrame::Raised);
+        gridLayout = new QGridLayout(m_showFrame);
+        gridLayout->setSpacing(0);
+        gridLayout->setContentsMargins(11, 11, 11, 11);
+        gridLayout->setObjectName(QStringLiteral("gridLayout"));
+        gridLayout->setContentsMargins(0, 0, 0, 0);
+        m_showLabel = new QLabel(m_showFrame);
         m_showLabel->setObjectName(QStringLiteral("m_showLabel"));
         m_showLabel->setAlignment(Qt::AlignCenter);
 
-        horizontalLayout->addWidget(m_showLabel);
+        gridLayout->addWidget(m_showLabel, 0, 0, 1, 1);
+
+
+        horizontalLayout->addWidget(m_showFrame);
 
         horizontalSpacer_2 = new QSpacerItem(38, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
@@ -512,12 +633,9 @@ public:
 
         verticalLayout_2->addLayout(horizontalLayout);
 
-        verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+        verticalSpacer_2 = new QSpacerItem(20, 824, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
         verticalLayout_2->addItem(verticalSpacer_2);
-
-
-        verticalLayout_7->addLayout(verticalLayout_2);
 
 
         horizontalLayout_3->addWidget(frame_2);
@@ -530,6 +648,7 @@ public:
         retranslateUi(MainWindowClass);
 
         m_resolutionSwitching->setCurrentIndex(2);
+        m_analogGainSet->setCurrentIndex(3);
 
 
         QMetaObject::connectSlotsByName(MainWindowClass);
@@ -582,9 +701,13 @@ public:
         m_exposureMode->setTitle(QApplication::translate("MainWindowClass", "\346\233\235\345\205\211\350\256\276\347\275\256", 0));
         m_autoExposure->setText(QApplication::translate("MainWindowClass", "\350\207\252\345\212\250", 0));
         m_manualExposure->setText(QApplication::translate("MainWindowClass", "\346\211\213\345\212\250(\346\233\235\345\205\211\345\200\274)", 0));
+        groupBox_6->setTitle(QString());
         groupBox_2->setTitle(QApplication::translate("MainWindowClass", "\345\270\247\347\216\207", 0));
         m_receiveRateLabel->setText(QApplication::translate("MainWindowClass", "0", 0));
         label_4->setText(QApplication::translate("MainWindowClass", "fps", 0));
+        groupBox_7->setTitle(QApplication::translate("MainWindowClass", "\346\270\251\345\272\246", 0));
+        label_6->setText(QApplication::translate("MainWindowClass", "0", 0));
+        label_3->setText(QApplication::translate("MainWindowClass", "\342\204\203", 0));
         m_showLabel->setText(QApplication::translate("MainWindowClass", "\346\230\276\347\244\272", 0));
     } // retranslateUi
 

@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
 	m_imageModel.setResolution(m_imageHeight, m_imageWidth);
 
  	ui.setupUi(this);
+	ui.m_showFrame->setFixedSize(QSize(1280, 960));
 	ui.m_showLabel->setFixedSize(QSize(m_imageWidth, m_imageHeight));
 		
 	m_frameRateLabel = new QLabel(ui.statusBar);
@@ -135,12 +136,11 @@ void MainWindow::updateImage(QPixmap image)
 
 void MainWindow::showFrameRate()
 {
-	QString frameRate = QString::number(m_frameCount);
-	QString receiveFrameRate = QString::number(m_receiveFramesCount);
-	m_frameRateLabel->setText(receiveFrameRate + "fps");
-	ui.m_receiveRateLabel->setText(frameRate);
+	//QString receiveFrameRate = QString::number(m_receiveFramesCount);
+	//m_frameRateLabel->setText(receiveFrameRate + "fps");
+	ui.m_receiveRateLabel->setText(QString::number(m_frameCount));
 	m_frameCount = 0;
-	m_receiveFramesCount = 0;
+	//m_receiveFramesCount = 0;
 }
 
 
@@ -187,11 +187,11 @@ void MainWindow::switchResolution(int index)
 	switch (index)
 	{
 	case 0:// 320 * 240
-		m_imageModel.changeResolution(320, 240, 0xb1, 320 * 240, 1, 200);
+		m_imageModel.changeResolution(320, 240, 0xb1, 320 * 240, 1, 50);
 		ui.m_showLabel->setFixedSize(320, 240);
 		break;
 	case 1:// 640 * 480
-		m_imageModel.changeResolution(640, 480, 0xa2, 320 * 240, 4, 200);
+		m_imageModel.changeResolution(640, 480, 0xa2, 320 * 240, 4, 50);
 		ui.m_showLabel->setFixedSize(640, 480);
 		break;
 	case 2:// 1280 * 960
@@ -285,6 +285,10 @@ void MainWindow::setBlueGain(int gain)
 
 void MainWindow::setGlobalGain(int gain)
 {
+	ui.m_rGainSet->setValue(gain);
+	ui.m_gGainSet->setValue(gain);
+	ui.m_bGainSet->setValue(gain);
+
 	ui.m_globalGain->setText(QString::number(gain));
 	uchar u4;
 	if (gain != 8)
@@ -293,6 +297,8 @@ void MainWindow::setGlobalGain(int gain)
 		u4 = 255;
 
 	m_imageModel.sendSettingCommand(0x30, 0x5E, 0x00, u4);
+
+	
 }
 
 void MainWindow::setExposureMode(bool isAuto)

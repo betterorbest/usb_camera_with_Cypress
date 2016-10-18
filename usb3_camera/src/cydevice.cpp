@@ -155,11 +155,11 @@ void CyDevice::changeWidthTo16bitsPerPixel()
 void CyDevice::changeResolution(int width, int height, int req)
 {
 	m_mutex.lock();
-	//if (sendControlCode(req))
-	//{
+	if (sendControlCode(req))
+	{
 		m_width = width;
 		m_height = height;
-	//}
+	}
 	m_recevingFlag = true;
 	m_mutex.unlock();
 }
@@ -313,7 +313,14 @@ void CyDevice::changeResolution(int width, int height, int req)
 
 void CyDevice::receiveData()
 {
+	//初始传输1280 * 960
+	//changeResolution(1280, 960, 0xa1);
+	sendControlCode(0xa1);
 	receiveData(120 * 1024, 10, 50);
+	//初始传输640 * 480
+	//changeResolution(640, 480, 0xa2);
+	//sendControlCode(0xb1);
+	//receiveData(76800, 4, 200);
 }
 
 void CyDevice::receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut)
@@ -433,7 +440,7 @@ void CyDevice::receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut)
 
 			if (transfer_count == transfer_count_limit)
 			{
-				emit completeFrameTransmission();
+				//emit completeFrameTransmission();
 				//if (!m_pauseFlag)
 				//{
 				if (ImageFifo::inFifo(&m_imageBuffer[m_whichBuffer]))
