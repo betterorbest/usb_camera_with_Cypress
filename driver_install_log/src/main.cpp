@@ -8,7 +8,7 @@
 #include <iostream>
 using namespace std;
 //隐藏控制台窗口
-//#pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" ) // 设置入口地址  
+#pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" ) // 设置入口地址  
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//cout << "-----------welcome to the driver installation------------" << endl;
