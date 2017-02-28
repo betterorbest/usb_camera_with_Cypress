@@ -4,7 +4,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent),
-	m_imageModel(this, 960, 1280),
+	m_imageModel(this, 1280, 960),
 	m_frameCount(0),
 	m_receiveFramesCount(0),
 	m_isClosed(false)
@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
 
  	ui.setupUi(this);
 	ui.m_showFrame->setFixedSize(QSize(1280, 960));
+	//ui.m_showFrame->setFixedSize(QSize(m_imageWidth, m_imageHeight));
 	ui.m_showLabel->setFixedSize(QSize(m_imageWidth, m_imageHeight));
 		
 	m_frameRateLabel = new QLabel(ui.statusBar);

@@ -1,6 +1,6 @@
 #include "imagemodel.h"
 #include "imagefifo.h"
-#define FIFO_SIZE 2   //该数值必须大于等于2
+#define FIFO_SIZE 2  //该数值必须大于等于2
 
 ImageModel::ImageModel(QWidget *mainWindow, int height, int width)
 	:m_mainWindow(mainWindow),

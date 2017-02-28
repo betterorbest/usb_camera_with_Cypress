@@ -44,7 +44,7 @@ bool CyDevice::openDevice(HANDLE hnd)
 	sendControlCode(0xb2);    //usb设备初始化
 
 	m_mutex.lock();
-	if (m_bitsPerPixel)
+	if (m_bitsPerPixel <= 8)
 	{
 		sendControlCode(0xb8);    //发送8位图像数据
 	}
@@ -316,8 +316,9 @@ void CyDevice::receiveData()
 	//初始传输1280 * 960
 	//changeResolution(1280, 960, 0xa1);
 	sendControlCode(0xa1);
-	receiveData(m_width * m_height / 10, 10, 200);
-	//receiveData(m_width * m_height, 1, 1000);
+	//receiveData(m_width * m_height / 10, 10, 200);
+	receiveData(m_width * m_height, 1, 1000);
+	//receiveData(m_width * m_height / 24, 24, 1000);
 	//receiveData(120 * 1024, 10, 50);
 	//初始传输640 * 480
 	//changeResolution(640, 480, 0xa2);

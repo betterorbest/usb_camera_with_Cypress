@@ -5,10 +5,6 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "usb2_camera_034", "usb2_camera_034\usb2_camera_034.vcxproj", "{B12702AD-ABFB-343A-A199-8E24837244A3}"
 EndProject
-Project("{6141683F-8A12-4E36-9623-2EB02B2C2303}") = "setup_usb2camera_034", "setup_usb2camera_034\setup_usb2camera_034.isproj", "{046B1E15-7131-4173-BB4B-6D389DDEFD74}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "driver_install_log", "driver_install_log\driver_install_log.vcxproj", "{76A6A6D5-6101-4F88-8FDE-32BBB7BE6DA0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CD_ROM|Win32 = CD_ROM|Win32
@@ -25,26 +21,6 @@ Global
 		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|Win32.ActiveCfg = Release|Win32
 		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|Win32.Build.0 = Release|Win32
 		{B12702AD-ABFB-343A-A199-8E24837244A3}.SingleImage|Win32.ActiveCfg = Release|Win32
-		{046B1E15-7131-4173-BB4B-6D389DDEFD74}.CD_ROM|Win32.ActiveCfg = CD_ROM
-		{046B1E15-7131-4173-BB4B-6D389DDEFD74}.CD_ROM|Win32.Build.0 = CD_ROM
-		{046B1E15-7131-4173-BB4B-6D389DDEFD74}.Debug|Win32.ActiveCfg = DVD-5
-		{046B1E15-7131-4173-BB4B-6D389DDEFD74}.Debug|Win32.Build.0 = DVD-5
-		{046B1E15-7131-4173-BB4B-6D389DDEFD74}.DVD-5|Win32.ActiveCfg = DVD-5
-		{046B1E15-7131-4173-BB4B-6D389DDEFD74}.DVD-5|Win32.Build.0 = DVD-5
-		{046B1E15-7131-4173-BB4B-6D389DDEFD74}.Release|Win32.ActiveCfg = SingleImage
-		{046B1E15-7131-4173-BB4B-6D389DDEFD74}.Release|Win32.Build.0 = SingleImage
-		{046B1E15-7131-4173-BB4B-6D389DDEFD74}.SingleImage|Win32.ActiveCfg = SingleImage
-		{046B1E15-7131-4173-BB4B-6D389DDEFD74}.SingleImage|Win32.Build.0 = SingleImage
-		{76A6A6D5-6101-4F88-8FDE-32BBB7BE6DA0}.CD_ROM|Win32.ActiveCfg = Release|Win32
-		{76A6A6D5-6101-4F88-8FDE-32BBB7BE6DA0}.CD_ROM|Win32.Build.0 = Release|Win32
-		{76A6A6D5-6101-4F88-8FDE-32BBB7BE6DA0}.Debug|Win32.ActiveCfg = Debug|Win32
-		{76A6A6D5-6101-4F88-8FDE-32BBB7BE6DA0}.Debug|Win32.Build.0 = Debug|Win32
-		{76A6A6D5-6101-4F88-8FDE-32BBB7BE6DA0}.DVD-5|Win32.ActiveCfg = Debug|Win32
-		{76A6A6D5-6101-4F88-8FDE-32BBB7BE6DA0}.DVD-5|Win32.Build.0 = Debug|Win32
-		{76A6A6D5-6101-4F88-8FDE-32BBB7BE6DA0}.Release|Win32.ActiveCfg = Release|Win32
-		{76A6A6D5-6101-4F88-8FDE-32BBB7BE6DA0}.Release|Win32.Build.0 = Release|Win32
-		{76A6A6D5-6101-4F88-8FDE-32BBB7BE6DA0}.SingleImage|Win32.ActiveCfg = Release|Win32
-		{76A6A6D5-6101-4F88-8FDE-32BBB7BE6DA0}.SingleImage|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
