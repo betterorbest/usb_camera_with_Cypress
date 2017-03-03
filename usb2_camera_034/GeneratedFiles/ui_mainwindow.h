@@ -23,7 +23,6 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QRadioButton>
-#include <QtWidgets/QSlider>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
@@ -58,37 +57,18 @@ public:
     QRadioButton *m_colorImageChoosed;
     QRadioButton *m_grayImageChoosed;
     QGroupBox *groupBox_3;
+    QGridLayout *gridLayout_2;
+    QLabel *label_2;
     QHBoxLayout *horizontalLayout_6;
-    QComboBox *m_analogGainSet;
-    QGroupBox *m_digitalGainSet;
-    QVBoxLayout *verticalLayout_3;
-    QHBoxLayout *horizontalLayout_11;
-    QLabel *label_11;
-    QSlider *m_rGainSet;
-    QLabel *m_rGain;
-    QLabel *label_13;
-    QHBoxLayout *horizontalLayout_10;
-    QLabel *label_8;
-    QSlider *m_gGainSet;
-    QLabel *m_gGain;
-    QLabel *label_10;
-    QHBoxLayout *horizontalLayout_9;
-    QLabel *label_5;
-    QSlider *m_bGainSet;
-    QLabel *m_bGain;
+    QLabel *label;
+    QSpinBox *m_addrHigh;
+    QSpinBox *m_addrLow;
     QLabel *label_7;
     QHBoxLayout *horizontalLayout_8;
-    QLabel *label_2;
-    QSlider *m_globalGainSet;
-    QLabel *m_globalGain;
-    QLabel *label;
-    QGroupBox *m_exposureMode;
-    QVBoxLayout *verticalLayout_4;
-    QRadioButton *m_autoExposure;
-    QRadioButton *m_manualExposure;
-    QHBoxLayout *horizontalLayout_12;
-    QSlider *m_exposureSlider;
-    QSpinBox *m_exposureSpinBox;
+    QLabel *label_5;
+    QSpinBox *m_regHigh;
+    QSpinBox *m_regLow;
+    QPushButton *m_sendRegBtn;
     QGroupBox *groupBox_6;
     QHBoxLayout *horizontalLayout_13;
     QGroupBox *groupBox_2;
@@ -294,247 +274,88 @@ public:
 
         groupBox_3 = new QGroupBox(frame);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
-        groupBox_3->setEnabled(true);
-        groupBox_3->setFont(font);
-        horizontalLayout_6 = new QHBoxLayout(groupBox_3);
-        horizontalLayout_6->setSpacing(6);
-        horizontalLayout_6->setContentsMargins(11, 11, 11, 11);
-        horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
-        m_analogGainSet = new QComboBox(groupBox_3);
-        m_analogGainSet->setObjectName(QStringLiteral("m_analogGainSet"));
-        m_analogGainSet->setEnabled(false);
-        m_analogGainSet->setFont(font2);
+        gridLayout_2 = new QGridLayout(groupBox_3);
+        gridLayout_2->setSpacing(6);
+        gridLayout_2->setContentsMargins(11, 11, 11, 11);
+        gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
+        label_2 = new QLabel(groupBox_3);
+        label_2->setObjectName(QStringLiteral("label_2"));
 
-        horizontalLayout_6->addWidget(m_analogGainSet);
+        gridLayout_2->addWidget(label_2, 0, 0, 1, 1);
+
+        horizontalLayout_6 = new QHBoxLayout();
+        horizontalLayout_6->setSpacing(0);
+        horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
+        label = new QLabel(groupBox_3);
+        label->setObjectName(QStringLiteral("label"));
+        label->setLayoutDirection(Qt::RightToLeft);
+        label->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        horizontalLayout_6->addWidget(label);
+
+        m_addrHigh = new QSpinBox(groupBox_3);
+        m_addrHigh->setObjectName(QStringLiteral("m_addrHigh"));
+        m_addrHigh->setWrapping(false);
+        m_addrHigh->setFrame(true);
+        m_addrHigh->setButtonSymbols(QAbstractSpinBox::NoButtons);
+        m_addrHigh->setMaximum(255);
+        m_addrHigh->setDisplayIntegerBase(16);
+
+        horizontalLayout_6->addWidget(m_addrHigh);
+
+        m_addrLow = new QSpinBox(groupBox_3);
+        m_addrLow->setObjectName(QStringLiteral("m_addrLow"));
+        m_addrLow->setButtonSymbols(QAbstractSpinBox::NoButtons);
+        m_addrLow->setMaximum(255);
+        m_addrLow->setDisplayIntegerBase(16);
+
+        horizontalLayout_6->addWidget(m_addrLow);
+
+
+        gridLayout_2->addLayout(horizontalLayout_6, 0, 1, 1, 1);
+
+        label_7 = new QLabel(groupBox_3);
+        label_7->setObjectName(QStringLiteral("label_7"));
+
+        gridLayout_2->addWidget(label_7, 1, 0, 1, 1);
+
+        horizontalLayout_8 = new QHBoxLayout();
+        horizontalLayout_8->setSpacing(0);
+        horizontalLayout_8->setObjectName(QStringLiteral("horizontalLayout_8"));
+        label_5 = new QLabel(groupBox_3);
+        label_5->setObjectName(QStringLiteral("label_5"));
+        label_5->setLayoutDirection(Qt::LeftToRight);
+        label_5->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        horizontalLayout_8->addWidget(label_5);
+
+        m_regHigh = new QSpinBox(groupBox_3);
+        m_regHigh->setObjectName(QStringLiteral("m_regHigh"));
+        m_regHigh->setButtonSymbols(QAbstractSpinBox::NoButtons);
+        m_regHigh->setMaximum(255);
+        m_regHigh->setDisplayIntegerBase(16);
+
+        horizontalLayout_8->addWidget(m_regHigh);
+
+        m_regLow = new QSpinBox(groupBox_3);
+        m_regLow->setObjectName(QStringLiteral("m_regLow"));
+        m_regLow->setButtonSymbols(QAbstractSpinBox::NoButtons);
+        m_regLow->setMaximum(255);
+        m_regLow->setDisplayIntegerBase(16);
+
+        horizontalLayout_8->addWidget(m_regLow);
+
+
+        gridLayout_2->addLayout(horizontalLayout_8, 1, 1, 1, 1);
+
+        m_sendRegBtn = new QPushButton(groupBox_3);
+        m_sendRegBtn->setObjectName(QStringLiteral("m_sendRegBtn"));
+        m_sendRegBtn->setEnabled(false);
+
+        gridLayout_2->addWidget(m_sendRegBtn, 2, 1, 1, 1);
 
 
         verticalLayout->addWidget(groupBox_3);
-
-        m_digitalGainSet = new QGroupBox(frame);
-        m_digitalGainSet->setObjectName(QStringLiteral("m_digitalGainSet"));
-        m_digitalGainSet->setEnabled(false);
-        m_digitalGainSet->setFont(font);
-        verticalLayout_3 = new QVBoxLayout(m_digitalGainSet);
-        verticalLayout_3->setSpacing(6);
-        verticalLayout_3->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
-        horizontalLayout_11 = new QHBoxLayout();
-        horizontalLayout_11->setSpacing(6);
-        horizontalLayout_11->setObjectName(QStringLiteral("horizontalLayout_11"));
-        label_11 = new QLabel(m_digitalGainSet);
-        label_11->setObjectName(QStringLiteral("label_11"));
-        label_11->setFont(font2);
-
-        horizontalLayout_11->addWidget(label_11);
-
-        m_rGainSet = new QSlider(m_digitalGainSet);
-        m_rGainSet->setObjectName(QStringLiteral("m_rGainSet"));
-        QSizePolicy sizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(m_rGainSet->sizePolicy().hasHeightForWidth());
-        m_rGainSet->setSizePolicy(sizePolicy);
-        m_rGainSet->setMaximumSize(QSize(16777215, 16777215));
-        m_rGainSet->setMinimum(1);
-        m_rGainSet->setMaximum(8);
-        m_rGainSet->setPageStep(1);
-        m_rGainSet->setOrientation(Qt::Horizontal);
-        m_rGainSet->setInvertedAppearance(false);
-        m_rGainSet->setInvertedControls(false);
-        m_rGainSet->setTickPosition(QSlider::NoTicks);
-        m_rGainSet->setTickInterval(1);
-
-        horizontalLayout_11->addWidget(m_rGainSet);
-
-        m_rGain = new QLabel(m_digitalGainSet);
-        m_rGain->setObjectName(QStringLiteral("m_rGain"));
-        m_rGain->setFont(font2);
-
-        horizontalLayout_11->addWidget(m_rGain);
-
-        label_13 = new QLabel(m_digitalGainSet);
-        label_13->setObjectName(QStringLiteral("label_13"));
-        label_13->setFont(font2);
-
-        horizontalLayout_11->addWidget(label_13);
-
-
-        verticalLayout_3->addLayout(horizontalLayout_11);
-
-        horizontalLayout_10 = new QHBoxLayout();
-        horizontalLayout_10->setSpacing(6);
-        horizontalLayout_10->setObjectName(QStringLiteral("horizontalLayout_10"));
-        label_8 = new QLabel(m_digitalGainSet);
-        label_8->setObjectName(QStringLiteral("label_8"));
-        label_8->setFont(font2);
-
-        horizontalLayout_10->addWidget(label_8);
-
-        m_gGainSet = new QSlider(m_digitalGainSet);
-        m_gGainSet->setObjectName(QStringLiteral("m_gGainSet"));
-        sizePolicy.setHeightForWidth(m_gGainSet->sizePolicy().hasHeightForWidth());
-        m_gGainSet->setSizePolicy(sizePolicy);
-        m_gGainSet->setMaximumSize(QSize(16777215, 16777215));
-        m_gGainSet->setMinimum(1);
-        m_gGainSet->setMaximum(8);
-        m_gGainSet->setPageStep(1);
-        m_gGainSet->setOrientation(Qt::Horizontal);
-        m_gGainSet->setInvertedAppearance(false);
-        m_gGainSet->setInvertedControls(false);
-        m_gGainSet->setTickPosition(QSlider::NoTicks);
-        m_gGainSet->setTickInterval(1);
-
-        horizontalLayout_10->addWidget(m_gGainSet);
-
-        m_gGain = new QLabel(m_digitalGainSet);
-        m_gGain->setObjectName(QStringLiteral("m_gGain"));
-        m_gGain->setFont(font2);
-
-        horizontalLayout_10->addWidget(m_gGain);
-
-        label_10 = new QLabel(m_digitalGainSet);
-        label_10->setObjectName(QStringLiteral("label_10"));
-        label_10->setFont(font2);
-
-        horizontalLayout_10->addWidget(label_10);
-
-
-        verticalLayout_3->addLayout(horizontalLayout_10);
-
-        horizontalLayout_9 = new QHBoxLayout();
-        horizontalLayout_9->setSpacing(6);
-        horizontalLayout_9->setObjectName(QStringLiteral("horizontalLayout_9"));
-        label_5 = new QLabel(m_digitalGainSet);
-        label_5->setObjectName(QStringLiteral("label_5"));
-        label_5->setFont(font2);
-
-        horizontalLayout_9->addWidget(label_5);
-
-        m_bGainSet = new QSlider(m_digitalGainSet);
-        m_bGainSet->setObjectName(QStringLiteral("m_bGainSet"));
-        sizePolicy.setHeightForWidth(m_bGainSet->sizePolicy().hasHeightForWidth());
-        m_bGainSet->setSizePolicy(sizePolicy);
-        m_bGainSet->setMaximumSize(QSize(16777215, 16777215));
-        m_bGainSet->setMinimum(1);
-        m_bGainSet->setMaximum(8);
-        m_bGainSet->setPageStep(1);
-        m_bGainSet->setOrientation(Qt::Horizontal);
-        m_bGainSet->setInvertedAppearance(false);
-        m_bGainSet->setInvertedControls(false);
-        m_bGainSet->setTickPosition(QSlider::NoTicks);
-        m_bGainSet->setTickInterval(1);
-
-        horizontalLayout_9->addWidget(m_bGainSet);
-
-        m_bGain = new QLabel(m_digitalGainSet);
-        m_bGain->setObjectName(QStringLiteral("m_bGain"));
-        m_bGain->setFont(font2);
-
-        horizontalLayout_9->addWidget(m_bGain);
-
-        label_7 = new QLabel(m_digitalGainSet);
-        label_7->setObjectName(QStringLiteral("label_7"));
-        label_7->setFont(font2);
-
-        horizontalLayout_9->addWidget(label_7);
-
-
-        verticalLayout_3->addLayout(horizontalLayout_9);
-
-        horizontalLayout_8 = new QHBoxLayout();
-        horizontalLayout_8->setSpacing(6);
-        horizontalLayout_8->setObjectName(QStringLiteral("horizontalLayout_8"));
-        label_2 = new QLabel(m_digitalGainSet);
-        label_2->setObjectName(QStringLiteral("label_2"));
-        label_2->setFont(font2);
-
-        horizontalLayout_8->addWidget(label_2);
-
-        m_globalGainSet = new QSlider(m_digitalGainSet);
-        m_globalGainSet->setObjectName(QStringLiteral("m_globalGainSet"));
-        sizePolicy.setHeightForWidth(m_globalGainSet->sizePolicy().hasHeightForWidth());
-        m_globalGainSet->setSizePolicy(sizePolicy);
-        m_globalGainSet->setMaximumSize(QSize(16777215, 16777215));
-        m_globalGainSet->setMinimum(1);
-        m_globalGainSet->setMaximum(8);
-        m_globalGainSet->setPageStep(1);
-        m_globalGainSet->setOrientation(Qt::Horizontal);
-        m_globalGainSet->setInvertedAppearance(false);
-        m_globalGainSet->setInvertedControls(false);
-        m_globalGainSet->setTickPosition(QSlider::NoTicks);
-        m_globalGainSet->setTickInterval(1);
-
-        horizontalLayout_8->addWidget(m_globalGainSet);
-
-        m_globalGain = new QLabel(m_digitalGainSet);
-        m_globalGain->setObjectName(QStringLiteral("m_globalGain"));
-        m_globalGain->setFont(font2);
-
-        horizontalLayout_8->addWidget(m_globalGain);
-
-        label = new QLabel(m_digitalGainSet);
-        label->setObjectName(QStringLiteral("label"));
-        label->setFont(font2);
-
-        horizontalLayout_8->addWidget(label);
-
-
-        verticalLayout_3->addLayout(horizontalLayout_8);
-
-
-        verticalLayout->addWidget(m_digitalGainSet);
-
-        m_exposureMode = new QGroupBox(frame);
-        m_exposureMode->setObjectName(QStringLiteral("m_exposureMode"));
-        m_exposureMode->setEnabled(false);
-        m_exposureMode->setFont(font);
-        verticalLayout_4 = new QVBoxLayout(m_exposureMode);
-        verticalLayout_4->setSpacing(6);
-        verticalLayout_4->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
-        m_autoExposure = new QRadioButton(m_exposureMode);
-        m_autoExposure->setObjectName(QStringLiteral("m_autoExposure"));
-        m_autoExposure->setFont(font2);
-        m_autoExposure->setChecked(true);
-
-        verticalLayout_4->addWidget(m_autoExposure);
-
-        m_manualExposure = new QRadioButton(m_exposureMode);
-        m_manualExposure->setObjectName(QStringLiteral("m_manualExposure"));
-        m_manualExposure->setFont(font2);
-
-        verticalLayout_4->addWidget(m_manualExposure);
-
-        horizontalLayout_12 = new QHBoxLayout();
-        horizontalLayout_12->setSpacing(6);
-        horizontalLayout_12->setObjectName(QStringLiteral("horizontalLayout_12"));
-        m_exposureSlider = new QSlider(m_exposureMode);
-        m_exposureSlider->setObjectName(QStringLiteral("m_exposureSlider"));
-        m_exposureSlider->setEnabled(false);
-        sizePolicy.setHeightForWidth(m_exposureSlider->sizePolicy().hasHeightForWidth());
-        m_exposureSlider->setSizePolicy(sizePolicy);
-        m_exposureSlider->setMaximumSize(QSize(16777215, 16777215));
-        m_exposureSlider->setMinimum(1);
-        m_exposureSlider->setMaximum(92);
-        m_exposureSlider->setSingleStep(1);
-        m_exposureSlider->setOrientation(Qt::Horizontal);
-
-        horizontalLayout_12->addWidget(m_exposureSlider);
-
-        m_exposureSpinBox = new QSpinBox(m_exposureMode);
-        m_exposureSpinBox->setObjectName(QStringLiteral("m_exposureSpinBox"));
-        m_exposureSpinBox->setEnabled(false);
-        m_exposureSpinBox->setFont(font2);
-        m_exposureSpinBox->setMinimum(1);
-        m_exposureSpinBox->setMaximum(92);
-
-        horizontalLayout_12->addWidget(m_exposureSpinBox);
-
-
-        verticalLayout_4->addLayout(horizontalLayout_12);
-
-
-        verticalLayout->addWidget(m_exposureMode);
 
         groupBox_6 = new QGroupBox(frame);
         groupBox_6->setObjectName(QStringLiteral("groupBox_6"));
@@ -651,7 +472,6 @@ public:
         retranslateUi(MainWindowClass);
 
         m_resolutionSwitching->setCurrentIndex(2);
-        m_analogGainSet->setCurrentIndex(3);
 
 
         QMetaObject::connectSlotsByName(MainWindowClass);
@@ -679,31 +499,12 @@ public:
         groupBox_4->setTitle(QApplication::translate("MainWindowClass", "\346\210\220\345\203\217\347\261\273\345\236\213", 0));
         m_colorImageChoosed->setText(QApplication::translate("MainWindowClass", "\345\275\251\350\211\262", 0));
         m_grayImageChoosed->setText(QApplication::translate("MainWindowClass", "\351\273\221\347\231\275", 0));
-        groupBox_3->setTitle(QApplication::translate("MainWindowClass", "\346\250\241\346\213\237\345\242\236\347\233\212", 0));
-        m_analogGainSet->clear();
-        m_analogGainSet->insertItems(0, QStringList()
-         << QApplication::translate("MainWindowClass", "1\345\200\215", 0)
-         << QApplication::translate("MainWindowClass", "2\345\200\215", 0)
-         << QApplication::translate("MainWindowClass", "4\345\200\215", 0)
-         << QApplication::translate("MainWindowClass", "8\345\200\215", 0)
-         << QApplication::translate("MainWindowClass", "10\345\200\215", 0)
-        );
-        m_digitalGainSet->setTitle(QApplication::translate("MainWindowClass", "\346\225\260\345\255\227\345\242\236\347\233\212", 0));
-        label_11->setText(QApplication::translate("MainWindowClass", "\347\272\242\350\211\262", 0));
-        m_rGain->setText(QApplication::translate("MainWindowClass", "1", 0));
-        label_13->setText(QApplication::translate("MainWindowClass", "x", 0));
-        label_8->setText(QApplication::translate("MainWindowClass", "\347\273\277\350\211\262", 0));
-        m_gGain->setText(QApplication::translate("MainWindowClass", "1", 0));
-        label_10->setText(QApplication::translate("MainWindowClass", "x", 0));
-        label_5->setText(QApplication::translate("MainWindowClass", "\350\223\235\350\211\262", 0));
-        m_bGain->setText(QApplication::translate("MainWindowClass", "1", 0));
-        label_7->setText(QApplication::translate("MainWindowClass", "x", 0));
-        label_2->setText(QApplication::translate("MainWindowClass", "\345\205\250\345\261\200", 0));
-        m_globalGain->setText(QApplication::translate("MainWindowClass", "1", 0));
-        label->setText(QApplication::translate("MainWindowClass", "x", 0));
-        m_exposureMode->setTitle(QApplication::translate("MainWindowClass", "\346\233\235\345\205\211\350\256\276\347\275\256", 0));
-        m_autoExposure->setText(QApplication::translate("MainWindowClass", "\350\207\252\345\212\250", 0));
-        m_manualExposure->setText(QApplication::translate("MainWindowClass", "\346\211\213\345\212\250(\346\233\235\345\205\211\345\200\274)", 0));
+        groupBox_3->setTitle(QApplication::translate("MainWindowClass", "\345\257\204\345\255\230\345\231\250\351\205\215\347\275\256", 0));
+        label_2->setText(QApplication::translate("MainWindowClass", "\345\234\260\345\235\200", 0));
+        label->setText(QApplication::translate("MainWindowClass", "0x", 0));
+        label_7->setText(QApplication::translate("MainWindowClass", "\345\257\204\345\255\230\345\231\250\345\200\274", 0));
+        label_5->setText(QApplication::translate("MainWindowClass", "0x", 0));
+        m_sendRegBtn->setText(QApplication::translate("MainWindowClass", "\345\217\221\351\200\201", 0));
         groupBox_6->setTitle(QString());
         groupBox_2->setTitle(QApplication::translate("MainWindowClass", "\345\270\247\347\216\207", 0));
         m_receiveRateLabel->setText(QApplication::translate("MainWindowClass", "0", 0));

@@ -35,15 +35,8 @@ public slots:
 	void changeImageToColor(bool flag);
 
 	void switchResolution(int index);
-	void setAnalogGain(int index);
 
-	void setRedGain(int gain);
-	void setGreenGain(int gain);
-	void setBlueGain(int gain);
-	void setGlobalGain(int gain);
-
-	void setExposureMode(bool isAuto);
-	void setExposureValue(int value);
+	void configRegister();
 
 	void chooseSavingPath();
 	void takeImage();

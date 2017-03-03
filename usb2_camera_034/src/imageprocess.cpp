@@ -40,7 +40,8 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 		{
 			cv::Mat image8bits = cv::Mat(height, width, CV_8UC1, data);
 			cv::Mat image;
-			cv::cvtColor(image8bits, image, CV_BayerRG2RGB);
+			cv::cvtColor(image8bits, image, CV_BayerGB2RGB);
+			//cv::cvtColor(image8bits, image, CV_BayerRG2RGB);
 			//cv::cvtColor(image8bits, image, CV_BayerGR2RGB);
 			//DWORD start = GetTickCount();
 			//cv::medianBlur(image, image, 3);                        //ÖÐÖµÂË²¨ 64-80ms
@@ -88,14 +89,15 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 			{
 				//m_imageData[i] = pow((data[2 * i + 1] << 8) + data[2 * i], 0.66);
 				//m_imageData[i] = pow(data16bits[i], 0.66);
-				//m_imageData[i] = data16bits[i] >> 4;
-				m_imageData[i] = data16bits[i];
+				m_imageData[i] = data16bits[i] >> (16 - bitsPerPixel);
+				//m_imageData[i] = data16bits[i];
 			}
 
 			cv::Mat image8bits = cv::Mat(height, width, CV_8UC1, m_imageData);
 			cv::Mat image;
 			//image16bits.convertTo(image, CV_8UC1);
-			cv::cvtColor(image8bits, image, CV_BayerRG2RGB);
+			cv::cvtColor(image8bits, image, CV_BayerGB2RGB);
+			//cv::cvtColor(image8bits, image, CV_BayerRG2RGB);
 			//cv::cvtColor(image8bits, image, CV_BayerGR2RGB);
 
 			autoWhiteBalance(image, image);
@@ -120,8 +122,8 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 			{
 				//m_imageData[i] = pow((data[2 * i + 1] << 8) + data[2 * i], 0.66);
 				//m_imageData[i] = pow(data16bits[i], 0.66);
-				//m_imageData[i] = data16bits[i] >> 4;
-				m_imageData[i] = data16bits[i];
+				m_imageData[i] = data16bits[i] >> (16 - bitsPerPixel);
+				//m_imageData[i] = data16bits[i];
 
 			}
 

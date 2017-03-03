@@ -38,22 +38,14 @@ MainWindow::MainWindow(QWidget *parent)
 	//Qt5的重载信号与槽连接的使用方式
 	connect(ui.m_resolutionSwitching, static_cast<void (QComboBox:: *)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::switchResolution);
 	
-	connect(ui.m_analogGainSet, static_cast<void (QComboBox:: *)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::setAnalogGain);
-	
-	connect(ui.m_rGainSet, &QSlider::valueChanged, this, &MainWindow::setRedGain);
-	connect(ui.m_gGainSet, &QSlider::valueChanged, this, &MainWindow::setGreenGain);
-	connect(ui.m_bGainSet, &QSlider::valueChanged, this, &MainWindow::setBlueGain);
-	connect(ui.m_globalGainSet, &QSlider::valueChanged, this, &MainWindow::setGlobalGain);
-
-	connect(ui.m_autoExposure, &QRadioButton::toggled, this, &MainWindow::setExposureMode);
-	connect(ui.m_exposureSlider, &QSlider::valueChanged, this, &MainWindow::setExposureValue);
-	connect(ui.m_exposureSlider, &QSlider::valueChanged, ui.m_exposureSpinBox, &QSpinBox::setValue);
-	connect(ui.m_exposureSpinBox, static_cast<void (QSpinBox:: *)(int)>(&QSpinBox::valueChanged), ui.m_exposureSlider, &QSlider::setValue);
 	
 	connect(ui.m_pathChoosingButton, &QPushButton::clicked, this, &MainWindow::chooseSavingPath);
 	connect(ui.m_imageTakingButton, &QPushButton::clicked, this, &MainWindow::takeImage);
 	connect(&m_timer, SIGNAL(timeout()), this, SLOT(showFrameRate()));
 	
+
+	//配置寄存器
+	connect(ui.m_sendRegBtn, &QPushButton::clicked, this, &MainWindow::configRegister);
 }
 
 MainWindow::~MainWindow()
@@ -116,9 +108,8 @@ void MainWindow::openCamera()
 		ui.m_bitsPerPixelChange->setEnabled(true);
 		ui.m_resolutionSwitching->setEnabled(true);
 		ui.m_imageTakingButton->setEnabled(true);
-		ui.m_analogGainSet->setEnabled(true);
-		ui.m_digitalGainSet->setEnabled(true);
-		ui.m_exposureMode->setEnabled(true);
+
+		ui.m_sendRegBtn->setEnabled(true);
 	}
 	else
 	{
@@ -129,15 +120,13 @@ void MainWindow::openCamera()
 void MainWindow::closeCamera()
 {
 	//qDebug() << "i out";
+	ui.m_sendRegBtn->setEnabled(false);
 
 	ui.m_stopButton->setEnabled(false);
 	ui.m_pauseButton->setEnabled(false);
 	ui.m_bitsPerPixelChange->setEnabled(false);
 	ui.m_resolutionSwitching->setEnabled(false);
 	ui.m_imageTakingButton->setEnabled(false);
-	ui.m_analogGainSet->setEnabled(false);
-	ui.m_digitalGainSet->setEnabled(false);
-	ui.m_exposureMode->setEnabled(false);
 
 	m_imageModel.closeUSBCamera();
 	m_timer.stop();
@@ -244,117 +233,35 @@ void MainWindow::switchResolution(int index)
 
 }
 
-void MainWindow::setAnalogGain(int index)
-{
-	switch (index)
-	{
-	case 0://1倍增益
-		m_imageModel.sendSettingCommand(0x3E, 0xE4, 0xD2, 0x08);
-		m_imageModel.sendSettingCommand(0x30, 0xB0, 0x00, 0x00);
-		break;
-	case 1://2倍增益
-		m_imageModel.sendSettingCommand(0x3E, 0xE4, 0xD2, 0x08);
-		m_imageModel.sendSettingCommand(0x30, 0xB0, 0x00, 0x10);
-		break;
-	case 2://4倍增益
-		m_imageModel.sendSettingCommand(0x3E, 0xE4, 0xD2, 0x08);
-		m_imageModel.sendSettingCommand(0x30, 0xB0, 0x00, 0x20);
-		break;
-	case 3://8倍增益
-		m_imageModel.sendSettingCommand(0x3E, 0xE4, 0xD2, 0x08);
-		m_imageModel.sendSettingCommand(0x30, 0xB0, 0x00, 0x30);
-		break;
-	case 4://10倍增益
-		m_imageModel.sendSettingCommand(0x3E, 0xE4, 0xD3, 0x08);
-		m_imageModel.sendSettingCommand(0x30, 0xB0, 0x00, 0x30);
-		break;
-	default:
-		break;
-	}
-}
+//void MainWindow::setAnalogGain(int index)
+//{
+//	switch (index)
+//	{
+//	case 0://1倍增益
+//		m_imageModel.sendSettingCommand(0x3E, 0xE4, 0xD2, 0x08);
+//		m_imageModel.sendSettingCommand(0x30, 0xB0, 0x00, 0x00);
+//		break;
+//	case 1://2倍增益
+//		m_imageModel.sendSettingCommand(0x3E, 0xE4, 0xD2, 0x08);
+//		m_imageModel.sendSettingCommand(0x30, 0xB0, 0x00, 0x10);
+//		break;
+//	case 2://4倍增益
+//		m_imageModel.sendSettingCommand(0x3E, 0xE4, 0xD2, 0x08);
+//		m_imageModel.sendSettingCommand(0x30, 0xB0, 0x00, 0x20);
+//		break;
+//	case 3://8倍增益
+//		m_imageModel.sendSettingCommand(0x3E, 0xE4, 0xD2, 0x08);
+//		m_imageModel.sendSettingCommand(0x30, 0xB0, 0x00, 0x30);
+//		break;
+//	case 4://10倍增益
+//		m_imageModel.sendSettingCommand(0x3E, 0xE4, 0xD3, 0x08);
+//		m_imageModel.sendSettingCommand(0x30, 0xB0, 0x00, 0x30);
+//		break;
+//	default:
+//		break;
+//	}
+//}
 
-void MainWindow::setRedGain(int gain)
-{
-	ui.m_rGain->setText(QString::number(gain));
-	uchar u4;
-	if (gain != 8)
-		u4 = gain << 5;
-	else
-		u4 = 255;
-
-	m_imageModel.sendSettingCommand(0x30, 0x5C, 0x00, u4);
-}
-
-void MainWindow::setGreenGain(int gain)
-{
-	ui.m_gGain->setText(QString::number(gain));
-	uchar u4;
-	if (gain != 8)
-		u4 = gain << 5;
-	else
-		u4 = 255;
-
-	m_imageModel.sendSettingCommand(0x30, 0x58, 0x00, u4);
-	m_imageModel.sendSettingCommand(0x30, 0x5A, 0x00, u4);
-}
-
-void MainWindow::setBlueGain(int gain)
-{
-	ui.m_bGain->setText(QString::number(gain));
-	uchar u4;
-	if (gain != 8)
-		u4 = gain << 5;
-	else
-		u4 = 255;
-
-	m_imageModel.sendSettingCommand(0x30, 0x56, 0x00, u4);
-}
-
-void MainWindow::setGlobalGain(int gain)
-{
-	ui.m_rGainSet->setValue(gain);
-	ui.m_gGainSet->setValue(gain);
-	ui.m_bGainSet->setValue(gain);
-
-	ui.m_globalGain->setText(QString::number(gain));
-	uchar u4;
-	if (gain != 8)
-		u4 = gain << 5;
-	else
-		u4 = 255;
-
-	m_imageModel.sendSettingCommand(0x30, 0x5E, 0x00, u4);
-
-	
-}
-
-void MainWindow::setExposureMode(bool isAuto)
-{
-	if (isAuto)
-	{
-		ui.m_exposureSlider->setEnabled(false);
-		ui.m_exposureSpinBox->setEnabled(false);
-		m_imageModel.sendSettingCommand(0x31, 0x00, 0x00, 0x1B);
-	}
-	else
-	{
-		m_imageModel.sendSettingCommand(0x31, 0x00, 0x00, 0x1A);
-		ui.m_exposureSlider->setEnabled(true);
-		ui.m_exposureSpinBox->setEnabled(true);
-	}
-}
-
-void MainWindow::setExposureValue(int value)
-{
-	qDebug() << value;
-	uchar u3;
-	uchar u4;
-
-	u3 = (value * 80 / 11) >> 8;
-	u4 = (value * 80 / 11);
-
-	m_imageModel.sendSettingCommand(0x30, 0x12, u3, u4);
-}
 
 void MainWindow::chooseSavingPath()
 {
@@ -367,4 +274,15 @@ void MainWindow::chooseSavingPath()
 void MainWindow::takeImage()
 {
 	m_imageModel.takeImage();
+}
+
+
+void MainWindow::configRegister()
+{
+	uchar addrHigh = ui.m_addrHigh->value();
+	uchar addrLow = ui.m_addrLow->value();
+	uchar regHigh = ui.m_regHigh->value();
+	uchar regLow = ui.m_regLow->value();
+
+	m_imageModel.sendSettingCommand(addrHigh, addrLow, regHigh, regLow);
 }
