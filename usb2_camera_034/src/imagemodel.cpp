@@ -2,17 +2,9 @@
 #include "imagefifo.h"
 #define FIFO_SIZE 2  //该数值必须大于等于2
 
-ImageModel::ImageModel(QWidget *mainWindow, int height, int width)
-	:m_mainWindow(mainWindow),
-	m_imageHeight(height),
-	m_imageWidth(width),
-	m_camera(height, width),
-	m_imageProcess(height, width)
+ImageModel::ImageModel(QWidget *mainWindow)
+	:m_mainWindow(mainWindow)
 {
-	initialImageFifo();
-
-	m_camera.setDataSavingSpace(m_imageDataSavingSpace, FIFO_SIZE);
-
 	m_camera.moveToThread(&m_receiveThread);
 
 	m_imageProcess.moveToThread(&m_imageProcessThread);
@@ -39,7 +31,7 @@ ImageModel::~ImageModel()
 		m_receiveThread.quit();
 		m_receiveThread.wait();
 
-		m_camera.closeDevice();
+		//m_camera.closeDevice();    device类析构时会判断并delete CyDevice
 	}
 	if (m_imageProcessThread.isRunning())
 	{
@@ -48,14 +40,19 @@ ImageModel::~ImageModel()
 		m_imageProcessThread.quit();
 		m_imageProcessThread.wait();
 	}
+
 	QThreadPool::globalInstance()->waitForDone();
+}
 
-	for (int i = 0; i < FIFO_SIZE; ++i)
-	{
-		delete[] m_imageDataSavingSpace[i];
-	}
+void ImageModel::initialize(int width, int height, int pixelWidth, int bufferNum, bool isColor)
+{
+	m_camera.initialize(width, height, pixelWidth, bufferNum);
+	m_imageProcess.initialize(width, height, isColor);
+}
 
-	delete[] m_imageDataSavingSpace;
+void ImageModel::initializeTransfer(int packetNum, int xferQueSize, int timeOut)
+{
+	m_camera.initializeTransfer(packetNum, xferQueSize, timeOut);
 }
 
 bool ImageModel::openUSBCamera()
@@ -95,7 +92,6 @@ void ImageModel::readData()
 	}
 	m_camera.enableReceving();
 	m_receiveThread.start();
-	
 }
 
 void ImageModel::setResolution(int height, int width)
@@ -143,18 +139,6 @@ void ImageModel::changeResolution(int width, int height, int req, long sizePerXf
 		m_camera.disableReceving();
 		emit resolutionChanged(width, height, req, sizePerXfer, xferQueueSize, timeOut);
 	}
-}
-
-void ImageModel::initialImageFifo()
-{
-	int size = m_imageHeight * m_imageWidth * 2;
-	m_imageDataSavingSpace = new uchar*[FIFO_SIZE];
-	ImageFifo::setFifoSize(FIFO_SIZE);
-	for (int i = 0; i < FIFO_SIZE; ++i)
-	{
-		m_imageDataSavingSpace[i] = new uchar[size];
-	}
-
 }
 
 void ImageModel::sendSettingCommand(uchar u1, uchar u2, uchar u3, uchar u4)

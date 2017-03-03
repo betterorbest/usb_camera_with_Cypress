@@ -56,7 +56,7 @@ public:
     QGroupBox *groupBox_4;
     QHBoxLayout *horizontalLayout_5;
     QRadioButton *m_colorImageChoosed;
-    QRadioButton *radioButton_2;
+    QRadioButton *m_grayImageChoosed;
     QGroupBox *groupBox_3;
     QHBoxLayout *horizontalLayout_6;
     QComboBox *m_analogGainSet;
@@ -282,12 +282,12 @@ public:
 
         horizontalLayout_5->addWidget(m_colorImageChoosed);
 
-        radioButton_2 = new QRadioButton(groupBox_4);
-        radioButton_2->setObjectName(QStringLiteral("radioButton_2"));
-        radioButton_2->setFont(font2);
-        radioButton_2->setChecked(false);
+        m_grayImageChoosed = new QRadioButton(groupBox_4);
+        m_grayImageChoosed->setObjectName(QStringLiteral("m_grayImageChoosed"));
+        m_grayImageChoosed->setFont(font2);
+        m_grayImageChoosed->setChecked(false);
 
-        horizontalLayout_5->addWidget(radioButton_2);
+        horizontalLayout_5->addWidget(m_grayImageChoosed);
 
 
         verticalLayout->addWidget(groupBox_4);
@@ -678,7 +678,7 @@ public:
         m_12bitsChoosed->setText(QApplication::translate("MainWindowClass", "12\344\275\215", 0));
         groupBox_4->setTitle(QApplication::translate("MainWindowClass", "\346\210\220\345\203\217\347\261\273\345\236\213", 0));
         m_colorImageChoosed->setText(QApplication::translate("MainWindowClass", "\345\275\251\350\211\262", 0));
-        radioButton_2->setText(QApplication::translate("MainWindowClass", "\351\273\221\347\231\275", 0));
+        m_grayImageChoosed->setText(QApplication::translate("MainWindowClass", "\351\273\221\347\231\275", 0));
         groupBox_3->setTitle(QApplication::translate("MainWindowClass", "\346\250\241\346\213\237\345\242\236\347\233\212", 0));
         m_analogGainSet->clear();
         m_analogGainSet->insertItems(0, QStringList()

@@ -11,17 +11,20 @@ class CyDevice: public QObject
 	Q_OBJECT
 
 public:
-	CyDevice(int height, int width);
+	CyDevice();
 	~CyDevice();
+	void initialize(int width, int height, int pixelWidth, int bufferNum);
+	void setMaxDataSavingSpace(int width, int height, int bufferNum);
+	void initializeTransfer(int packetNum, int xferQueSize, int timeOut);
 
 	bool openDevice(HANDLE hnd);
 	void closeDevice();
-	void setDataSavingSpace(UCHAR **data, int size);
+	
 	void enableReceving();
 	void disableReceving();
 	
-	bool sendControlCode(int code);
-	bool sendRequestCode(int code, uchar *buf, LONG bufLen);
+	bool sendControlCode(int code, int timeOut=1000);
+	bool sendRequestCode(int code, uchar *buf, LONG bufLen, int timeOut=1000);
 
 	void setWidth(int width);
 	void setHeight(int height);
@@ -52,7 +55,7 @@ private:
 	LONG m_size;
 	UCHAR **m_dataBuffer;
 	ImageData *m_imageBuffer;
-	int m_bufferSize;
+	int m_bufferNum;
 	bool m_recevingFlag;
 	//bool m_pauseFlag;
 	int m_bitsPerPixel;
@@ -64,11 +67,32 @@ private:
 	CCyUSBEndPoint *m_dataInEndPoint;
 	CCyControlEndPoint *m_controlEndPoint;
 
-	
+	//初始化时传输参数
+	int m_packetNum;
+	int m_xferQueSize;
+	int m_timeOut;
 
 
 
 };
+
+
+inline void CyDevice::setWidth(int width)
+{
+	m_width = width;
+}
+
+inline void CyDevice::setHeight(int height)
+{
+	m_height = height;
+}
+
+inline void CyDevice::initializeTransfer(int packetNum, int xferQueSize, int timeOut)
+{
+	m_packetNum = packetNum;
+	m_xferQueSize = xferQueSize;
+	m_timeOut = timeOut;
+}
 
 
 #endif

@@ -12,9 +12,10 @@ class ImageProcess : public QObject
 	Q_OBJECT
 
 public:
-	ImageProcess(int height, int width);
+	ImageProcess();
 	~ImageProcess();
-	void setDataSavingSpace(unsigned char *data);
+	void initialize(int width, int height, bool isColor);
+
 	void setWidth(int width);
 	void setHeight(int height);
 	void imageToPixmap(QImage &image);
@@ -59,5 +60,16 @@ private:
 	bool m_pauseFlag;
 	bool m_isTakingImage;
 };
+
+inline void ImageProcess::setWidth(int width)
+{
+	m_imageWidth = width;
+}
+
+inline void ImageProcess::setHeight(int height)
+{
+	m_imageHeight = height;
+}
+
 
 #endif

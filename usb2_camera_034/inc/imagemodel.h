@@ -11,9 +11,11 @@ class ImageModel: public QObject
 	Q_OBJECT
 
 public:
-	ImageModel(QWidget *mainWindow, int height, int width);
+	ImageModel(QWidget *mainWindow);
 	~ImageModel();
-	
+	void initialize(int width, int height, int pixelWidth, int bufferNum, bool isColor);
+	void initializeTransfer(int packetNum, int xferQueSize, int timeOut);
+
 	bool openUSBCamera();
 	void closeUSBCamera();
 	void readData();
@@ -32,7 +34,6 @@ public:
 
 	void setSavingPath(QString path);
 	void takeImage();
-	void initialImageFifo();
 
 signals:
 	void resolutionChanged(int width, int height, int req, long sizePerXfer, int xferQueueSize, int timeOut);
@@ -47,7 +48,6 @@ private:
 	QThread m_receiveThread;
 	QThread m_imageProcessThread;
 
-	uchar** m_imageDataSavingSpace;
 
 
 

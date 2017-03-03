@@ -6,28 +6,28 @@
 #include "imagefifo.h"
 //#include "qtextstream.h"
 
-ImageProcess::ImageProcess(int height, int width)
-	:m_imageHeight(height),
-	m_imageWidth(width),
-	m_isColor(true),
-	m_imageProcessingFlag(true),
+ImageProcess::ImageProcess()
+	:m_imageProcessingFlag(true),
 	m_pauseFlag(false),
 	m_path("."),
 	m_isTakingImage(false)
 {
-	m_imageData = new uchar[m_imageHeight * m_imageWidth];
 
 }
 
 ImageProcess::~ImageProcess()
 {
-	delete[] m_imageData;
-
+	if (m_imageData != nullptr)
+	{
+		delete[] m_imageData;
+		m_imageData = nullptr;
+	}
 }
 
-void ImageProcess::setDataSavingSpace(unsigned char *data)
+void ImageProcess::initialize(int width, int height, bool isColor)
 {
-	m_imageData = data;
+	m_imageData = new uchar[width * height];
+	m_isColor = isColor;
 }
 
 void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width, int height)
@@ -64,10 +64,6 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 			m_imageShow = QPixmap::fromImage(qImage);
 		}
 
-		if (m_isTakingImage)
-		{
-
-		}
 		emit showImage(m_imageShow);
 		if (m_isTakingImage)
 		{
@@ -156,15 +152,6 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 
 }
 
-void ImageProcess::setWidth(int width)
-{
-	m_imageWidth = width;
-}
-
-void ImageProcess::setHeight(int height)
-{
-	m_imageHeight = height;
-}
 
 void ImageProcess::imageToPixmap(QImage &image)
 {

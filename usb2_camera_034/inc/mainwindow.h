@@ -14,7 +14,8 @@ public:
 	MainWindow(QWidget *parent = 0);
 	~MainWindow();
 
-	bool initCameraConfig();
+private:
+	void initCameraConfig();
 
 public slots:
 	void openCamera();
@@ -46,6 +47,7 @@ public slots:
 
 	void chooseSavingPath();
 	void takeImage();
+
 private:
 	Ui::MainWindowClass ui;
 
@@ -53,7 +55,7 @@ private:
 
 	QTimer m_timer;
 
-	QLabel *m_frameRateLabel;
+	QLabel *m_statusBarLabel;
 
 	int m_frameCount;
 
@@ -63,6 +65,9 @@ private:
 	int m_imageHeight;
 
 	bool m_isClosed;
+
+	bool m_isColor;
+	int m_bitsPerPixel;
 };
 
 #endif // MAINWINDOW_H

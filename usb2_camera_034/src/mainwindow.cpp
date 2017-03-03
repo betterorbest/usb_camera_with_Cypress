@@ -4,27 +4,27 @@
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent),
-	m_imageModel(this, 1280, 960),
+	m_imageModel(this),
 	m_frameCount(0),
 	m_receiveFramesCount(0),
 	m_isClosed(false)
 {
-	if (!initCameraConfig())
-	{
-		m_imageHeight = 960;
-		m_imageWidth = 1280;
-	}
-
-	m_imageModel.setResolution(m_imageHeight, m_imageWidth);
+	initCameraConfig();
 
  	ui.setupUi(this);
-	ui.m_showFrame->setFixedSize(QSize(1280, 960));
-	//ui.m_showFrame->setFixedSize(QSize(m_imageWidth, m_imageHeight));
+
+	ui.m_showFrame->setFixedSize(QSize(m_imageWidth, m_imageHeight));
 	ui.m_showLabel->setFixedSize(QSize(m_imageWidth, m_imageHeight));
+
+	if (!m_isColor)
+		ui.m_grayImageChoosed->setChecked(true);
+
+	if (m_bitsPerPixel > 8)
+		ui.m_12bitsChoosed->setChecked(true);
 		
-	m_frameRateLabel = new QLabel(ui.statusBar);
-	ui.statusBar->addWidget(m_frameRateLabel);
-	m_frameRateLabel->setText(QStringLiteral("就绪"));
+	m_statusBarLabel = new QLabel(ui.statusBar);
+	ui.statusBar->addWidget(m_statusBarLabel);
+	m_statusBarLabel->setText(QStringLiteral("就绪"));
 
 	//Qt4的信号槽使用方式
 	connect(ui.m_startButton, SIGNAL(clicked()), this, SLOT(openCamera()));
@@ -59,6 +59,44 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
 	//m_imageModel.closeUSBCamera();
+}
+
+void MainWindow::initCameraConfig()
+{
+	//TODO 配置信息设置
+	QSettings settings("camconfig.ini", QSettings::IniFormat);
+	m_imageWidth = settings.value("Camera034/width").toInt();
+	m_imageHeight = settings.value("Camera034/height").toInt();
+	m_bitsPerPixel = settings.value("Camera034/pixbitswidth").toInt();
+	m_isColor = settings.value("Camera034/iscolor").toBool();
+	int bufferNum = settings.value("Transfer/buffernum").toInt();
+	int packetNum = settings.value("Transfer/packetnum").toInt();
+	int xferQueSize = settings.value("Transfer/xferquesize").toInt();
+	int timeOut = settings.value("Transfer/timeout").toInt();
+
+	if (m_imageWidth == 0 || m_imageHeight == 0)
+	{
+		m_imageWidth = 1280;
+		m_imageHeight = 960;
+	}
+
+	if (m_bitsPerPixel <= 0)
+		m_bitsPerPixel = 8;
+
+	if (bufferNum <= 0)
+		bufferNum = 2;
+
+	if (packetNum <= 0)
+		packetNum = 1;
+
+	if (xferQueSize <= 0)
+		xferQueSize = 1;
+
+	if (timeOut <= 0)
+		timeOut = 1000;
+
+	m_imageModel.initialize(m_imageWidth, m_imageHeight, m_bitsPerPixel, bufferNum, m_isColor);
+	m_imageModel.initializeTransfer(packetNum, xferQueSize, timeOut);
 }
 
 void MainWindow::openCamera()
@@ -110,7 +148,7 @@ void MainWindow::closeCamera()
 		m_imageModel.whetherPausingUSBCamera(false);
 	}
 
-	m_frameRateLabel->setText(QStringLiteral("就绪"));
+	m_statusBarLabel->setText(QStringLiteral("就绪"));
 	ui.m_startButton->setEnabled(true);
 	m_frameCount = 0;
 	m_receiveFramesCount = 0;
@@ -138,7 +176,7 @@ void MainWindow::updateImage(QPixmap image)
 void MainWindow::showFrameRate()
 {
 	//QString receiveFrameRate = QString::number(m_receiveFramesCount);
-	//m_frameRateLabel->setText(receiveFrameRate + "fps");
+	//m_statusBarLabel->setText(receiveFrameRate + "fps");
 	ui.m_receiveRateLabel->setText(QString::number(m_frameCount));
 	m_frameCount = 0;
 	//m_receiveFramesCount = 0;
@@ -188,15 +226,15 @@ void MainWindow::switchResolution(int index)
 	switch (index)
 	{
 	case 0:// 320 * 240
-		m_imageModel.changeResolution(320, 240, 0xb1, 320 * 240, 2, 50);
+		m_imageModel.changeResolution(320, 240, 0xb1, 320 * 240, 1, 1000);
 		ui.m_showLabel->setFixedSize(320, 240);
 		break;
 	case 1:// 640 * 480
-		m_imageModel.changeResolution(640, 480, 0xa2, 320 * 240, 4, 50);
+		m_imageModel.changeResolution(640, 480, 0xa2, 320 * 240, 4, 1000);
 		ui.m_showLabel->setFixedSize(640, 480);
 		break;
 	case 2:// 1280 * 960
-		m_imageModel.changeResolution(1280, 960, 0xa1, 120 * 1024, 10, 50);
+		m_imageModel.changeResolution(1280, 960, 0xa1, 120 * 1024, 10, 1000);
 		ui.m_showLabel->setFixedSize(1280, 960);
 		break;
 	default:
@@ -204,19 +242,6 @@ void MainWindow::switchResolution(int index)
 	}
 	ui.m_resolutionSwitching->setEnabled(true);
 
-}
-
-bool MainWindow::initCameraConfig()
-{
-	QSettings settings("camconfig.ini", QSettings::IniFormat);
-
-	m_imageWidth = settings.value("Camera034/width").toInt();
-	m_imageHeight = settings.value("Camera034/height").toInt();
-
-	if (m_imageHeight == 0 || m_imageWidth == 0)
-		return false;
-	else
-		return true;
 }
 
 void MainWindow::setAnalogGain(int index)
