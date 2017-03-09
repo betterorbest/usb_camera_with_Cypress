@@ -35,7 +35,7 @@ public:
 	void changeWidthTo16bitsPerPixel();
 
 	void changeResolution(int width, int height, int req);
-	void receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut);
+	void receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut, int wavelen=0);
 
 	bool isReceving();
 

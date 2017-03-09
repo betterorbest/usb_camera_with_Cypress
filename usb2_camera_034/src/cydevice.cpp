@@ -193,12 +193,11 @@ void CyDevice::changeResolution(int width, int height, int req)
 
 void CyDevice::receiveData()
 {
-	if (m_width == 1280 && m_height == 960)
-		sendControlCode(0xa1);
+	sendControlCode(0xa1);
 	receiveData(m_dataInEndPoint->MaxPktSize * m_packetNum, m_xferQueSize, m_timeOut);
 }
 
-void CyDevice::receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut)
+void CyDevice::receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut, int wavelen)
 {
 	//如果MaxPktSize=1024，那么sizePerXfer就是MaxPktSize的倍数，每次接的包数不能太小，也不能太大
 	//太小，数据会接不到；太大，数据会来不及接
