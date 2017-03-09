@@ -35,7 +35,6 @@ public:
 	void changeWidthTo16bitsPerPixel();
 
 	void changeResolution(int width, int height, int req);
-
 	void receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut);
 
 	bool isReceving();
@@ -72,7 +71,9 @@ private:
 	int m_xferQueSize;
 	int m_timeOut;
 
-
+/*************LCTF代码部分，不采用继承*******************/
+public:
+	bool openLCTF();
 
 };
 

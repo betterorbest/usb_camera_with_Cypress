@@ -158,3 +158,16 @@ void ImageModel::takeImage()
 {
 	m_imageProcess.setTakingImageFlag(true);
 }
+
+
+
+bool ImageModel::openSpectrometer()
+{
+	return m_camera.openLCTF();
+}
+
+bool ImageModel::setWavelength(uchar u1, uchar u2)
+{
+	uchar buf[2] = { u1, u2 };
+	return m_camera.sendRequestCode(0xa4, buf, 2);
+}

@@ -50,6 +50,10 @@ private:
 
 
 
+public:
+	bool openSpectrometer();
+	bool setWavelength(uchar u1, uchar u2);
+
 
 	
 };

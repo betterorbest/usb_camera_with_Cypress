@@ -34,12 +34,8 @@ public slots:
 	
 	void changeImageToColor(bool flag);
 
-	void switchResolution(int index);
 	void setAnalogGain(int index);
 
-	void setRedGain(int gain);
-	void setGreenGain(int gain);
-	void setBlueGain(int gain);
 	void setGlobalGain(int gain);
 
 	void setExposureMode(bool isAuto);
@@ -48,6 +44,10 @@ public slots:
 	void chooseSavingPath();
 	void takeImage();
 
+	void changeWavelength();
+	void openSpectrometer();
+	void captureSpectrumImg();
+	bool setWavelength(unsigned short wavelen);
 private:
 	Ui::MainWindowClass ui;
 
@@ -68,6 +68,11 @@ private:
 
 	bool m_isColor;
 	int m_bitsPerPixel;
+
+	bool m_isCapturingSpectrum;
+	uchar m_countForCapturingSpectrum;
+	QProgressDialog *m_progress;
+	unsigned short m_wavelength;
 };
 
 #endif // MAINWINDOW_H

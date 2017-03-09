@@ -193,20 +193,9 @@ void CyDevice::changeResolution(int width, int height, int req)
 
 void CyDevice::receiveData()
 {
-	//初始传输1280 * 960
-	//changeResolution(1280, 960, 0xa1);
 	if (m_width == 1280 && m_height == 960)
 		sendControlCode(0xa1);
-	//receiveData(m_width * m_height / 10, 10, 200);
-	//receiveData(m_width * m_height, 1, 1000);
-	//receiveData(1024 * 400, 2, 1500);
 	receiveData(m_dataInEndPoint->MaxPktSize * m_packetNum, m_xferQueSize, m_timeOut);
-	//receiveData(m_width * m_height / 24, 24, 1000);
-	//receiveData(120 * 1024, 10, 50);
-	//初始传输640 * 480
-	//changeResolution(640, 480, 0xa2);
-	//sendControlCode(0xb1);
-	//receiveData(76800, 4, 200);
 }
 
 void CyDevice::receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut)
@@ -395,3 +384,12 @@ bool CyDevice::isReceving()
 	QMutexLocker locker(&m_mutex);
 	return m_recevingFlag;
 }
+
+
+
+/********LCTF代码部分*****************/
+bool CyDevice::openLCTF()
+{
+	return sendControlCode(0xa5);
+}
+

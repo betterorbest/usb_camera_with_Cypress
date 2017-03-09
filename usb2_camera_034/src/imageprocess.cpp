@@ -127,10 +127,13 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 
 			//DWORD end = GetTickCount();
 			//qDebug() << end - start;
-			QImage qImage = QImage(m_imageData, width, height, QImage::Format_Grayscale8);
+			cv::Mat image = cv::Mat(height, width, CV_8UC1, m_imageData);
+			cv::resize(image, image, cv::Size(width / 2, height / 2));
+			QImage qImage = QImage(image.data, image.cols, image.rows, QImage::Format_Grayscale8);
 			if (qImage.isNull()) return;
+			//qImage.scaled(width / 2, height / 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+			
 			m_imageShow = QPixmap::fromImage(qImage);
-
 		}
 		emit showImage(m_imageShow);
 		if (m_isTakingImage)

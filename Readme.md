@@ -4,5 +4,5 @@ usb camera with Cypress是一款简单的相机软件，该软件专用于基于
 使用vs2013 + Qt5.5.0插件开发，用到第三方库CyAPI.lib以及opencv2.4.11，界面采用Qt框架。
 ##注意
 opencv需要自行下载，并配置，主要是修改opencv.props和opecv_release.props两个配置文件
-## master分支用于基本相机框架，来源之前usb2 034相机的项目
-其他相机开发可以基于该基本项目
+## develop_spectrometer分支， 光谱仪的开发分支
+1.版本一，简单实现与光谱仪的通信

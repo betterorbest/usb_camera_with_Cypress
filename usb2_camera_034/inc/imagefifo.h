@@ -10,6 +10,7 @@ public:
 	int m_bitsPerPixel;
 	int m_imageHeight;
 	int m_imageWidth;
+	int m_wavelength;
 };
 
 class ImageFifo
