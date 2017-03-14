@@ -30,39 +30,13 @@ void ImageProcess::initialize(int width, int height, bool isColor)
 	m_isColor = isColor;
 }
 
-void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width, int height)
+void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width, int height, unsigned short wavelen)
 {
-	switch (bitsPerPixel)
+	if (bitsPerPixel <= 8)
 	{
-	case 8:
-	{
-		if (m_isColor)
-		{
-			cv::Mat image8bits = cv::Mat(height, width, CV_8UC1, data);
-			cv::Mat image;
-			cv::cvtColor(image8bits, image, CV_BayerRG2RGB);
-			//cv::cvtColor(image8bits, image, CV_BayerGR2RGB);
-			//DWORD start = GetTickCount();
-			//cv::medianBlur(image, image, 3);                        //中值滤波 64-80ms
-
-			//DWORD end = GetTickCount();
-			//qDebug() << end - start;
-			//autoWhiteBalance(image, image);
-			QImage qImage = QImage(image.data, width, height, image.step, QImage::Format_RGB888);
-
-			//QImage qImage = QImage(data, m_imageWidth, m_imageHeight, QImage::Format_Grayscale8);
-
-			if (qImage.isNull()) return;
-
-			m_imageShow = QPixmap::fromImage(qImage);
-		}
-		else
-		{
-
-			QImage qImage = QImage(data, width, height, QImage::Format_Grayscale8);
-			if (qImage.isNull()) return;
-			m_imageShow = QPixmap::fromImage(qImage);
-		}
+		QImage qImage = QImage(data, width, height, QImage::Format_Grayscale8);
+		if (qImage.isNull()) return;
+		m_imageShow = QPixmap::fromImage(qImage);
 
 		emit showImage(m_imageShow);
 		if (m_isTakingImage)
@@ -72,82 +46,39 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 			DWORD end = GetTickCount();
 			qDebug() << end - start << "this is the time";
 		}
-		break;
-		break;
 	}
-	case 12:
+	else
 	{
 		unsigned short* data16bits = (unsigned short *)data;
-		if (m_isColor)
+		int size = height * width;
+		//unsignd short temp;
+		//DWORD start = GetTickCount();
+		for (int i = 0; i < size; ++i)
 		{
+			//m_imageData[i] = pow((data[2 * i + 1] << 8) + data[2 * i], 0.66);
+			//m_imageData[i] = pow(data16bits[i], 0.66);
+			//m_imageData[i] = data16bits[i] >> 4;
+			m_imageData[i] = data16bits[i];
 
-			int size = height * width;
-			//unsigned short temp;
-			//DWORD start = GetTickCount();
-			for (int i = 0; i < size; ++i)
-			{
-				//m_imageData[i] = pow((data[2 * i + 1] << 8) + data[2 * i], 0.66);
-				//m_imageData[i] = pow(data16bits[i], 0.66);
-				//m_imageData[i] = data16bits[i] >> 4;
-				m_imageData[i] = data16bits[i];
-			}
-
-			cv::Mat image8bits = cv::Mat(height, width, CV_8UC1, m_imageData);
-			cv::Mat image;
-			//image16bits.convertTo(image, CV_8UC1);
-			cv::cvtColor(image8bits, image, CV_BayerRG2RGB);
-			//cv::cvtColor(image8bits, image, CV_BayerGR2RGB);
-
-			autoWhiteBalance(image, image);
-
-			QImage qImage = QImage(image.data, width, height, image.step, QImage::Format_RGB888);
-			//DWORD end = GetTickCount();
-			//qDebug() << end - start;
-			//cv::Mat image16bits = cv::Mat(m_imageHeight, m_imageWidth, CV_16UC1, data);
-			//image16bits.convertTo(image16bits, CV_8UC1, 0.0625);
-			//cv::Mat image;
-			//cv::cvtColor(image16bits, image, CV_BayerRG2RGB);
-
-			if (qImage.isNull()) return;
-			m_imageShow = QPixmap::fromImage(qImage);
 		}
-		else
-		{
-			int size = height * width;
-			//unsignd short temp;
-			//DWORD start = GetTickCount();
-			for (int i = 0; i < size; ++i)
-			{
-				//m_imageData[i] = pow((data[2 * i + 1] << 8) + data[2 * i], 0.66);
-				//m_imageData[i] = pow(data16bits[i], 0.66);
-				//m_imageData[i] = data16bits[i] >> 4;
-				m_imageData[i] = data16bits[i];
 
-			}
+		//DWORD end = GetTickCount();
+		//qDebug() << end - start;
+		cv::Mat image = cv::Mat(height, width, CV_8UC1, m_imageData);
+		cv::resize(image, image, cv::Size(width / 2, height / 2));
+		QImage qImage = QImage(image.data, image.cols, image.rows, QImage::Format_Grayscale8);
+		if (qImage.isNull()) return;
 
-			//DWORD end = GetTickCount();
-			//qDebug() << end - start;
-			cv::Mat image = cv::Mat(height, width, CV_8UC1, m_imageData);
-			cv::resize(image, image, cv::Size(width / 2, height / 2));
-			QImage qImage = QImage(image.data, image.cols, image.rows, QImage::Format_Grayscale8);
-			if (qImage.isNull()) return;
-			//qImage.scaled(width / 2, height / 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-			
-			m_imageShow = QPixmap::fromImage(qImage);
-		}
+		m_imageShow = QPixmap::fromImage(qImage);
 		emit showImage(m_imageShow);
 		if (m_isTakingImage)
 		{
 			DWORD start = GetTickCount();
-			takeOriginalImage(cv::Mat(height, width, CV_16UC1, data16bits), m_imageShow);
+			takeOriginalImage(cv::Mat(height, width, CV_16UC1, data16bits), m_imageShow, wavelen);
 			DWORD end = GetTickCount();
 			qDebug() << end - start << "this is the time";
 		}
-		break;
-	}
-	default:
-		break;
-	
+
 	}
 	/*********数据接收较慢时使用*******************/
 	/*m_image = QImage(m_imageData, m_imageWidth, m_imageHeight, QImage::Format_Grayscale8);
@@ -165,6 +96,8 @@ void ImageProcess::imageToPixmap(QImage &image)
 	emit showImage(pixmap);
 }
 
+
+//存储图像原始数据为.txt格式
 void ImageProcess::saveOriginalData(unsigned short *data)
 {
 	int size = m_imageHeight * m_imageWidth;
@@ -218,7 +151,7 @@ void ImageProcess::dataToImage()
 		if (imageData == nullptr) continue;
 		if (!m_pauseFlag)
 		{
-			dataToImage((*imageData).m_data, (*imageData).m_bitsPerPixel, (*imageData).m_imageWidth, (*imageData).m_imageHeight);
+			dataToImage((*imageData).m_data, (*imageData).m_bitsPerPixel, (*imageData).m_imageWidth, (*imageData).m_imageHeight, (*imageData).m_wavelength);
 		}
 		ImageFifo::outFifo();
 	}
@@ -247,13 +180,13 @@ void ImageProcess::setSavingPath(QString path)
 	m_path = path;
 }
 
-void ImageProcess::takeOriginalImage(const cv::Mat& image, const QPixmap& pixmap)
+void ImageProcess::takeOriginalImage(const cv::Mat& image, const QPixmap& pixmap, unsigned short wavelen)
 {
 	QTime time = QTime::currentTime();
 	QString str = time.toString("hhmmsszzz");
-	QString path = m_path + "\\" + str + ".png";
-	cv::imwrite(path.toLocal8Bit().toStdString(), image);
-	pixmap.save(m_path + "\\" + str + ".bmp");
+	QString path = m_path + "\\" + QString::number(wavelen) + "_" + str;
+	cv::imwrite((path + ".png").toLocal8Bit().toStdString(), image);
+	pixmap.save(path + ".bmp");
 	m_isTakingImage = false;
 }
 

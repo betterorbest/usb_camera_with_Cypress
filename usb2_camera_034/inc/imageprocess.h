@@ -30,10 +30,10 @@ public:
 
 	void autoWhiteBalance(cv::Mat &src, cv::Mat &dst);
 
-	void dataToImage(unsigned char *data, int bitsPerPixel, int width, int height);
+	void dataToImage(unsigned char *data, int bitsPerPixel, int width, int height, unsigned short wavelen);
 
 	void setSavingPath(QString path);
-	void takeOriginalImage(const cv::Mat& image,  const QPixmap& pixmap);
+	void takeOriginalImage(const cv::Mat& image,  const QPixmap& pixmap, unsigned short wavelen);
 	void takeShowingImage(const QPixmap& pixmap);
 	void setTakingImageFlag(bool flag);
 

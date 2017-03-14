@@ -80,15 +80,21 @@ public:
     QHBoxLayout *horizontalLayout_14;
     QLabel *label_6;
     QLabel *label_3;
-    QGroupBox *groupBox;
+    QGroupBox *m_captureSpectrumBox;
     QGridLayout *gridLayout_3;
-    QLabel *label_9;
-    QLabel *label_10;
-    QSpinBox *m_capMaxWavelen;
-    QSpinBox *m_capMinWavelen;
     QLabel *label_8;
+    QSpinBox *m_capMinWavelen;
     QLabel *label_7;
+    QSpinBox *m_capMaxWavelen;
+    QLabel *label_10;
+    QLabel *label_9;
+    QSpinBox *m_stepOfWavelen;
+    QLabel *label_11;
+    QLabel *label_12;
     QPushButton *m_captureSpectrum;
+    QLabel *label_13;
+    QLabel *label_14;
+    QLabel *m_rangeOfWavelen;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindowClass)
@@ -215,6 +221,7 @@ public:
         m_globalGainSet->setMinimum(1);
         m_globalGainSet->setMaximum(8);
         m_globalGainSet->setPageStep(1);
+        m_globalGainSet->setTracking(false);
         m_globalGainSet->setOrientation(Qt::Horizontal);
         m_globalGainSet->setInvertedAppearance(false);
         m_globalGainSet->setInvertedControls(false);
@@ -272,6 +279,7 @@ public:
         m_exposureSlider->setMinimum(1);
         m_exposureSlider->setMaximum(92);
         m_exposureSlider->setSingleStep(1);
+        m_exposureSlider->setTracking(false);
         m_exposureSlider->setOrientation(Qt::Horizontal);
 
         horizontalLayout_12->addWidget(m_exposureSlider);
@@ -280,6 +288,7 @@ public:
         m_exposureSpinBox->setObjectName(QStringLiteral("m_exposureSpinBox"));
         m_exposureSpinBox->setEnabled(false);
         m_exposureSpinBox->setFont(font2);
+        m_exposureSpinBox->setKeyboardTracking(false);
         m_exposureSpinBox->setMinimum(1);
         m_exposureSpinBox->setMaximum(92);
 
@@ -385,49 +394,85 @@ public:
 
         horizontalLayout_13->addWidget(groupBox_7);
 
-        groupBox = new QGroupBox(centralWidget);
-        groupBox->setObjectName(QStringLiteral("groupBox"));
-        groupBox->setGeometry(QRect(670, 280, 191, 151));
-        gridLayout_3 = new QGridLayout(groupBox);
+        m_captureSpectrumBox = new QGroupBox(centralWidget);
+        m_captureSpectrumBox->setObjectName(QStringLiteral("m_captureSpectrumBox"));
+        m_captureSpectrumBox->setEnabled(false);
+        m_captureSpectrumBox->setGeometry(QRect(670, 280, 191, 181));
+        gridLayout_3 = new QGridLayout(m_captureSpectrumBox);
         gridLayout_3->setSpacing(6);
         gridLayout_3->setContentsMargins(11, 11, 11, 11);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
-        label_9 = new QLabel(groupBox);
-        label_9->setObjectName(QStringLiteral("label_9"));
-
-        gridLayout_3->addWidget(label_9, 0, 2, 1, 1);
-
-        label_10 = new QLabel(groupBox);
-        label_10->setObjectName(QStringLiteral("label_10"));
-
-        gridLayout_3->addWidget(label_10, 1, 2, 1, 1);
-
-        m_capMaxWavelen = new QSpinBox(groupBox);
-        m_capMaxWavelen->setObjectName(QStringLiteral("m_capMaxWavelen"));
-        m_capMaxWavelen->setButtonSymbols(QAbstractSpinBox::NoButtons);
-
-        gridLayout_3->addWidget(m_capMaxWavelen, 1, 1, 1, 1);
-
-        m_capMinWavelen = new QSpinBox(groupBox);
-        m_capMinWavelen->setObjectName(QStringLiteral("m_capMinWavelen"));
-        m_capMinWavelen->setButtonSymbols(QAbstractSpinBox::NoButtons);
-
-        gridLayout_3->addWidget(m_capMinWavelen, 0, 1, 1, 1);
-
-        label_8 = new QLabel(groupBox);
+        label_8 = new QLabel(m_captureSpectrumBox);
         label_8->setObjectName(QStringLiteral("label_8"));
 
         gridLayout_3->addWidget(label_8, 1, 0, 1, 1);
 
-        label_7 = new QLabel(groupBox);
+        m_capMinWavelen = new QSpinBox(m_captureSpectrumBox);
+        m_capMinWavelen->setObjectName(QStringLiteral("m_capMinWavelen"));
+        m_capMinWavelen->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
+
+        gridLayout_3->addWidget(m_capMinWavelen, 0, 1, 1, 1);
+
+        label_7 = new QLabel(m_captureSpectrumBox);
         label_7->setObjectName(QStringLiteral("label_7"));
 
         gridLayout_3->addWidget(label_7, 0, 0, 1, 1);
 
-        m_captureSpectrum = new QPushButton(groupBox);
+        m_capMaxWavelen = new QSpinBox(m_captureSpectrumBox);
+        m_capMaxWavelen->setObjectName(QStringLiteral("m_capMaxWavelen"));
+        m_capMaxWavelen->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
+
+        gridLayout_3->addWidget(m_capMaxWavelen, 1, 1, 1, 1);
+
+        label_10 = new QLabel(m_captureSpectrumBox);
+        label_10->setObjectName(QStringLiteral("label_10"));
+
+        gridLayout_3->addWidget(label_10, 1, 2, 1, 1);
+
+        label_9 = new QLabel(m_captureSpectrumBox);
+        label_9->setObjectName(QStringLiteral("label_9"));
+
+        gridLayout_3->addWidget(label_9, 0, 2, 1, 1);
+
+        m_stepOfWavelen = new QSpinBox(m_captureSpectrumBox);
+        m_stepOfWavelen->setObjectName(QStringLiteral("m_stepOfWavelen"));
+        m_stepOfWavelen->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
+        m_stepOfWavelen->setMinimum(0);
+        m_stepOfWavelen->setMaximum(99);
+        m_stepOfWavelen->setValue(0);
+
+        gridLayout_3->addWidget(m_stepOfWavelen, 2, 1, 1, 1);
+
+        label_11 = new QLabel(m_captureSpectrumBox);
+        label_11->setObjectName(QStringLiteral("label_11"));
+
+        gridLayout_3->addWidget(label_11, 2, 0, 1, 1);
+
+        label_12 = new QLabel(m_captureSpectrumBox);
+        label_12->setObjectName(QStringLiteral("label_12"));
+
+        gridLayout_3->addWidget(label_12, 2, 2, 1, 1);
+
+        m_captureSpectrum = new QPushButton(m_captureSpectrumBox);
         m_captureSpectrum->setObjectName(QStringLiteral("m_captureSpectrum"));
 
-        gridLayout_3->addWidget(m_captureSpectrum, 2, 1, 1, 1);
+        gridLayout_3->addWidget(m_captureSpectrum, 4, 1, 1, 1);
+
+        label_13 = new QLabel(m_captureSpectrumBox);
+        label_13->setObjectName(QStringLiteral("label_13"));
+
+        gridLayout_3->addWidget(label_13, 3, 0, 1, 1);
+
+        label_14 = new QLabel(m_captureSpectrumBox);
+        label_14->setObjectName(QStringLiteral("label_14"));
+
+        gridLayout_3->addWidget(label_14, 3, 2, 1, 1);
+
+        m_rangeOfWavelen = new QLabel(m_captureSpectrumBox);
+        m_rangeOfWavelen->setObjectName(QStringLiteral("m_rangeOfWavelen"));
+        m_rangeOfWavelen->setAlignment(Qt::AlignCenter);
+
+        gridLayout_3->addWidget(m_rangeOfWavelen, 3, 1, 1, 1);
 
         MainWindowClass->setCentralWidget(centralWidget);
         statusBar = new QStatusBar(MainWindowClass);
@@ -478,12 +523,17 @@ public:
         groupBox_7->setTitle(QApplication::translate("MainWindowClass", "\346\270\251\345\272\246", 0));
         label_6->setText(QApplication::translate("MainWindowClass", "0", 0));
         label_3->setText(QApplication::translate("MainWindowClass", "\342\204\203", 0));
-        groupBox->setTitle(QApplication::translate("MainWindowClass", "\346\212\223\345\217\226\345\205\211\350\260\261\345\233\276\345\203\217", 0));
-        label_9->setText(QApplication::translate("MainWindowClass", "nm", 0));
-        label_10->setText(QApplication::translate("MainWindowClass", "nm", 0));
+        m_captureSpectrumBox->setTitle(QApplication::translate("MainWindowClass", "\346\212\223\345\217\226\345\205\211\350\260\261\345\233\276\345\203\217", 0));
         label_8->setText(QApplication::translate("MainWindowClass", "\347\273\210\346\255\242\346\263\242\351\225\277", 0));
         label_7->setText(QApplication::translate("MainWindowClass", "\350\265\267\345\247\213\346\263\242\351\225\277", 0));
+        label_10->setText(QApplication::translate("MainWindowClass", "nm", 0));
+        label_9->setText(QApplication::translate("MainWindowClass", "nm", 0));
+        label_11->setText(QApplication::translate("MainWindowClass", "\346\263\242\351\225\277\351\227\264\351\232\224", 0));
+        label_12->setText(QApplication::translate("MainWindowClass", "nm", 0));
         m_captureSpectrum->setText(QApplication::translate("MainWindowClass", "\345\274\200\345\247\213\346\212\223\345\217\226", 0));
+        label_13->setText(QApplication::translate("MainWindowClass", "\346\263\242\351\225\277\350\214\203\345\233\264", 0));
+        label_14->setText(QApplication::translate("MainWindowClass", "nm", 0));
+        m_rangeOfWavelen->setText(QApplication::translate("MainWindowClass", "-", 0));
     } // retranslateUi
 
 };

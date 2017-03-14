@@ -129,8 +129,10 @@ void CyDevice::disableReceving()
 	m_mutex.unlock();
 }
 
+
 bool CyDevice::sendControlCode(int code, int timeOut)
 {
+	//没有加锁
 	m_controlEndPoint->TimeOut = timeOut;
 	m_controlEndPoint->Target = TGT_DEVICE;
 	m_controlEndPoint->ReqType = REQ_VENDOR;
@@ -140,12 +142,16 @@ bool CyDevice::sendControlCode(int code, int timeOut)
 
 	UCHAR buf = 0;
 	LONG len = 0;
+
 	m_controlEndPoint->ReqCode = code;
 	return m_controlEndPoint->XferData(&buf, len);
 }
 
 bool CyDevice::sendRequestCode(int code, uchar *buf, LONG bufLen, int timeOut)
 {
+	//加锁
+	QMutexLocker mutexLocker(&m_mutex);
+
 	m_controlEndPoint->TimeOut = timeOut;
 	m_controlEndPoint->Target = TGT_DEVICE;
 	m_controlEndPoint->ReqType = REQ_VENDOR;
@@ -176,18 +182,6 @@ void CyDevice::changeWidthTo16bitsPerPixel()
 	m_mutex.lock();
 	sendControlCode(0xb9);
 	m_bitsPerPixel = 12;
-	m_mutex.unlock();
-}
-
-void CyDevice::changeResolution(int width, int height, int req)
-{
-	m_mutex.lock();
-	if (sendControlCode(req))
-	{
-		m_width = width;
-		m_height = height;
-	}
-	m_recevingFlag = true;
 	m_mutex.unlock();
 }
 
@@ -232,8 +226,9 @@ void CyDevice::receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut, int
 		m_imageBuffer[m_whichBuffer].m_bitsPerPixel = m_bitsPerPixel;
 		m_imageBuffer[m_whichBuffer].m_imageHeight = m_height;
 		m_imageBuffer[m_whichBuffer].m_imageWidth = m_width;
+		m_imageBuffer[m_whichBuffer].m_wavelength = wavelen;
 		m_size = m_bitsPerPixel > 8 ? m_width * m_height * 2 : m_width * m_height;
-
+		
 		//sendControlCode(0xb4);
 		sendControlCode(0xb5);
 
@@ -372,10 +367,11 @@ void CyDevice::receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut, int
 	inContexts = nullptr;
 }
 
-void CyDevice::changeResolution(int width, int height, int req, long sizePerXfer, int xferQueueSize, int timeOut)
+void CyDevice::changeWavelength(unsigned short wavelen)
 {
-	changeResolution(width, height, req);
-	receiveData(sizePerXfer, xferQueueSize, timeOut);
+	setWavelength(wavelen);
+	enableReceving();
+	receiveData(m_dataInEndPoint->MaxPktSize * m_packetNum, m_xferQueSize, m_timeOut, wavelen);
 }
 
 bool CyDevice::isReceving()
@@ -384,11 +380,23 @@ bool CyDevice::isReceving()
 	return m_recevingFlag;
 }
 
+bool CyDevice::configRegister(uchar* buf, int len)
+{
+	return sendRequestCode(0xb3, buf, len);
+}
 
 
 /********LCTF代码部分*****************/
 bool CyDevice::openLCTF()
 {
-	return sendControlCode(0xa5);
+	return sendControlCode(0xd1);
 }
 
+bool CyDevice::setWavelength(unsigned short wavelen)
+{
+	wavelen *= 10;
+	uchar buf[2] = { 0 };
+	buf[0] = wavelen >> 8;    //highbyte
+	buf[1] = wavelen;         //lowbyte
+	return sendRequestCode(0xd2, buf, 2);
+}

@@ -44,10 +44,13 @@ public slots:
 	void chooseSavingPath();
 	void takeImage();
 
+
+
+	//光谱仪相关
 	void changeWavelength();
 	void openSpectrometer();
 	void captureSpectrumImg();
-	bool setWavelength(unsigned short wavelen);
+
 private:
 	Ui::MainWindowClass ui;
 
@@ -69,10 +72,16 @@ private:
 	bool m_isColor;
 	int m_bitsPerPixel;
 
+
+	//光谱仪相关
 	bool m_isCapturingSpectrum;
 	uchar m_countForCapturingSpectrum;
-	QProgressDialog *m_progress;
-	unsigned short m_wavelength;
+	unsigned short m_curWavelength;
+	unsigned short m_minWavelength;
+	unsigned short m_maxWavelength;
+	unsigned short m_stepOfWavelength;
+	int m_countForProgressBar;
+	QProgressDialog* m_progressDialog;
 };
 
 #endif // MAINWINDOW_H

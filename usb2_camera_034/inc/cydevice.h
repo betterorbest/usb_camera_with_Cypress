@@ -23,8 +23,8 @@ public:
 	void enableReceving();
 	void disableReceving();
 	
-	bool sendControlCode(int code, int timeOut=1000);
-	bool sendRequestCode(int code, uchar *buf, LONG bufLen, int timeOut=1000);
+	bool sendControlCode(int code, int timeOut=100);
+	bool sendRequestCode(int code, uchar *buf, LONG bufLen, int timeOut=100);
 
 	void setWidth(int width);
 	void setHeight(int height);
@@ -34,10 +34,11 @@ public:
 	void changeWidthTo8bitsPerPixel();
 	void changeWidthTo16bitsPerPixel();
 
-	void changeResolution(int width, int height, int req);
 	void receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut, int wavelen=0);
 
 	bool isReceving();
+
+	bool configRegister(uchar* buf, int len);
 
 signals:
 	//void completeFrameTransmission(unsigned char *data);
@@ -45,7 +46,7 @@ signals:
 
 public slots:
 	void receiveData();
-	void changeResolution(int width, int height, int req, long sizePerXfer, int xferQueueSize, int timeOut);
+	void changeWavelength(unsigned short wavelen);
 
 private:
 	int m_whichBuffer;
@@ -74,6 +75,7 @@ private:
 /*************LCTF代码部分，不采用继承*******************/
 public:
 	bool openLCTF();
+	bool setWavelength(unsigned short wavelen);
 
 };
 

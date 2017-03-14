@@ -8,8 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
 	m_frameCount(0),
 	m_receiveFramesCount(0),
 	m_isClosed(false),
-	m_isCapturingSpectrum(false),
-	m_countForCapturingSpectrum(0)
+	m_isCapturingSpectrum(false)
 {
  	ui.setupUi(this);
 
@@ -46,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	connect(ui.m_openSpectrometerButton, &QPushButton::clicked, this, &MainWindow::openSpectrometer);
 
-	//connect(ui.m_captureSpectrum, &QPushButton::clicked, this, &MainWindow::captureSpectrumImg);
+	connect(ui.m_captureSpectrum, &QPushButton::clicked, this, &MainWindow::captureSpectrumImg);
 }
 
 MainWindow::~MainWindow()
@@ -70,7 +69,7 @@ void MainWindow::initCameraConfig()
 	QSettings settings("camconfig.ini", QSettings::IniFormat);
 	m_imageWidth = settings.value("Spectrometer/width").toInt();
 	m_imageHeight = settings.value("Spectrometer/height").toInt();
-	m_wavelength = settings.value("Spectrometer/initwavelen").toInt();
+	m_curWavelength = settings.value("Spectrometer/initwavelen").toInt();
 	unsigned short minWavelenth = settings.value("Spectrometer/minwavelen").toInt();
 	unsigned short maxWavelenth = settings.value("Spectrometer/maxwavelen").toInt();
 	unsigned short stepOfWavelenth = settings.value("Spectrometer/stepofwavelen").toInt();
@@ -87,8 +86,8 @@ void MainWindow::initCameraConfig()
 		m_imageHeight = 960;
 	}
 
-	if (m_wavelength == 0)
-		m_wavelength = 420;
+	if (m_curWavelength == 0)
+		m_curWavelength = 420;
 	if (minWavelenth == 0)
 		minWavelenth = 420;
 	if (maxWavelenth == 0)
@@ -119,14 +118,23 @@ void MainWindow::initCameraConfig()
 
 	ui.m_wavelengthSlider->setMinimum(minWavelenth);
 	ui.m_wavelengthSlider->setMaximum(maxWavelenth);
-	ui.m_wavelengthSlider->setValue(m_wavelength);
+	ui.m_wavelengthSlider->setValue(m_curWavelength);
 	ui.m_wavelengthSlider->setSingleStep(stepOfWavelenth);
 
 	ui.m_wavelengthSpinBox->setMinimum(minWavelenth);
 	ui.m_wavelengthSpinBox->setMaximum(maxWavelenth);
-	ui.m_wavelengthSpinBox->setValue(m_wavelength);
+	ui.m_wavelengthSpinBox->setValue(m_curWavelength);
 	ui.m_wavelengthSpinBox->setSingleStep(stepOfWavelenth);
 
+	ui.m_capMinWavelen->setMinimum(minWavelenth);
+	ui.m_capMinWavelen->setMaximum(maxWavelenth);
+	ui.m_capMinWavelen->setValue(minWavelenth);
+	ui.m_capMaxWavelen->setMinimum(minWavelenth);
+	ui.m_capMaxWavelen->setMaximum(maxWavelenth);
+	ui.m_capMaxWavelen->setValue(maxWavelenth);
+	ui.m_stepOfWavelen->setValue(stepOfWavelenth);
+
+	ui.m_rangeOfWavelen->setText(QString::number(minWavelenth) + "-" + QString::number(maxWavelenth));
 
 }
 
@@ -169,7 +177,9 @@ void MainWindow::closeCamera()
 	ui.m_digitalGainSet->setEnabled(false);
 	ui.m_exposureMode->setEnabled(false);
 
+	ui.m_captureSpectrumBox->setEnabled(false);
 	ui.m_spectrometerCtrl->setEnabled(false);
+	
 
 	m_imageModel.closeUSBCamera();
 	m_timer.stop();
@@ -196,16 +206,31 @@ void MainWindow::updateImage(QPixmap image)
 	ui.m_showLabel->setPixmap(image);
 	++m_frameCount;
 
-	//if (m_isCapturingSpectrum)
-	//{
-	//	++m_countForCapturingSpectrum;
-	//	if (m_countForCapturingSpectrum == 10)
-	//		m_imageModel.takeImage();
-	//	if (m_countForCapturingSpectrum == 20)
-	//	{
-	//		m_imageModel.setWavelength()
-	//	}
-	//}
+	if (m_isCapturingSpectrum)
+	{
+		if (m_countForCapturingSpectrum == 0)
+		{
+			if (m_curWavelength <= m_maxWavelength)
+			{
+				m_imageModel.changeWavelength(m_curWavelength);
+				m_curWavelength += m_stepOfWavelength;
+				++m_countForProgressBar;
+			}
+		}
+			
+		++m_countForCapturingSpectrum;
+		if (m_countForCapturingSpectrum == 10)
+		{
+			m_imageModel.takeImage();
+		}
+
+		if (m_countForCapturingSpectrum == 20)
+		{
+			m_countForCapturingSpectrum = 0;
+			m_progressDialog->setValue(m_countForProgressBar);
+		}
+
+	}
 }
 
 void MainWindow::showFrameRate()
@@ -293,6 +318,7 @@ void MainWindow::setGlobalGain(int gain)
 		u4 = 255;
 
 	m_imageModel.sendSettingCommand(0x30, 0x5E, 0x00, u4);
+	ui.m_globalGain->setText(QString::number(gain));
 	
 }
 
@@ -340,32 +366,38 @@ void MainWindow::takeImage()
 void MainWindow::changeWavelength()
 {
 	unsigned short wavelen = ui.m_wavelengthSlider->value();
-	setWavelength(wavelen);
-	
-}
-
-bool MainWindow::setWavelength(unsigned short wavelen)
-{
-	unsigned short wavelenMul10 = wavelen * 10;
-	uchar highByte = wavelenMul10 >> 8;
-	uchar lowByte = wavelenMul10;
-	return m_imageModel.setWavelength(highByte, lowByte);
+	m_imageModel.changeWavelength(wavelen);
 }
 
 void MainWindow::openSpectrometer()
 {
 	if (m_imageModel.openSpectrometer())
 	{
-		setWavelength(m_wavelength);
+		m_imageModel.changeWavelength(m_curWavelength);
+		
 	}
+
+	ui.m_captureSpectrumBox->setEnabled(true);
 }
 
 void MainWindow::captureSpectrumImg()
 {
-	int numFiles = 10;
-	//QProgressDialog progress("Copying files...", "Abort Copy", 0, numFiles, this);
-	m_progress = new QProgressDialog("Copying files...", "Abort Copy", 0, numFiles, this);
-	//progress.setWindowModality(Qt::WindowModal);
+	m_curWavelength = ui.m_capMinWavelen->value();
+	m_minWavelength = ui.m_capMinWavelen->value();
+	m_maxWavelength = ui.m_capMaxWavelen->value();
+	m_stepOfWavelength = ui.m_stepOfWavelen->value();
+	m_countForCapturingSpectrum = 0;
+	m_countForProgressBar = 0;
+
+	int num = (m_maxWavelength - m_minWavelength) / m_stepOfWavelength + 1;
+	QProgressDialog progress(QStringLiteral("²¶»ñ¹âÆ×Í¼Ïñ"), QStringLiteral("Í£Ö¹²¶»ñ"), 0, num, this);
+	m_progressDialog = &progress;
+	progress.setWindowModality(Qt::WindowModal);
+
+	m_isCapturingSpectrum = true;
 	
-	m_progress->exec();
+	progress.exec();
+
+	m_isCapturingSpectrum = false;
+
 }

@@ -27,8 +27,8 @@ public:
 
 	void changeWidthTo8bitsPerPixel(bool flag);
 	void changeImageToColor(bool flag);
-	void changeResolution(int width, int height, int req);
-	void changeResolution(int width, int height, int req, long sizePerXfer, int xferQueueSize, int timeOut);
+
+	void changeWavelength(unsigned short wavelen);
 	
 	void sendSettingCommand(uchar u1, uchar u2, uchar u3, uchar u4);
 
@@ -36,7 +36,7 @@ public:
 	void takeImage();
 
 signals:
-	void resolutionChanged(int width, int height, int req, long sizePerXfer, int xferQueueSize, int timeOut);
+	void wavelengthChanged(unsigned short wavelen);
 
 private:
 	CyDevice m_camera;
@@ -52,7 +52,7 @@ private:
 
 public:
 	bool openSpectrometer();
-	bool setWavelength(uchar u1, uchar u2);
+	bool setWavelength(unsigned short wavelen);
 
 
 	

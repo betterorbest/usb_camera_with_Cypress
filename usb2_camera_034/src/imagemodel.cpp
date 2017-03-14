@@ -16,7 +16,7 @@ ImageModel::ImageModel(QWidget *mainWindow)
 	//connect(&m_imageProcess, SIGNAL(showImage(QImage)), m_mainWindow, SLOT(updateImage(QImage)));
 	connect(&m_camera, SIGNAL(completeFrameTransmission()), m_mainWindow, SLOT(countReceiveFrames()));
 	
-	connect(this, &ImageModel::resolutionChanged, &m_camera, static_cast<void (CyDevice::*)(int, int, int, LONG, int ,int)>(&CyDevice::changeResolution));
+	connect(this, &ImageModel::wavelengthChanged, &m_camera, static_cast<void (CyDevice::*)(unsigned short)>(&CyDevice::changeWavelength));
 	//connect(&m_camera, SIGNAL(completeFrameTransmission(unsigned char *, bool)), &m_imageProcess, SLOT(dataToImage(unsigned char *, bool)), Qt::DirectConnection);
 	//connect(&m_camera, SIGNAL(completeFrameTransmission(unsigned char *, bool)), &m_imageProcess, SLOT(dataToImage(unsigned char *, bool)));
 
@@ -130,14 +130,14 @@ void ImageModel::changeImageToColor(bool flag)
 	m_imageProcess.setImageColorOrBlack(flag);
 }
 
-void ImageModel::changeResolution(int width, int height, int req, long sizePerXfer, int xferQueueSize, int timeOut)
+void ImageModel::changeWavelength(unsigned short wavelen)
 {
 	//m_camera.changeResolution(width, height, req);
 	//可以对切换无法进行的在界面处进行处理
 	if (m_camera.isReceving())
 	{
 		m_camera.disableReceving();
-		emit resolutionChanged(width, height, req, sizePerXfer, xferQueueSize, timeOut);
+		emit wavelengthChanged(wavelen);
 	}
 }
 
@@ -145,7 +145,7 @@ void ImageModel::sendSettingCommand(uchar u1, uchar u2, uchar u3, uchar u4)
 {
 	uchar buf[4] = { u1, u2, u3, u4 };
 
-	m_camera.sendRequestCode(0xb3, buf, 4);
+	m_camera.configRegister(buf, 4);
 
 }
 
@@ -166,8 +166,7 @@ bool ImageModel::openSpectrometer()
 	return m_camera.openLCTF();
 }
 
-bool ImageModel::setWavelength(uchar u1, uchar u2)
+bool ImageModel::setWavelength(unsigned short wavelen)
 {
-	uchar buf[2] = { u1, u2 };
-	return m_camera.sendRequestCode(0xa4, buf, 2);
+	return m_camera.setWavelength(wavelen);
 }
