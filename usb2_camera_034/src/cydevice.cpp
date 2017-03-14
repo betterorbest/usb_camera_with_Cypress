@@ -146,6 +146,7 @@ bool CyDevice::sendControlCode(int code, int timeOut)
 
 bool CyDevice::sendRequestCode(int code, uchar *buf, LONG bufLen, int timeOut)
 {
+	QMutexLocker mutexLocker(&m_mutex);
 	m_controlEndPoint->TimeOut = timeOut;
 	m_controlEndPoint->Target = TGT_DEVICE;
 	m_controlEndPoint->ReqType = REQ_VENDOR;
@@ -195,8 +196,7 @@ void CyDevice::receiveData()
 {
 	//³õÊ¼´«Êä1280 * 960
 	//changeResolution(1280, 960, 0xa1);
-	if (m_width == 1280 && m_height == 960)
-		sendControlCode(0xa1);
+	sendControlCode(0xa1);
 	//receiveData(m_width * m_height / 10, 10, 200);
 	//receiveData(m_width * m_height, 1, 1000);
 	//receiveData(1024 * 400, 2, 1500);
@@ -394,4 +394,9 @@ bool CyDevice::isReceving()
 {
 	QMutexLocker locker(&m_mutex);
 	return m_recevingFlag;
+}
+
+bool CyDevice::configRegister(uchar* buf, int len)
+{
+	return sendRequestCode(0xb3, buf, len);
 }

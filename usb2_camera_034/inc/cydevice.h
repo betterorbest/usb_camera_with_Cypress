@@ -40,6 +40,8 @@ public:
 
 	bool isReceving();
 
+	bool configRegister(uchar* buf, int len);
+
 signals:
 	//void completeFrameTransmission(unsigned char *data);
 	void completeFrameTransmission();

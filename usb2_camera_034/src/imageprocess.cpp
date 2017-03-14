@@ -32,9 +32,7 @@ void ImageProcess::initialize(int width, int height, bool isColor)
 
 void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width, int height)
 {
-	switch (bitsPerPixel)
-	{
-	case 8:
+	if (bitsPerPixel <= 8)
 	{
 		if (m_isColor)
 		{
@@ -72,10 +70,8 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 			DWORD end = GetTickCount();
 			qDebug() << end - start << "this is the time";
 		}
-		break;
-		break;
 	}
-	case 12:
+	else
 	{
 		unsigned short* data16bits = (unsigned short *)data;
 		if (m_isColor)
@@ -140,11 +136,6 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 			DWORD end = GetTickCount();
 			qDebug() << end - start << "this is the time";
 		}
-		break;
-	}
-	default:
-		break;
-	
 	}
 	/*********数据接收较慢时使用*******************/
 	/*m_image = QImage(m_imageData, m_imageWidth, m_imageHeight, QImage::Format_Grayscale8);
@@ -248,9 +239,9 @@ void ImageProcess::takeOriginalImage(const cv::Mat& image, const QPixmap& pixmap
 {
 	QTime time = QTime::currentTime();
 	QString str = time.toString("hhmmsszzz");
-	QString path = m_path + "\\" + str + ".png";
-	cv::imwrite(path.toLocal8Bit().toStdString(), image);
-	pixmap.save(m_path + "\\" + str + ".bmp");
+	QString path = m_path + "\\" + str;
+	cv::imwrite((path + ".png").toLocal8Bit().toStdString(), image);
+	pixmap.save(path + ".bmp");
 	m_isTakingImage = false;
 }
 

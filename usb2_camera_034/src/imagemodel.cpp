@@ -145,7 +145,7 @@ void ImageModel::sendSettingCommand(uchar u1, uchar u2, uchar u3, uchar u4)
 {
 	uchar buf[4] = { u1, u2, u3, u4 };
 
-	m_camera.sendRequestCode(0xb3, buf, 4);
+	m_camera.configRegister(buf, 4);
 
 }
 
