@@ -23,30 +23,22 @@ public slots:
 	void pauseCamera();
 
 	void updateImage(QPixmap image);
+	void updateImage(QPixmap visible, QPixmap infrared);
 
 	void showFrameRate();
 
 	void saveData();
 
 	void countReceiveFrames();
-
-	void changeWidthTo8bitsPerPixel(bool flag);
 	
 	void changeImageToColor(bool flag);
 
-	void switchResolution(int index);
-	void setAnalogGain(int index);
-
-	void setRedGain(int gain);
-	void setGreenGain(int gain);
-	void setBlueGain(int gain);
-	void setGlobalGain(int gain);
-
-	void setExposureMode(bool isAuto);
-	void setExposureValue(int value);
-
 	void chooseSavingPath();
 	void takeImage();
+
+
+	//dual lights fusion
+	void changeInfraredColor();
 
 private:
 	Ui::MainWindowClass ui;
@@ -66,7 +58,7 @@ private:
 
 	bool m_isClosed;
 
-	bool m_isColor;
+
 	int m_bitsPerPixel;
 };
 

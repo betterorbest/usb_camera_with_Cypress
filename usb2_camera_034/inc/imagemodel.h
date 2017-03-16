@@ -15,6 +15,7 @@ public:
 	~ImageModel();
 	void initialize(int width, int height, int pixelWidth, int bufferNum, bool isColor);
 	void initializeTransfer(int packetNum, int xferQueSize, int timeOut);
+	void initializeDual(int visibleWidth, int visibleHeight, int infraWidth, int infraHeight, bool isColor, ImageProcess::InfraredColor infraColor);
 
 	bool openUSBCamera();
 	void closeUSBCamera();
@@ -35,6 +36,7 @@ public:
 	void setSavingPath(QString path);
 	void takeImage();
 
+	void setInfraredColor(ImageProcess::InfraredColor color);
 signals:
 	void resolutionChanged(int width, int height, int req, long sizePerXfer, int xferQueueSize, int timeOut);
 

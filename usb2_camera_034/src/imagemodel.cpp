@@ -12,6 +12,7 @@ ImageModel::ImageModel(QWidget *mainWindow)
 	connect(&m_receiveThread, SIGNAL(started()), &m_camera, SLOT(receiveData()));
 	connect(&m_imageProcessThread, SIGNAL(started()), &m_imageProcess, SLOT(dataToImage()));
 
+	connect(&m_imageProcess, SIGNAL(showImage(QPixmap, QPixmap)), m_mainWindow, SLOT(updateImage(QPixmap, QPixmap)));
 	connect(&m_imageProcess, SIGNAL(showImage(QPixmap)), m_mainWindow, SLOT(updateImage(QPixmap)));
 	//connect(&m_imageProcess, SIGNAL(showImage(QImage)), m_mainWindow, SLOT(updateImage(QImage)));
 	connect(&m_camera, SIGNAL(completeFrameTransmission()), m_mainWindow, SLOT(countReceiveFrames()));
@@ -47,7 +48,12 @@ ImageModel::~ImageModel()
 void ImageModel::initialize(int width, int height, int pixelWidth, int bufferNum, bool isColor)
 {
 	m_camera.initialize(width, height, pixelWidth, bufferNum);
-	m_imageProcess.initialize(width, height, isColor);
+	//m_imageProcess.initialize(width, height, isColor);
+}
+
+void ImageModel::initializeDual(int visibleWidth, int visibleHeight, int infraWidth, int infraHeight, bool isColor, ImageProcess::InfraredColor infraColor)
+{
+	m_imageProcess.initialize(visibleWidth, visibleHeight, infraWidth, infraHeight, isColor, infraColor);
 }
 
 void ImageModel::initializeTransfer(int packetNum, int xferQueSize, int timeOut)
@@ -157,4 +163,9 @@ void ImageModel::setSavingPath(QString path)
 void ImageModel::takeImage()
 {
 	m_imageProcess.setTakingImageFlag(true);
+}
+
+void ImageModel::setInfraredColor(ImageProcess::InfraredColor color)
+{
+	m_imageProcess.setInfraColor(color);
 }

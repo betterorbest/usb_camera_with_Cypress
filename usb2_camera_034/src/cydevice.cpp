@@ -75,8 +75,9 @@ bool CyDevice::openDevice(HANDLE hnd)
 		m_device = nullptr;
 		return false;
 	}
-	m_dataInEndPoint = m_device->BulkInEndPt;
-	//m_dataInEndPoint = m_device->EndPointOf(0x82);
+	
+	//m_dataInEndPoint = m_device->BulkInEndPt;
+	m_dataInEndPoint = m_device->EndPointOf(0x83);
 	m_controlEndPoint = m_device->ControlEndPt;
 
 
@@ -196,7 +197,7 @@ void CyDevice::receiveData()
 {
 	//³õÊ¼´«Êä1280 * 960
 	//changeResolution(1280, 960, 0xa1);
-	sendControlCode(0xa1);
+	//sendControlCode(0xa1);
 	//receiveData(m_width * m_height / 10, 10, 200);
 	//receiveData(m_width * m_height, 1, 1000);
 	//receiveData(1024 * 400, 2, 1500);

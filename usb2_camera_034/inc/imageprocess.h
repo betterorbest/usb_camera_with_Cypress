@@ -12,10 +12,18 @@ class ImageProcess : public QObject
 	Q_OBJECT
 
 public:
+	typedef enum{
+		GRAY,
+		GRAY_INVERSE,
+		METAL,
+		RAINBOW
+	} InfraredColor;
+
+
 	ImageProcess();
 	~ImageProcess();
 	void initialize(int width, int height, bool isColor);
-
+	void initialize(int visibleWidth, int visibleHeight, int infraWidth, int infraHeight, bool isColor, InfraredColor infraColor);
 	void setWidth(int width);
 	void setHeight(int height);
 	void imageToPixmap(QImage &image);
@@ -34,11 +42,19 @@ public:
 
 	void setSavingPath(QString path);
 	void takeOriginalImage(const cv::Mat& image,  const QPixmap& pixmap);
-	void takeShowingImage(const QPixmap& pixmap);
+	void takeShowingImage(const QPixmap& visible, const QPixmap& infrared);
 	void setTakingImageFlag(bool flag);
 
+	
+	void initLookupTable();
+	void visibleDataToImage(cv::Mat& src, cv::Mat& dst, bool isColor);
+	void infrared14bitsTo8bits(cv::Mat& src, cv::Mat& dst);
+	void infraredDataToImage(cv::Mat& src, cv::Mat& dst, InfraredColor infraColor);
+	void setInfraColor(InfraredColor color);
+
 signals:
-	void showImage(QPixmap image);
+	void showImage(QPixmap visible, QPixmap infra);
+	void showImage(QPixmap visible);
 
 public slots:
 	void dataToImage();
@@ -59,6 +75,18 @@ private:
 	bool m_imageProcessingFlag;
 	bool m_pauseFlag;
 	bool m_isTakingImage;
+
+	//dual lights fusion
+	cv::Mat m_metalLUT;
+	cv::Mat m_grayInverseLUT;
+	cv::Mat m_rainbowLUT;
+
+	InfraredColor m_infraredColor;
+	int m_visibleWidth;
+	int m_visibleHeight;
+	int m_infraredWidth;
+	int m_infraredHeight;
+	
 };
 
 inline void ImageProcess::setWidth(int width)
@@ -70,6 +98,5 @@ inline void ImageProcess::setHeight(int height)
 {
 	m_imageHeight = height;
 }
-
 
 #endif

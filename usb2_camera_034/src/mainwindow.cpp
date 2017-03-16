@@ -9,18 +9,9 @@ MainWindow::MainWindow(QWidget *parent)
 	m_receiveFramesCount(0),
 	m_isClosed(false)
 {
-	initCameraConfig();
-
  	ui.setupUi(this);
 
-	ui.m_showFrame->setFixedSize(QSize(m_imageWidth, m_imageHeight));
-	ui.m_showLabel->setFixedSize(QSize(m_imageWidth, m_imageHeight));
-
-	if (!m_isColor)
-		ui.m_grayImageChoosed->setChecked(true);
-
-	if (m_bitsPerPixel > 8)
-		ui.m_12bitsChoosed->setChecked(true);
+	initCameraConfig();
 		
 	m_statusBarLabel = new QLabel(ui.statusBar);
 	ui.statusBar->addWidget(m_statusBarLabel);
@@ -31,29 +22,19 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui.m_stopButton, SIGNAL(clicked()), this, SLOT(closeCamera()));
 	connect(ui.m_pauseButton, SIGNAL(clicked()), this, SLOT(pauseCamera()));
 
-	connect(ui.m_8bitsChoosed, SIGNAL(toggled(bool)), this, SLOT(changeWidthTo8bitsPerPixel(bool)));
 	connect(ui.m_colorImageChoosed, SIGNAL(toggled(bool)), this, SLOT(changeImageToColor(bool)));
-	
 
 	//Qt5的重载信号与槽连接的使用方式
-	connect(ui.m_resolutionSwitching, static_cast<void (QComboBox:: *)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::switchResolution);
-	
-	connect(ui.m_analogGainSet, static_cast<void (QComboBox:: *)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::setAnalogGain);
-	
-	connect(ui.m_rGainSet, &QSlider::valueChanged, this, &MainWindow::setRedGain);
-	connect(ui.m_gGainSet, &QSlider::valueChanged, this, &MainWindow::setGreenGain);
-	connect(ui.m_bGainSet, &QSlider::valueChanged, this, &MainWindow::setBlueGain);
-	connect(ui.m_globalGainSet, &QSlider::valueChanged, this, &MainWindow::setGlobalGain);
-
-	connect(ui.m_autoExposure, &QRadioButton::toggled, this, &MainWindow::setExposureMode);
-	connect(ui.m_exposureSlider, &QSlider::valueChanged, this, &MainWindow::setExposureValue);
-	connect(ui.m_exposureSlider, &QSlider::valueChanged, ui.m_exposureSpinBox, &QSpinBox::setValue);
-	connect(ui.m_exposureSpinBox, static_cast<void (QSpinBox:: *)(int)>(&QSpinBox::valueChanged), ui.m_exposureSlider, &QSlider::setValue);
-	
 	connect(ui.m_pathChoosingButton, &QPushButton::clicked, this, &MainWindow::chooseSavingPath);
 	connect(ui.m_imageTakingButton, &QPushButton::clicked, this, &MainWindow::takeImage);
 	connect(&m_timer, SIGNAL(timeout()), this, SLOT(showFrameRate()));
 	
+
+	connect(ui.m_infraGray, &QRadioButton::clicked, this, &MainWindow::changeInfraredColor);
+	connect(ui.m_infraGrayInverse, &QRadioButton::clicked, this, &MainWindow::changeInfraredColor);
+	connect(ui.m_infraMetal, &QRadioButton::clicked, this, &MainWindow::changeInfraredColor);
+	connect(ui.m_infraRainbow, &QRadioButton::clicked, this, &MainWindow::changeInfraredColor);
+
 }
 
 MainWindow::~MainWindow()
@@ -65,10 +46,10 @@ void MainWindow::initCameraConfig()
 {
 	//TODO 配置信息设置
 	QSettings settings("camconfig.ini", QSettings::IniFormat);
-	m_imageWidth = settings.value("Camera034/width").toInt();
-	m_imageHeight = settings.value("Camera034/height").toInt();
-	m_bitsPerPixel = settings.value("Camera034/pixbitswidth").toInt();
-	m_isColor = settings.value("Camera034/iscolor").toBool();
+	m_imageWidth = settings.value("Dual/width").toInt();
+	m_imageHeight = settings.value("Dual/height").toInt();
+	m_bitsPerPixel = settings.value("Dual/pixbitswidth").toInt();
+	bool isColor = settings.value("Dual/iscolor").toBool();
 	int bufferNum = settings.value("Transfer/buffernum").toInt();
 	int packetNum = settings.value("Transfer/packetnum").toInt();
 	int xferQueSize = settings.value("Transfer/xferquesize").toInt();
@@ -76,27 +57,39 @@ void MainWindow::initCameraConfig()
 
 	if (m_imageWidth == 0 || m_imageHeight == 0)
 	{
-		m_imageWidth = 1280;
+		m_imageWidth = 1920;
 		m_imageHeight = 960;
 	}
 
 	if (m_bitsPerPixel <= 0)
-		m_bitsPerPixel = 8;
+		m_bitsPerPixel = 12;
 
 	if (bufferNum <= 0)
 		bufferNum = 2;
 
 	if (packetNum <= 0)
-		packetNum = 1;
+		packetNum = 45;
 
 	if (xferQueSize <= 0)
-		xferQueSize = 1;
+		xferQueSize = 5;
 
 	if (timeOut <= 0)
 		timeOut = 1000;
 
-	m_imageModel.initialize(m_imageWidth, m_imageHeight, m_bitsPerPixel, bufferNum, m_isColor);
+	m_imageModel.initialize(m_imageWidth, m_imageHeight, m_bitsPerPixel, bufferNum, isColor);
 	m_imageModel.initializeTransfer(packetNum, xferQueSize, timeOut);
+	m_imageModel.initializeDual(1280, 960, 640, 512, isColor, ImageProcess::METAL);
+
+	ui.m_visibleDisplay->setFixedSize(QSize(1280, 960));
+	ui.m_infraDisplay->setFixedSize(QSize(640, 512));
+
+
+	//初始化组件部分配置
+	if (!isColor)
+		ui.m_grayImageChoosed->setChecked(true);
+
+	ui.m_infraMetal->setChecked(true);
+
 }
 
 void MainWindow::openCamera()
@@ -113,12 +106,7 @@ void MainWindow::openCamera()
 		m_frameCount = 0;
 		m_timer.start(1000);
 
-		ui.m_bitsPerPixelChange->setEnabled(true);
-		ui.m_resolutionSwitching->setEnabled(true);
 		ui.m_imageTakingButton->setEnabled(true);
-		ui.m_analogGainSet->setEnabled(true);
-		ui.m_digitalGainSet->setEnabled(true);
-		ui.m_exposureMode->setEnabled(true);
 	}
 	else
 	{
@@ -132,12 +120,7 @@ void MainWindow::closeCamera()
 
 	ui.m_stopButton->setEnabled(false);
 	ui.m_pauseButton->setEnabled(false);
-	ui.m_bitsPerPixelChange->setEnabled(false);
-	ui.m_resolutionSwitching->setEnabled(false);
 	ui.m_imageTakingButton->setEnabled(false);
-	ui.m_analogGainSet->setEnabled(false);
-	ui.m_digitalGainSet->setEnabled(false);
-	ui.m_exposureMode->setEnabled(false);
 
 	m_imageModel.closeUSBCamera();
 	m_timer.stop();
@@ -153,7 +136,8 @@ void MainWindow::closeCamera()
 	m_frameCount = 0;
 	m_receiveFramesCount = 0;
 	m_isClosed = true;
-	ui.m_showLabel->clear();
+	ui.m_visibleDisplay->clear();
+	ui.m_infraDisplay->clear();
 	ui.m_receiveRateLabel->setText(QString::number(0));
 }
 
@@ -165,13 +149,24 @@ void MainWindow::updateImage(QPixmap image)
 	//ui.m_showLabel->resize(image.size());
 	
 	//ui.m_showLabel->clear();
-	ui.m_showLabel->setPixmap(image);
+	ui.m_visibleDisplay->setPixmap(image);
 	//DWORD start1 = GetTickCount();
 	++m_frameCount;
 
 	/*DWORD end1 = GetTickCount();
 	qDebug() << end1 - start1;*/
 }
+
+void MainWindow::updateImage(QPixmap visible, QPixmap infrared)
+{
+	if (m_isClosed)
+		return;
+
+	ui.m_visibleDisplay->setPixmap(visible);
+	ui.m_infraDisplay->setPixmap(infrared);
+	++m_frameCount;
+}
+
 
 void MainWindow::showFrameRate()
 {
@@ -209,151 +204,10 @@ void MainWindow::pauseCamera()
 	}
 }
 
-void MainWindow::changeWidthTo8bitsPerPixel(bool flag)
-{
-	m_imageModel.changeWidthTo8bitsPerPixel(flag);
-	//qDebug() << "in change";
-}
 
 void MainWindow::changeImageToColor(bool flag)
 {
 	m_imageModel.changeImageToColor(flag);
-}
-
-void MainWindow::switchResolution(int index)
-{
-	ui.m_resolutionSwitching->setEnabled(false);
-	switch (index)
-	{
-	case 0:// 320 * 240
-		m_imageModel.changeResolution(320, 240, 0xb1, 320 * 240, 1, 1000);
-		ui.m_showLabel->setFixedSize(320, 240);
-		break;
-	case 1:// 640 * 480
-		m_imageModel.changeResolution(640, 480, 0xa2, 320 * 240, 4, 1000);
-		ui.m_showLabel->setFixedSize(640, 480);
-		break;
-	case 2:// 1280 * 960
-		m_imageModel.changeResolution(1280, 960, 0xa1, 120 * 1024, 10, 1000);
-		ui.m_showLabel->setFixedSize(1280, 960);
-		break;
-	default:
-		break;
-	}
-	ui.m_resolutionSwitching->setEnabled(true);
-
-}
-
-void MainWindow::setAnalogGain(int index)
-{
-	switch (index)
-	{
-	case 0://1倍增益
-		m_imageModel.sendSettingCommand(0x3E, 0xE4, 0xD2, 0x08);
-		m_imageModel.sendSettingCommand(0x30, 0xB0, 0x00, 0x00);
-		break;
-	case 1://2倍增益
-		m_imageModel.sendSettingCommand(0x3E, 0xE4, 0xD2, 0x08);
-		m_imageModel.sendSettingCommand(0x30, 0xB0, 0x00, 0x10);
-		break;
-	case 2://4倍增益
-		m_imageModel.sendSettingCommand(0x3E, 0xE4, 0xD2, 0x08);
-		m_imageModel.sendSettingCommand(0x30, 0xB0, 0x00, 0x20);
-		break;
-	case 3://8倍增益
-		m_imageModel.sendSettingCommand(0x3E, 0xE4, 0xD2, 0x08);
-		m_imageModel.sendSettingCommand(0x30, 0xB0, 0x00, 0x30);
-		break;
-	case 4://10倍增益
-		m_imageModel.sendSettingCommand(0x3E, 0xE4, 0xD3, 0x08);
-		m_imageModel.sendSettingCommand(0x30, 0xB0, 0x00, 0x30);
-		break;
-	default:
-		break;
-	}
-}
-
-void MainWindow::setRedGain(int gain)
-{
-	ui.m_rGain->setText(QString::number(gain));
-	uchar u4;
-	if (gain != 8)
-		u4 = gain << 5;
-	else
-		u4 = 255;
-
-	m_imageModel.sendSettingCommand(0x30, 0x5C, 0x00, u4);
-}
-
-void MainWindow::setGreenGain(int gain)
-{
-	ui.m_gGain->setText(QString::number(gain));
-	uchar u4;
-	if (gain != 8)
-		u4 = gain << 5;
-	else
-		u4 = 255;
-
-	m_imageModel.sendSettingCommand(0x30, 0x58, 0x00, u4);
-	m_imageModel.sendSettingCommand(0x30, 0x5A, 0x00, u4);
-}
-
-void MainWindow::setBlueGain(int gain)
-{
-	ui.m_bGain->setText(QString::number(gain));
-	uchar u4;
-	if (gain != 8)
-		u4 = gain << 5;
-	else
-		u4 = 255;
-
-	m_imageModel.sendSettingCommand(0x30, 0x56, 0x00, u4);
-}
-
-void MainWindow::setGlobalGain(int gain)
-{
-	ui.m_rGainSet->setValue(gain);
-	ui.m_gGainSet->setValue(gain);
-	ui.m_bGainSet->setValue(gain);
-
-	ui.m_globalGain->setText(QString::number(gain));
-	uchar u4;
-	if (gain != 8)
-		u4 = gain << 5;
-	else
-		u4 = 255;
-
-	m_imageModel.sendSettingCommand(0x30, 0x5E, 0x00, u4);
-
-	
-}
-
-void MainWindow::setExposureMode(bool isAuto)
-{
-	if (isAuto)
-	{
-		ui.m_exposureSlider->setEnabled(false);
-		ui.m_exposureSpinBox->setEnabled(false);
-		m_imageModel.sendSettingCommand(0x31, 0x00, 0x00, 0x1B);
-	}
-	else
-	{
-		m_imageModel.sendSettingCommand(0x31, 0x00, 0x00, 0x1A);
-		ui.m_exposureSlider->setEnabled(true);
-		ui.m_exposureSpinBox->setEnabled(true);
-	}
-}
-
-void MainWindow::setExposureValue(int value)
-{
-	qDebug() << value;
-	uchar u3;
-	uchar u4;
-
-	u3 = (value * 80 / 11) >> 8;
-	u4 = (value * 80 / 11);
-
-	m_imageModel.sendSettingCommand(0x30, 0x12, u3, u4);
 }
 
 void MainWindow::chooseSavingPath()
@@ -367,4 +221,32 @@ void MainWindow::chooseSavingPath()
 void MainWindow::takeImage()
 {
 	m_imageModel.takeImage();
+}
+
+
+//dual lights fusion
+void MainWindow::changeInfraredColor()
+{
+	//click radiobutton 信号就会触发该槽
+	//已选中的选项，再次点击，依然会进入该槽
+	if (ui.m_infraGray->isChecked())
+	{
+		m_imageModel.setInfraredColor(ImageProcess::GRAY);
+		qDebug() << "gray" << sender()->objectName();
+	}
+	else if (ui.m_infraGrayInverse->isChecked())
+	{
+		m_imageModel.setInfraredColor(ImageProcess::GRAY_INVERSE);
+		qDebug() << "inverse" << sender()->objectName();
+	}
+	else if (ui.m_infraMetal->isChecked())
+	{
+		m_imageModel.setInfraredColor(ImageProcess::METAL);
+		qDebug() << "metal" << sender()->objectName();
+	}
+	else
+	{
+		m_imageModel.setInfraredColor(ImageProcess::RAINBOW);
+		qDebug() << "rainbow" << sender()->objectName();
+	}
 }

@@ -23,8 +23,8 @@ public:
 	void enableReceving();
 	void disableReceving();
 	
-	bool sendControlCode(int code, int timeOut=1000);
-	bool sendRequestCode(int code, uchar *buf, LONG bufLen, int timeOut=1000);
+	bool sendControlCode(int code, int timeOut=100);
+	bool sendRequestCode(int code, uchar *buf, LONG bufLen, int timeOut=100);
 
 	void setWidth(int width);
 	void setHeight(int height);

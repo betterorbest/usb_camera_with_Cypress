@@ -10,9 +10,10 @@ ImageProcess::ImageProcess()
 	:m_imageProcessingFlag(true),
 	m_pauseFlag(false),
 	m_path("."),
-	m_isTakingImage(false)
+	m_isTakingImage(false),
+	m_imageData(nullptr)
 {
-
+	initLookupTable();
 }
 
 ImageProcess::~ImageProcess()
@@ -30,112 +31,43 @@ void ImageProcess::initialize(int width, int height, bool isColor)
 	m_isColor = isColor;
 }
 
+void ImageProcess::initialize(int visibleWidth, int visibleHeight, int infraWidth, int infraHeight, bool isColor, InfraredColor infraColor)
+{
+	m_visibleWidth = visibleWidth;
+	m_visibleHeight = visibleHeight;
+	m_infraredWidth = infraWidth;
+	m_infraredHeight = infraHeight;
+	m_isColor = isColor;
+	m_infraredColor = infraColor;
+}
+
 void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width, int height)
 {
-	if (bitsPerPixel <= 8)
+	//bitsPerPixel为12bits
+
+	cv::Mat image = cv::Mat(height, width, CV_16UC1, data);
+	cv::Mat visibleData = image(cv::Rect(0, 0, m_visibleWidth, m_visibleHeight));
+	cv::Mat infraredData = image(cv::Rect(m_visibleWidth, 0, m_infraredWidth, m_infraredHeight));
+
+
+	cv::Mat visibleDisplay;
+	cv::Mat infraredDisplay;
+	visibleDataToImage(visibleData, visibleDisplay, m_isColor);
+	infraredDataToImage(infraredData, infraredDisplay, m_infraredColor);
+
+	QImage visibleImage(visibleDisplay.data, visibleDisplay.cols, visibleDisplay.rows, visibleDisplay.step, QImage::Format_RGB888);
+	QImage infraImage(infraredDisplay.data, infraredDisplay.cols, infraredDisplay.rows, infraredDisplay.step, QImage::Format_RGB888);
+		
+	QPixmap visiblePixmap(QPixmap::fromImage(visibleImage));
+	QPixmap infraPixmap(QPixmap::fromImage(infraImage));
+	emit showImage(visiblePixmap, infraPixmap);
+	if (m_isTakingImage)
 	{
-		if (m_isColor)
-		{
-			cv::Mat image8bits = cv::Mat(height, width, CV_8UC1, data);
-			cv::Mat image;
-			cv::cvtColor(image8bits, image, CV_BayerRG2RGB);
-			//cv::cvtColor(image8bits, image, CV_BayerGR2RGB);
-			//DWORD start = GetTickCount();
-			//cv::medianBlur(image, image, 3);                        //中值滤波 64-80ms
-
-			//DWORD end = GetTickCount();
-			//qDebug() << end - start;
-			//autoWhiteBalance(image, image);
-			QImage qImage = QImage(image.data, width, height, image.step, QImage::Format_RGB888);
-
-			//QImage qImage = QImage(data, m_imageWidth, m_imageHeight, QImage::Format_Grayscale8);
-
-			if (qImage.isNull()) return;
-
-			m_imageShow = QPixmap::fromImage(qImage);
-		}
-		else
-		{
-
-			QImage qImage = QImage(data, width, height, QImage::Format_Grayscale8);
-			if (qImage.isNull()) return;
-			m_imageShow = QPixmap::fromImage(qImage);
-		}
-
-		emit showImage(m_imageShow);
-		if (m_isTakingImage)
-		{
-			DWORD start = GetTickCount();
-			takeShowingImage(m_imageShow);
-			DWORD end = GetTickCount();
-			qDebug() << end - start << "this is the time";
-		}
-	}
-	else
-	{
-		unsigned short* data16bits = (unsigned short *)data;
-		if (m_isColor)
-		{
-
-			int size = height * width;
-			//unsigned short temp;
-			//DWORD start = GetTickCount();
-			for (int i = 0; i < size; ++i)
-			{
-				//m_imageData[i] = pow((data[2 * i + 1] << 8) + data[2 * i], 0.66);
-				//m_imageData[i] = pow(data16bits[i], 0.66);
-				//m_imageData[i] = data16bits[i] >> 4;
-				m_imageData[i] = data16bits[i];
-			}
-
-			cv::Mat image8bits = cv::Mat(height, width, CV_8UC1, m_imageData);
-			cv::Mat image;
-			//image16bits.convertTo(image, CV_8UC1);
-			cv::cvtColor(image8bits, image, CV_BayerRG2RGB);
-			//cv::cvtColor(image8bits, image, CV_BayerGR2RGB);
-
-			autoWhiteBalance(image, image);
-
-			QImage qImage = QImage(image.data, width, height, image.step, QImage::Format_RGB888);
-			//DWORD end = GetTickCount();
-			//qDebug() << end - start;
-			//cv::Mat image16bits = cv::Mat(m_imageHeight, m_imageWidth, CV_16UC1, data);
-			//image16bits.convertTo(image16bits, CV_8UC1, 0.0625);
-			//cv::Mat image;
-			//cv::cvtColor(image16bits, image, CV_BayerRG2RGB);
-
-			if (qImage.isNull()) return;
-			m_imageShow = QPixmap::fromImage(qImage);
-		}
-		else
-		{
-			int size = height * width;
-			//unsignd short temp;
-			//DWORD start = GetTickCount();
-			for (int i = 0; i < size; ++i)
-			{
-				//m_imageData[i] = pow((data[2 * i + 1] << 8) + data[2 * i], 0.66);
-				//m_imageData[i] = pow(data16bits[i], 0.66);
-				//m_imageData[i] = data16bits[i] >> 4;
-				m_imageData[i] = data16bits[i];
-
-			}
-
-			//DWORD end = GetTickCount();
-			//qDebug() << end - start;
-			QImage qImage = QImage(m_imageData, width, height, QImage::Format_Grayscale8);
-			if (qImage.isNull()) return;
-			m_imageShow = QPixmap::fromImage(qImage);
-
-		}
-		emit showImage(m_imageShow);
-		if (m_isTakingImage)
-		{
-			DWORD start = GetTickCount();
-			takeOriginalImage(cv::Mat(height, width, CV_16UC1, data16bits), m_imageShow);
-			DWORD end = GetTickCount();
-			qDebug() << end - start << "this is the time";
-		}
+		DWORD start = GetTickCount();
+		//takeOriginalImage(cv::Mat(height, width, CV_16UC1, data16bits), m_imageShow);
+		takeShowingImage(visiblePixmap, infraPixmap);
+		DWORD end = GetTickCount();
+		qDebug() << end - start << "this is the time";
 	}
 	/*********数据接收较慢时使用*******************/
 	/*m_image = QImage(m_imageData, m_imageWidth, m_imageHeight, QImage::Format_Grayscale8);
@@ -186,7 +118,6 @@ void ImageProcess::saveOriginalData(unsigned short *data)
 
 }
 
-
 void ImageProcess::enableSaveData()
 {
 	m_saveOriginalDataFlag = true;
@@ -212,7 +143,6 @@ void ImageProcess::dataToImage()
 	}
 
 	ImageFifo::emptyFifo();
-	
 }
 
 void ImageProcess::disableImageProcess()
@@ -245,12 +175,14 @@ void ImageProcess::takeOriginalImage(const cv::Mat& image, const QPixmap& pixmap
 	m_isTakingImage = false;
 }
 
-void ImageProcess::takeShowingImage(const QPixmap& pixmap)
+void ImageProcess::takeShowingImage(const QPixmap& visible, const QPixmap& infrared)
 {
 	QTime time = QTime::currentTime();
 	QString str = time.toString("hhmmsszzz");
-	QString path = m_path + "\\" + str + ".bmp";
-	pixmap.save(path);
+	QString visiblePath = m_path + "\\" + "vis_" + str + ".bmp";
+	QString infraredPath = m_path + "\\" + "infra_" + str + ".bmp";
+	visible.save(visiblePath);
+	infrared.save(infraredPath);
 	m_isTakingImage = false;
 }
 
@@ -260,6 +192,8 @@ void ImageProcess::setTakingImageFlag(bool flag)
 		return;
 	m_isTakingImage = flag;
 }
+
+
 
 void ImageProcess::autoWhiteBalance(cv::Mat &src, cv::Mat &dst)
 {
@@ -345,72 +279,307 @@ void ImageProcess::autoWhiteBalance(cv::Mat &src, cv::Mat &dst)
 
 	//delete[] RGBSum;
 
+
+	//cv::Vec3d m_last_avg_bgr = cv::Vec3d(-1, -1, -1);
+	//double m_smooth_ratio = 0.8;
+	//std::vector<int> m_white_hist;
+	//m_white_hist.resize(766, 0);
+	//std::fill(m_white_hist.begin(), m_white_hist.end(), 0);
+	//std::vector<cv::Mat> bgr;
+	//split(src, bgr);
+	//cv::Mat sum = cv::Mat::zeros(src.size(), CV_32FC1);
+	//sum = cv::Mat::zeros(src.size(), CV_32FC1);
+	//cv::accumulate(bgr[0], sum);
+	//cv::accumulate(bgr[1], sum);
+	//cv::accumulate(bgr[2], sum);
+	//double min_value, max_value;
+	//cv::minMaxLoc(sum, &min_value, &max_value);
+	//int t = int(max_value*(1 - 0.1));
+
+	//float* ptr_sum = sum.ptr<float>();
+	//ptr_sum = sum.ptr<float>();
+	//for (int i = 0; i < sum.total(); ++i)
+	//{
+	//	m_white_hist[ptr_sum[i]]++;
+	//}
+
+	////t = 255;
+	//int hist_sum = 0;
+	//for (int i = 765; i >= 0; --i)
+	//{
+	//	hist_sum += m_white_hist[i];
+	//	if (hist_sum > sum.total() * 0.05)
+	//	{
+	//		t = i;
+	//		break;
+	//	}
+	//}
+
+	//ptr_sum = sum.ptr<float>();
+	//cv::Vec3b* ptr_img = src.ptr<cv::Vec3b>();
+	//ptr_img = src.ptr<cv::Vec3b>();
+	//int count = 0;
+	//cv::Vec3d avg_bgr(0, 0, 0);
+	//for (int i = 0; i < sum.total(); ++i)
+	//{
+	//	if (ptr_sum[i] > t)
+	//	{
+	//		count++;
+	//		avg_bgr += ptr_img[i];
+	//	}
+	//}
+	//avg_bgr /= count;
+	//if (count > 0)
+	//{
+	//	if (m_last_avg_bgr[0] < 0)
+	//	{
+	//		m_last_avg_bgr = avg_bgr;
+	//	}
+	//	avg_bgr = m_smooth_ratio * m_last_avg_bgr + (1 - m_smooth_ratio) * avg_bgr;
+	//	m_last_avg_bgr = avg_bgr;
+
+	//	cv::Scalar gain(255 / avg_bgr[0], 255 / avg_bgr[1], 255 / avg_bgr[2]);
+	//	cv::multiply(src, gain, dst);
+	//}
 }
 
 
 
+void ImageProcess::visibleDataToImage(cv::Mat&src, cv::Mat &dst, bool isColor)
+{
+	//raw data转图片显示
+	DWORD start = GetTickCount();
+	src.convertTo(dst, CV_8UC1, 0.0625);
+	DWORD end = GetTickCount();
+	qDebug() << end - start;
+
+	if (isColor)
+		cv::cvtColor(dst, dst, CV_BayerGB2RGB);
+	else
+		cv::cvtColor(dst, dst, CV_GRAY2RGB);
+}
 
 
+void ImageProcess::infraredDataToImage(cv::Mat& src, cv::Mat& dst, InfraredColor infraColor)
+{
+	cv::medianBlur(src, dst, 3);
+	
 
+	////得到一帧最大值、最小值、平均值
+	//minMaxLoc(m_image_16bit, &m_min_pixel, &m_max_pixel, 0, &m_max_pixel_position);
+	//m_avg_pixel = mean(m_image_16bit);
 
-//cv::Vec3d m_last_avg_bgr = cv::Vec3d(-1, -1, -1);
-//double m_smooth_ratio = 0.8;
-//std::vector<int> m_white_hist;
-//m_white_hist.resize(766, 0);
-//std::fill(m_white_hist.begin(), m_white_hist.end(), 0);
-//std::vector<cv::Mat> bgr;
-//split(src, bgr);
-//cv::Mat sum = cv::Mat::zeros(src.size(), CV_32FC1);
-//sum = cv::Mat::zeros(src.size(), CV_32FC1);
-//cv::accumulate(bgr[0], sum);
-//cv::accumulate(bgr[1], sum);
-//cv::accumulate(bgr[2], sum);
-//double min_value, max_value;
-//cv::minMaxLoc(sum, &min_value, &max_value);
-//int t = int(max_value*(1 - 0.1));
+	//Mat image_16bit_tmp;
+	//image_16bit_tmp = m_image_16bit.clone();
 
-//float* ptr_sum = sum.ptr<float>();
-//ptr_sum = sum.ptr<float>();
-//for (int i = 0; i < sum.total(); ++i)
-//{
-//	m_white_hist[ptr_sum[i]]++;
-//}
+	//16bit转8bit图像处理
+	infrared14bitsTo8bits(dst, dst);
 
-////t = 255;
-//int hist_sum = 0;
-//for (int i = 765; i >= 0; --i)
-//{
-//	hist_sum += m_white_hist[i];
-//	if (hist_sum > sum.total() * 0.05)
-//	{
-//		t = i;
-//		break;
-//	}
-//}
+	//单通道变为3通道
+	cv::cvtColor(dst, dst, CV_GRAY2RGB);
 
-//ptr_sum = sum.ptr<float>();
-//cv::Vec3b* ptr_img = src.ptr<cv::Vec3b>();
-//ptr_img = src.ptr<cv::Vec3b>();
-//int count = 0;
-//cv::Vec3d avg_bgr(0, 0, 0);
-//for (int i = 0; i < sum.total(); ++i)
-//{
-//	if (ptr_sum[i] > t)
-//	{
-//		count++;
-//		avg_bgr += ptr_img[i];
-//	}
-//}
-//avg_bgr /= count;
-//if (count > 0)
-//{
-//	if (m_last_avg_bgr[0] < 0)
-//	{
-//		m_last_avg_bgr = avg_bgr;
-//	}
-//	avg_bgr = m_smooth_ratio * m_last_avg_bgr + (1 - m_smooth_ratio) * avg_bgr;
-//	m_last_avg_bgr = avg_bgr;
+	switch (infraColor)
+	{
+	case METAL:
+	{
+		//查找表法，效率高
+		cv::LUT(dst, m_metalLUT, dst);
+	}
+	break;
+	case RAINBOW:
+	{
+		cv::LUT(dst, m_rainbowLUT, dst);
+	}
+	break;
+	case GRAY_INVERSE:
+	{
+		//使用查找表法反转
+		cv::LUT(dst, m_grayInverseLUT, dst);
+	}
+	break;
+	default:
+		break;
+	}
 
-//	cv::Scalar gain(255 / avg_bgr[0], 255 / avg_bgr[1], 255 / avg_bgr[2]);
-//	cv::multiply(src, gain, dst);
-//}
+	/*Point point1(m_max_pixel_position.x - 5, m_max_pixel_position.y);
+	Point point2(m_max_pixel_position.x + 5, m_max_pixel_position.y);
+	Point point3(m_max_pixel_position.x, m_max_pixel_position.y - 5);
+	Point point4(m_max_pixel_position.x, m_max_pixel_position.y + 5);
+	line(image_tmp, point1, point2, Scalar(255, 0, 0));
+	line(image_tmp, point3, point4, Scalar(255, 0, 0));*/
+
+}
+
+void ImageProcess::infrared14bitsTo8bits(cv::Mat &src, cv::Mat &dst)
+{
+	/*************自适应直方图******************/
+	//计算直方图
+	int histSize[1] = { 0xffff + 1 };
+	float hrangs[2] = { 0, 0xffff + 1 };
+	const float* ranges[1] = { hrangs };
+	int channels[1] = { 0 };
+	cv::Mat hist;
+	cv::calcHist(&src, 1, channels, cv::Mat(), hist, 1, histSize, ranges);
+	int imin = 0;
+	for (; imin < histSize[0]; ++imin)
+		if (hist.at<float>(imin) > 1)     //改为可调界限
+			break;
+	int imax = histSize[0] - 1;
+	for (; imax >= 0; --imax)
+		if (imin >= imax || hist.at<float>(imax) > 0)
+			break;
+
+	if (imin >= imax)
+	{
+		imax = imin;
+		imin = imin - 2;
+	}
+
+	cv::Mat tempDst(src.rows, src.cols, CV_8UC1);
+	for (int i = 0; i < src.rows; i++)
+	{
+		unsigned short *dataSrc = src.ptr<unsigned short>(i);
+		unsigned char *dataDst = tempDst.ptr<unsigned char>(i);
+		for (int j = 0; j < src.cols; j++)
+		{
+			if (dataSrc[j] <= imin)
+			{
+				dataDst[j] = 0;
+			}
+			else if (dataSrc[j] >= imax)
+			{
+				dataDst[j] = 255;
+			}
+			else
+			{
+				dataDst[j] = (dataSrc[j] - imin + 0.0) / (imax - imin) * 255;
+			}
+		}
+	}
+
+	dst = tempDst;
+}
+
+void ImageProcess::initLookupTable()
+{
+	//伪彩查找表 RGB排列方式
+	m_metalLUT = cv::Mat(1, 256, CV_8UC3);
+	uchar *p1 = m_metalLUT.data;
+	for (int i = 0; i < 256; i++)
+	{
+		if (i >= 0 && i < 22)
+		{
+			p1[3 * i] = 0;
+			p1[3 * i + 1] = 0;
+			p1[3 * i + 2] = (i / 22.0) * 115;
+		}
+		else if (i >= 22 && i < 95)
+		{
+			float seg_ratio = (i - 22) / 73.0f;
+			p1[3 * i] = seg_ratio * 190;
+			p1[3 * i + 1] = 0;
+			p1[3 * i + 2] = seg_ratio * 35 + 115;
+		}
+		else if (i >= 95 && i < 140)
+		{
+			float seg_ratio = (i - 95) / 45.0f;
+			p1[3 * i] = seg_ratio * 50 + 190;
+			p1[3 * i + 1] = seg_ratio * 80;
+			p1[3 * i + 2] = 150 - seg_ratio * 150;
+		}
+		else if (i >= 140 && i < 150)
+		{
+			float seg_ratio = (i - 140) / 10.0f;
+			p1[3 * i] = seg_ratio * 15 + 240;
+			p1[3 * i + 1] = seg_ratio * 20 + 80;
+			p1[3 * i + 2] = 0;
+		}
+		else if (i >= 150 && i < 220)
+		{
+			float seg_ratio = (i - 150) / 70.0f;
+			p1[3 * i] = 255;
+			p1[3 * i + 1] = seg_ratio * 120 + 100;
+			p1[3 * i + 2] = 0;
+		}
+		else if (i >= 220 && i < 240)
+		{
+			float seg_ratio = (i - 220) / 20.0f;
+			p1[3 * i] = 255;
+			p1[3 * i + 1] = seg_ratio * 35 + 220;
+			p1[3 * i + 2] = seg_ratio * 150;
+		}
+		else
+		{
+			float seg_ratio = (i - 240) / 15.0f;
+			p1[3 * i] = 255;
+			p1[3 * i + 1] = 255;
+			p1[3 * i + 2] = seg_ratio * 105 + 150;
+		}
+
+	}
+
+	//网上通用的伪彩
+	/*m_look_up_table_color = Mat(1, 256, CV_8UC3);
+	uchar *p1 = m_look_up_table_color.data;
+	for (int i = 0; i < 256; i++)
+	{
+	p1[3 * i] = abs(0 - i);
+	p1[3 * i + 1] = abs(127 - i);
+	p1[3 * i + 2] = abs(255 - i);
+	}*/
+
+	//彩虹图查找表
+	m_rainbowLUT = cv::Mat(1, 256, CV_8UC3);
+	uchar *p2 = m_rainbowLUT.data;
+	for (int i = 0; i < 256; i++)
+	{
+		int tmp = i;
+		if (i <= 51)
+		{
+			p2[3 * i] = 0;
+			p2[3 * i + 1] = tmp * 5;
+			p2[3 * i + 2] = 255;
+		}
+		else if (i <= 102)
+		{
+			tmp -= 51;
+			p2[3 * i] = 0;
+			p2[3 * i + 1] = 255;
+			p2[3 * i + 2] = 255 - tmp * 5;
+		}
+		else if (i <= 153)
+		{
+			tmp -= 102;
+			p2[3 * i] = tmp * 5;
+			p2[3 * i + 1] = 255;
+			p2[3 * i + 2] = 0;
+		}
+		else if (i <= 204)
+		{
+			tmp -= 153;
+			p2[3 * i] = 255;
+			p2[3 * i + 1] = 255 - (uchar)(128.0 * tmp / 51.0 + 0.5);
+			p2[3 * i + 2] = 0;
+		}
+		else
+		{
+			tmp -= 204;
+			p2[3 * i] = 255;
+			p2[3 * i + 1] = 127 - (uchar)(127.0 * tmp / 51.0 + 0.5);
+			p2[3 * i + 2] = 0;
+		}
+	}
+
+	//灰度反转查找表
+	m_grayInverseLUT = cv::Mat(1, 256, CV_8UC1);
+	uchar *p3 = m_grayInverseLUT.data;
+	for (int i = 0; i < 256; i++)
+	{
+		p3[i] = 255 - i;
+	}
+}
+
+void ImageProcess::setInfraColor(InfraredColor color)
+{
+	m_infraredColor = color;
+}
