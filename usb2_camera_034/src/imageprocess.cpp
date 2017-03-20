@@ -58,7 +58,7 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 			//m_imageData[i] = pow((data[2 * i + 1] << 8) + data[2 * i], 0.66);
 			//m_imageData[i] = pow(data16bits[i], 0.66);
 			//m_imageData[i] = data16bits[i] >> 4;
-			m_imageData[i] = data16bits[i];
+			m_imageData[i] = data16bits[i] >> (16 - bitsPerPixel);
 
 		}
 

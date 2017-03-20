@@ -401,3 +401,4 @@ void MainWindow::captureSpectrumImg()
 	m_isCapturingSpectrum = false;
 
 }
+

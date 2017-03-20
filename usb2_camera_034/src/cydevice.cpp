@@ -187,7 +187,7 @@ void CyDevice::changeWidthTo16bitsPerPixel()
 
 void CyDevice::receiveData()
 {
-	sendControlCode(0xa1);
+	//sendControlCode(0xc3);	
 	receiveData(m_dataInEndPoint->MaxPktSize * m_packetNum, m_xferQueSize, m_timeOut);
 }
 
