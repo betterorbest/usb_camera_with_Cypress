@@ -27,8 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
 	//Qt5的重载信号与槽连接的使用方式
 	
 	connect(ui.m_analogGainSet, static_cast<void (QComboBox:: *)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::setAnalogGain);
-
-	connect(ui.m_globalGainSet, &QSlider::valueChanged, this, &MainWindow::setGlobalGain);
+	connect(ui.m_digitalGainSet, static_cast<void (QComboBox:: *)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::setDigitalGain);
 
 	connect(ui.m_autoExposure, &QRadioButton::toggled, this, &MainWindow::setExposureMode);
 	connect(ui.m_exposureSlider, &QSlider::valueChanged, this, &MainWindow::setExposureValue);
@@ -46,6 +45,9 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui.m_openSpectrometerButton, &QPushButton::clicked, this, &MainWindow::openSpectrometer);
 
 	connect(ui.m_captureSpectrum, &QPushButton::clicked, this, &MainWindow::captureSpectrumImg);
+
+	connect(ui.m_horizontalMirror, &QPushButton::clicked, this, &MainWindow::setHorizontalMirror);
+	connect(ui.m_verticalMirror, &QPushButton::clicked, this, &MainWindow::setVerticalMirror);
 }
 
 MainWindow::~MainWindow()
@@ -70,8 +72,8 @@ void MainWindow::initCameraConfig()
 	m_imageWidth = settings.value("Spectrometer/width").toInt();
 	m_imageHeight = settings.value("Spectrometer/height").toInt();
 	m_curWavelength = settings.value("Spectrometer/initwavelen").toInt();
-	unsigned short minWavelenth = settings.value("Spectrometer/minwavelen").toInt();
-	unsigned short maxWavelenth = settings.value("Spectrometer/maxwavelen").toInt();
+	m_sliderMinWavelength = settings.value("Spectrometer/minwavelen").toInt();
+	m_sliderMaxWavelength = settings.value("Spectrometer/maxwavelen").toInt();
 	unsigned short stepOfWavelenth = settings.value("Spectrometer/stepofwavelen").toInt();
 	m_bitsPerPixel = settings.value("Spectrometer/pixbitswidth").toInt();
 	m_isColor = settings.value("Spectrometer/iscolor").toBool();
@@ -88,10 +90,10 @@ void MainWindow::initCameraConfig()
 
 	if (m_curWavelength == 0)
 		m_curWavelength = 420;
-	if (minWavelenth == 0)
-		minWavelenth = 420;
-	if (maxWavelenth == 0)
-		maxWavelenth = 720;
+	if (m_sliderMinWavelength == 0)
+		m_sliderMinWavelength = 420;
+	if (m_sliderMaxWavelength == 0)
+		m_sliderMaxWavelength = 720;
 	if (stepOfWavelenth == 0)
 		stepOfWavelenth = 10;
 
@@ -116,26 +118,28 @@ void MainWindow::initCameraConfig()
 	ui.m_showFrame->setFixedSize(QSize(m_imageWidth / 2, m_imageHeight / 2));
 	ui.m_showLabel->setFixedSize(QSize(m_imageWidth / 2, m_imageHeight / 2));
 
-	ui.m_wavelengthSlider->setMinimum(minWavelenth);
-	ui.m_wavelengthSlider->setMaximum(maxWavelenth);
+	ui.m_wavelengthSlider->setMinimum(m_sliderMinWavelength);
+	ui.m_wavelengthSlider->setMaximum(m_sliderMaxWavelength);
 	ui.m_wavelengthSlider->setValue(m_curWavelength);
 	ui.m_wavelengthSlider->setSingleStep(stepOfWavelenth);
 
-	ui.m_wavelengthSpinBox->setMinimum(minWavelenth);
-	ui.m_wavelengthSpinBox->setMaximum(maxWavelenth);
+	ui.m_wavelengthSpinBox->setMinimum(m_sliderMinWavelength);
+	ui.m_wavelengthSpinBox->setMaximum(m_sliderMaxWavelength);
 	ui.m_wavelengthSpinBox->setValue(m_curWavelength);
 	ui.m_wavelengthSpinBox->setSingleStep(stepOfWavelenth);
 
-	ui.m_capMinWavelen->setMinimum(minWavelenth);
-	ui.m_capMinWavelen->setMaximum(maxWavelenth);
-	ui.m_capMinWavelen->setValue(minWavelenth);
-	ui.m_capMaxWavelen->setMinimum(minWavelenth);
-	ui.m_capMaxWavelen->setMaximum(maxWavelenth);
-	ui.m_capMaxWavelen->setValue(maxWavelenth);
+	ui.m_capMinWavelen->setMinimum(m_sliderMinWavelength);
+	ui.m_capMinWavelen->setMaximum(m_sliderMaxWavelength);
+	ui.m_capMinWavelen->setValue(m_sliderMinWavelength);
+	ui.m_capMaxWavelen->setMinimum(m_sliderMinWavelength);
+	ui.m_capMaxWavelen->setMaximum(m_sliderMaxWavelength);
+	ui.m_capMaxWavelen->setValue(m_sliderMaxWavelength);
 	ui.m_stepOfWavelen->setValue(stepOfWavelenth);
 
-	ui.m_rangeOfWavelen->setText(QString::number(minWavelenth) + "-" + QString::number(maxWavelenth));
+	ui.m_rangeOfWavelen->setText(QString::number(m_sliderMinWavelength) + "-" + QString::number(m_sliderMaxWavelength));
 
+
+	//ui.m_showLabel->installEventFilter(this);
 }
 
 void MainWindow::openCamera()
@@ -309,16 +313,50 @@ void MainWindow::setAnalogGain(int index)
 	}
 }
 
-void MainWindow::setGlobalGain(int gain)
+void MainWindow::setDigitalGain(int index)
 {
 	uchar u4;
-	if (gain != 8)
-		u4 = gain << 5;
+	++index;
+	if (index != 8)
+		u4 = index << 5;
 	else
 		u4 = 255;
 
 	m_imageModel.sendSettingCommand(0x30, 0x5E, 0x00, u4);
-	ui.m_globalGain->setText(QString::number(gain));
+
+	//switch (index)
+	//{
+	//case 0://1倍增益
+	//	
+	//	break;
+	//case 1://2倍增益
+	//	
+	//	break;
+	//case 2://4倍增益
+	//	
+	//	break;
+	//case 3://8倍增益
+	//	
+	//	
+	//	break;
+	//case 4://10倍增益
+	//	
+	//	break;
+	//case 5://10倍增益
+	//	
+	//	break;
+	//case 6://10倍增益
+	//	
+	//	break;
+	//case 7://10倍增益
+	//	
+	//	break;
+	//case 8://10倍增益
+	//	
+	//	break;
+	//default:
+	//	break;
+	//}
 	
 }
 
@@ -402,3 +440,39 @@ void MainWindow::captureSpectrumImg()
 
 }
 
+void MainWindow::paintEvent(QPaintEvent* event)
+{
+	qDebug() << "come in" << endl;
+	QMainWindow::paintEvent(event);
+	int xPos = ui.m_spectrometerCtrl->x() + ui.m_wavelengthSlider->x() - 5;
+	int yPos = ui.m_spectrometerCtrl->y() + ui.m_labelForPos->y() + ui.m_spectrometerCtrl->layout()->spacing() + 2;
+	int num = 10;
+	int interval = (m_sliderMaxWavelength - m_sliderMinWavelength) / num;
+	int posInterval = ui.m_wavelengthSlider->width() / num;
+	ui.m_wavelengthSlider->setTickInterval(interval);
+	QPainter painter(this);
+	for (int i = 0; i <= num; ++i) {
+		painter.drawText(xPos + i * posInterval, yPos, QString::number(m_sliderMinWavelength + i * interval));
+	}
+
+}
+
+bool MainWindow::eventFilter(QObject* obj, QEvent* ev)
+{
+	if (obj == ui.m_showLabel)
+	{
+		return ui.m_showLabel->eventFilter(obj, ev);
+	}
+	else
+		return QMainWindow::eventFilter(obj, ev);
+}
+
+void MainWindow::setHorizontalMirror()
+{
+	m_imageModel.setHorizontalMirror();
+}
+
+void MainWindow::setVerticalMirror()
+{
+	m_imageModel.setVerticalMirror();
+}

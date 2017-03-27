@@ -35,6 +35,8 @@ public:
 	void setSavingPath(QString path);
 	void takeImage();
 
+	void setHorizontalMirror();
+	void setVerticalMirror();
 signals:
 	void wavelengthChanged(unsigned short wavelen);
 

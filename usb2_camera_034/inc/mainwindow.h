@@ -14,6 +14,8 @@ public:
 	MainWindow(QWidget *parent = 0);
 	~MainWindow();
 
+	void paintEvent(QPaintEvent* event);
+	bool eventFilter(QObject *, QEvent *);
 private:
 	void initCameraConfig();
 
@@ -36,7 +38,7 @@ public slots:
 
 	void setAnalogGain(int index);
 
-	void setGlobalGain(int gain);
+	void setDigitalGain(int index);
 
 	void setExposureMode(bool isAuto);
 	void setExposureValue(int value);
@@ -50,6 +52,9 @@ public slots:
 	void changeWavelength();
 	void openSpectrometer();
 	void captureSpectrumImg();
+
+	void setHorizontalMirror();
+	void setVerticalMirror();
 
 private:
 	Ui::MainWindowClass ui;
@@ -82,6 +87,9 @@ private:
 	unsigned short m_stepOfWavelength;
 	int m_countForProgressBar;
 	QProgressDialog* m_progressDialog;
+
+	unsigned short m_sliderMinWavelength;
+	unsigned short m_sliderMaxWavelength;
 };
 
 #endif // MAINWINDOW_H

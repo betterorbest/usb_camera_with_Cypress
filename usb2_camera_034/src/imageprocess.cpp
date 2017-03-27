@@ -10,7 +10,9 @@ ImageProcess::ImageProcess()
 	:m_imageProcessingFlag(true),
 	m_pauseFlag(false),
 	m_path("."),
-	m_isTakingImage(false)
+	m_isTakingImage(false),
+	m_horizontalMirror(false),
+	m_verticalMirror(false)
 {
 
 }
@@ -37,7 +39,7 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 		QImage qImage = QImage(data, width, height, QImage::Format_Grayscale8);
 		if (qImage.isNull()) return;
 		m_imageShow = QPixmap::fromImage(qImage);
-
+		
 		emit showImage(m_imageShow);
 		if (m_isTakingImage)
 		{
@@ -68,6 +70,8 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 		cv::resize(image, image, cv::Size(width / 2, height / 2));
 		QImage qImage = QImage(image.data, image.cols, image.rows, QImage::Format_Grayscale8);
 		if (qImage.isNull()) return;
+
+		qImage = qImage.mirrored(m_horizontalMirror, m_verticalMirror);
 
 		m_imageShow = QPixmap::fromImage(qImage);
 		emit showImage(m_imageShow);
@@ -178,6 +182,16 @@ void ImageProcess::setPauseFlag(bool flag)
 void ImageProcess::setSavingPath(QString path)
 {
 	m_path = path;
+}
+
+void ImageProcess::setHorizontal()
+{
+	m_horizontalMirror = !m_horizontalMirror;
+}
+
+void ImageProcess::setVertical()
+{
+	m_verticalMirror = !m_verticalMirror;
 }
 
 void ImageProcess::takeOriginalImage(const cv::Mat& image, const QPixmap& pixmap, unsigned short wavelen)

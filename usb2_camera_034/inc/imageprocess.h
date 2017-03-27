@@ -37,6 +37,8 @@ public:
 	void takeShowingImage(const QPixmap& pixmap);
 	void setTakingImageFlag(bool flag);
 
+	void setHorizontal();
+	void setVertical();
 signals:
 	void showImage(QPixmap image);
 
@@ -59,6 +61,9 @@ private:
 	bool m_imageProcessingFlag;
 	bool m_pauseFlag;
 	bool m_isTakingImage;
+
+	bool m_horizontalMirror;
+	bool m_verticalMirror;
 };
 
 inline void ImageProcess::setWidth(int width)

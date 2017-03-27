@@ -170,3 +170,14 @@ bool ImageModel::setWavelength(unsigned short wavelen)
 {
 	return m_camera.setWavelength(wavelen);
 }
+
+void ImageModel::setHorizontalMirror()
+{
+	m_imageProcess.setHorizontal();
+}
+
+void ImageModel::setVerticalMirror()
+{
+	m_imageProcess.setVertical();
+}
+
