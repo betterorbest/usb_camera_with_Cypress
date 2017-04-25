@@ -11,8 +11,10 @@ ImageProcess::ImageProcess()
 	m_pauseFlag(false),
 	m_path("."),
 	m_isTakingImage(false),
+	m_isCapturingSpectrum(false),
 	m_horizontalMirror(false),
-	m_verticalMirror(false)
+	m_verticalMirror(false),
+	m_lowIlluminationChecked(false)
 {
 
 }
@@ -55,12 +57,36 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 		int size = height * width;
 		//unsignd short temp;
 		//DWORD start = GetTickCount();
+		
+		int x1 = 1024;
+		int y1 = 192;
+		int x2 = 3072;
+		int y2 = 224;
 		for (int i = 0; i < size; ++i)
 		{
 			//m_imageData[i] = pow((data[2 * i + 1] << 8) + data[2 * i], 0.66);
 			//m_imageData[i] = pow(data16bits[i], 0.66);
 			//m_imageData[i] = data16bits[i] >> 4;
-			m_imageData[i] = data16bits[i] >> (16 - bitsPerPixel);
+
+			if (m_lowIlluminationChecked)
+			{
+				if (data16bits[i] < x1)
+				{
+					m_imageData[i] = (1.0 * y1 / x1) * data16bits[i];
+				}
+				else if (data16bits[i] < x2)
+				{
+					m_imageData[i] = (y2 - y1 + 0.0) / (x2 - x1) * (data16bits[i] - x1) + y1;
+				}
+				else
+				{
+					m_imageData[i] = (255 - y2 + 0.0) / (4095 - x2) * (data16bits[i] - x2) + y2;
+				}
+			}
+			else
+			{
+				m_imageData[i] = data16bits[i] >> (16 - bitsPerPixel);
+			}
 
 		}
 
@@ -75,12 +101,18 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 
 		m_imageShow = QPixmap::fromImage(qImage);
 		emit showImage(m_imageShow);
+
 		if (m_isTakingImage)
 		{
 			DWORD start = GetTickCount();
 			takeOriginalImage(cv::Mat(height, width, CV_16UC1, data16bits), m_imageShow, wavelen);
 			DWORD end = GetTickCount();
 			qDebug() << end - start << "this is the time";
+		}
+
+		if (m_isCapturingSpectrum)
+		{
+			takeSpectrumImage(cv::Mat(height, width, CV_16UC1, data16bits), m_imageShow, wavelen);
 		}
 
 	}
@@ -184,6 +216,11 @@ void ImageProcess::setSavingPath(QString path)
 	m_path = path;
 }
 
+QString ImageProcess::getSavingPath()
+{
+	return m_path;
+}
+
 void ImageProcess::setHorizontal()
 {
 	m_horizontalMirror = !m_horizontalMirror;
@@ -194,6 +231,11 @@ void ImageProcess::setVertical()
 	m_verticalMirror = !m_verticalMirror;
 }
 
+void ImageProcess::setLowIlluminationChecked(bool flag)
+{
+	m_lowIlluminationChecked = flag;
+}
+
 void ImageProcess::takeOriginalImage(const cv::Mat& image, const QPixmap& pixmap, unsigned short wavelen)
 {
 	QTime time = QTime::currentTime();
@@ -202,6 +244,14 @@ void ImageProcess::takeOriginalImage(const cv::Mat& image, const QPixmap& pixmap
 	cv::imwrite((path + ".png").toLocal8Bit().toStdString(), image);
 	pixmap.save(path + ".bmp");
 	m_isTakingImage = false;
+}
+
+void ImageProcess::takeSpectrumImage(const cv::Mat& image, const QPixmap& pixmap, unsigned short wavelen)
+{
+	QString path = m_path + "\\" + QString::number(wavelen);
+	cv::imwrite((path + ".png").toLocal8Bit().toStdString(), image);
+	pixmap.save(path + ".bmp");
+	m_isCapturingSpectrum = false;
 }
 
 void ImageProcess::takeShowingImage(const QPixmap& pixmap)
@@ -218,6 +268,13 @@ void ImageProcess::setTakingImageFlag(bool flag)
 	if (m_isTakingImage)
 		return;
 	m_isTakingImage = flag;
+}
+
+void ImageProcess::setCapturingSpectrumFlag(bool flag)
+{
+	if (m_isCapturingSpectrum)
+		return;
+	m_isCapturingSpectrum = flag;
 }
 
 void ImageProcess::autoWhiteBalance(cv::Mat &src, cv::Mat &dst)

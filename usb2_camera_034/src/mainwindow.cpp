@@ -14,10 +14,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 	initCameraConfig();
 
-		
-	m_statusBarLabel = new QLabel(ui.statusBar);
-	ui.statusBar->addWidget(m_statusBarLabel);
-	m_statusBarLabel->setText(QStringLiteral("就绪"));
+	
+	ui.statusBar->showMessage(QStringLiteral("就绪"));
+	//m_statusBarLabel = new QLabel(ui.statusBar);
+	//ui.statusBar->addWidget(m_statusBarLabel);
+	//m_statusBarLabel->setText(QStringLiteral("就绪"));
 
 	//Qt4的信号槽使用方式
 	connect(ui.m_startButton, SIGNAL(clicked()), this, SLOT(openCamera()));
@@ -32,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui.m_autoExposure, &QRadioButton::toggled, this, &MainWindow::setExposureMode);
 	connect(ui.m_exposureSlider, &QSlider::valueChanged, this, &MainWindow::setExposureValue);
 	connect(ui.m_exposureSlider, &QSlider::valueChanged, ui.m_exposureSpinBox, &QSpinBox::setValue);
-	connect(ui.m_exposureSpinBox, static_cast<void (QSpinBox:: *)(int)>(&QSpinBox::valueChanged), ui.m_exposureSlider, &QSlider::setValue);
+	//connect(ui.m_exposureSpinBox, static_cast<void (QSpinBox:: *)(int)>(&QSpinBox::valueChanged), ui.m_exposureSlider, &QSlider::setValue);
 	
 	connect(ui.m_pathChoosingButton, &QPushButton::clicked, this, &MainWindow::chooseSavingPath);
 	connect(ui.m_imageTakingButton, &QPushButton::clicked, this, &MainWindow::takeImage);
@@ -40,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
 	
 	connect(ui.m_wavelengthSlider, &QSlider::valueChanged, this, &MainWindow::changeWavelength);
 	connect(ui.m_wavelengthSlider, &QSlider::valueChanged, ui.m_wavelengthSpinBox, &QSpinBox::setValue);
-	connect(ui.m_wavelengthSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), ui.m_wavelengthSlider, &QSlider::setValue);
+	//connect(ui.m_wavelengthSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), ui.m_wavelengthSlider, &QSlider::setValue);
 
 	connect(ui.m_openSpectrometerButton, &QPushButton::clicked, this, &MainWindow::openSpectrometer);
 
@@ -48,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	connect(ui.m_horizontalMirror, &QPushButton::clicked, this, &MainWindow::setHorizontalMirror);
 	connect(ui.m_verticalMirror, &QPushButton::clicked, this, &MainWindow::setVerticalMirror);
+	connect(ui.m_lowIlluminationCheck, &QCheckBox::stateChanged, this, &MainWindow::setIlluminationState);
 }
 
 MainWindow::~MainWindow()
@@ -138,7 +140,6 @@ void MainWindow::initCameraConfig()
 
 	ui.m_rangeOfWavelen->setText(QString::number(m_sliderMinWavelength) + "-" + QString::number(m_sliderMaxWavelength));
 
-
 	//ui.m_showLabel->installEventFilter(this);
 }
 
@@ -147,6 +148,22 @@ void MainWindow::openCamera()
 	//qDebug() << "i have in ";
 	if (m_imageModel.openUSBCamera())
 	{
+
+		//相机配置初始化
+		setAnalogGain(ui.m_analogGainSet->currentIndex());
+		setDigitalGain(ui.m_digitalGainSet->currentIndex());
+		if (ui.m_autoExposure->isChecked())
+		{
+			setExposureMode(true);
+		}
+		else
+		{
+			setExposureMode(false);
+			setExposureValue(ui.m_exposureSlider->value());
+		}
+
+
+
 		ui.m_startButton->setEnabled(false);
 		ui.m_pauseButton->setEnabled(true);
 		ui.m_stopButton->setEnabled(true);
@@ -161,7 +178,9 @@ void MainWindow::openCamera()
 		ui.m_digitalGainSet->setEnabled(true);
 		ui.m_exposureMode->setEnabled(true);
 
-		ui.m_spectrometerCtrl->setEnabled(true);
+		//ui.m_spectrometerCtrl->setEnabled(true);
+		ui.m_openSpectrometerButton->setEnabled(true);
+
 	}
 	else
 	{
@@ -182,8 +201,8 @@ void MainWindow::closeCamera()
 	ui.m_exposureMode->setEnabled(false);
 
 	ui.m_captureSpectrumBox->setEnabled(false);
-	ui.m_spectrometerCtrl->setEnabled(false);
-	
+	//ui.m_spectrometerCtrl->setEnabled(false);
+	ui.m_wavelengthSlider->setEnabled(false);
 
 	m_imageModel.closeUSBCamera();
 	m_timer.stop();
@@ -194,7 +213,8 @@ void MainWindow::closeCamera()
 		m_imageModel.whetherPausingUSBCamera(false);
 	}
 
-	m_statusBarLabel->setText(QStringLiteral("就绪"));
+	//m_statusBarLabel->setText(QStringLiteral("就绪"));
+	ui.statusBar->showMessage(QStringLiteral("就绪"));
 	ui.m_startButton->setEnabled(true);
 	m_frameCount = 0;
 	m_receiveFramesCount = 0;
@@ -225,7 +245,7 @@ void MainWindow::updateImage(QPixmap image)
 		++m_countForCapturingSpectrum;
 		if (m_countForCapturingSpectrum == 10)
 		{
-			m_imageModel.takeImage();
+			m_imageModel.takeSpectrumImage();
 		}
 
 		if (m_countForCapturingSpectrum == 20)
@@ -264,12 +284,18 @@ void MainWindow::pauseCamera()
 		ui.m_imageTakingButton->setEnabled(false);
 		m_imageModel.whetherPausingUSBCamera(true);
 		ui.m_pauseButton->setText(QStringLiteral("取消暂停"));
+
+		ui.m_captureSpectrumBox->setEnabled(false);
 	}
 	else
 	{
 		m_imageModel.whetherPausingUSBCamera(false);
 		ui.m_pauseButton->setText(QStringLiteral("暂停"));
 		ui.m_imageTakingButton->setEnabled(true);
+
+
+		if (!ui.m_openSpectrometerButton->isEnabled())
+			ui.m_captureSpectrumBox->setEnabled(true);
 	}
 }
 
@@ -323,41 +349,6 @@ void MainWindow::setDigitalGain(int index)
 		u4 = 255;
 
 	m_imageModel.sendSettingCommand(0x30, 0x5E, 0x00, u4);
-
-	//switch (index)
-	//{
-	//case 0://1倍增益
-	//	
-	//	break;
-	//case 1://2倍增益
-	//	
-	//	break;
-	//case 2://4倍增益
-	//	
-	//	break;
-	//case 3://8倍增益
-	//	
-	//	
-	//	break;
-	//case 4://10倍增益
-	//	
-	//	break;
-	//case 5://10倍增益
-	//	
-	//	break;
-	//case 6://10倍增益
-	//	
-	//	break;
-	//case 7://10倍增益
-	//	
-	//	break;
-	//case 8://10倍增益
-	//	
-	//	break;
-	//default:
-	//	break;
-	//}
-	
 }
 
 void MainWindow::setExposureMode(bool isAuto)
@@ -376,14 +367,22 @@ void MainWindow::setExposureMode(bool isAuto)
 	}
 }
 
+
 void MainWindow::setExposureValue(int value)
 {
+	// cmos相关
+	// A + Q = 1904, pixclk = 29.7 Mhz
+	// (A + Q) / pixclk = 64.1 us
+	// exposure_time = valueof(0x3012) * 64.1 us
+	// max_value_of(0x3012) = 1136
+
 	qDebug() << value;
 	uchar u3;
 	uchar u4;
 
-	u3 = (value * 80 / 11) >> 8;
-	u4 = (value * 80 / 11);
+	value = value * 1000 / 64;
+	u3 = value >> 8;
+	u4 = value;
 
 	m_imageModel.sendSettingCommand(0x30, 0x12, u3, u4);
 }
@@ -392,7 +391,7 @@ void MainWindow::chooseSavingPath()
 {
 	QString path = QFileDialog::getExistingDirectory(this, QStringLiteral("存储路径选择"), ".");
 	if (path == "")
-		path = ".";
+		return;
 	m_imageModel.setSavingPath(path);
 }
 
@@ -411,11 +410,21 @@ void MainWindow::openSpectrometer()
 {
 	if (m_imageModel.openSpectrometer())
 	{
-		m_imageModel.changeWavelength(m_curWavelength);
-		
+
+		ui.m_openSpectrometerButton->setEnabled(false);
+		ui.m_wavelengthSlider->setEnabled(true);
+
+		m_imageModel.changeWavelength(m_curWavelength);		
+		ui.m_captureSpectrumBox->setEnabled(true);
+
+
+	}
+	else
+	{
+		showStateOnStatusBar("Open LCTF failed, please try again");
 	}
 
-	ui.m_captureSpectrumBox->setEnabled(true);
+	
 }
 
 void MainWindow::captureSpectrumImg()
@@ -432,17 +441,28 @@ void MainWindow::captureSpectrumImg()
 	m_progressDialog = &progress;
 	progress.setWindowModality(Qt::WindowModal);
 
+	// 当前目录下建立频谱文件夹
+	QString path = m_imageModel.getSavingPath();
+	QDir dir(path);
+	QTime time = QTime::currentTime();
+	QString dirName = time.toString("hhmmsszzz");
+	dir.mkdir(dirName);
+	m_imageModel.setSavingPath(path + "\\" + dirName);
+
 	m_isCapturingSpectrum = true;
 	
 	progress.exec();
 
 	m_isCapturingSpectrum = false;
 
+	m_imageModel.setSavingPath(path);
+
 }
 
+
+// 窗体每1.5ms左右自动进入paintEvent
 void MainWindow::paintEvent(QPaintEvent* event)
 {
-	qDebug() << "come in" << endl;
 	QMainWindow::paintEvent(event);
 	int xPos = ui.m_spectrometerCtrl->x() + ui.m_wavelengthSlider->x() - 5;
 	int yPos = ui.m_spectrometerCtrl->y() + ui.m_labelForPos->y() + ui.m_spectrometerCtrl->layout()->spacing() + 2;
@@ -457,16 +477,6 @@ void MainWindow::paintEvent(QPaintEvent* event)
 
 }
 
-bool MainWindow::eventFilter(QObject* obj, QEvent* ev)
-{
-	if (obj == ui.m_showLabel)
-	{
-		return ui.m_showLabel->eventFilter(obj, ev);
-	}
-	else
-		return QMainWindow::eventFilter(obj, ev);
-}
-
 void MainWindow::setHorizontalMirror()
 {
 	m_imageModel.setHorizontalMirror();
@@ -475,4 +485,24 @@ void MainWindow::setHorizontalMirror()
 void MainWindow::setVerticalMirror()
 {
 	m_imageModel.setVerticalMirror();
+}
+
+void MainWindow::showStateOnStatusBar(QString state, int timeOut)
+{
+	ui.statusBar->showMessage(state, timeOut);
+}
+
+void MainWindow::setIlluminationState(int state)
+{
+	switch (state)
+	{
+	case Qt::Checked:
+		m_imageModel.setLowIlluminationChecked(true);
+		break;
+	case Qt::Unchecked:
+		m_imageModel.setLowIlluminationChecked(false);
+		break;
+	default:
+		break;
+	}
 }

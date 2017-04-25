@@ -255,6 +255,8 @@ void CyDevice::receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut, int
 					CloseHandle(inOverlaps[j].hEvent);
 				}
 				qDebug() << "BeginDataXfer failed!";
+				emit deviceStateToBeShown("Please close the camera first and open again. The reason is BeginDataXfer failed at the beginning");
+
 				delete[] inOverlaps;
 				delete[] inContexts;
 				inOverlaps = nullptr;
@@ -282,6 +284,8 @@ void CyDevice::receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut, int
 				//TODO
 				qDebug() << "WaitForXfer failed!" << ", finished num is:" << transfer_count_finished <<",  begun number is:" << transfer_count_begun;
 				//break;
+
+				emit deviceStateToBeShown("WaitForXfer failed");
 			}
 
 			if (!m_dataInEndPoint->FinishDataXfer(data + transfer_count_finished * sizePerXfer, sizePerDataXfer, &inOverlaps[i], inContexts[i]))
@@ -289,6 +293,7 @@ void CyDevice::receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut, int
 				//TODO
 				currentFrameDropped = true;
 				qDebug() << "FinishDataXfer failed!";
+				emit deviceStateToBeShown("FinishDataxfer failed");
 				//break;
 			}
 
@@ -317,6 +322,8 @@ void CyDevice::receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut, int
 					inContexts = nullptr;
 
 					qDebug() << "BeginDataXfer in loop failed!";
+
+					emit deviceStateToBeShown("Please close the camera first and open again. The reason is BeginDataXfer failed during the transferring");
 					return;
 					//TODO 
 					//做些BeginDataXfer失败的事
@@ -369,8 +376,12 @@ void CyDevice::receiveData(LONG sizePerXfer, int xferQueueSize, int timeOut, int
 
 void CyDevice::changeWavelength(unsigned short wavelen)
 {
-	setWavelength(wavelen);
+	if (!setWavelength(wavelen))
+		emit deviceStateToBeShown(QStringLiteral("波长设置失败，请重新设置"));
+	else
+		emit deviceStateToBeShown("wavelength set succeeded", 2000);
 	enableReceving();
+
 	receiveData(m_dataInEndPoint->MaxPktSize * m_packetNum, m_xferQueSize, m_timeOut, wavelen);
 }
 

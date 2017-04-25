@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>CMOS数字相机测试软件</string>
+   <string>成像光谱仪测试软件</string>
   </property>
   <property name="windowIcon">
    <iconset resource="mainwindow.qrc">
@@ -420,7 +420,7 @@
           <number>1</number>
          </property>
          <property name="maximum">
-          <number>92</number>
+          <number>500</number>
          </property>
          <property name="singleStep">
           <number>1</number>
@@ -445,14 +445,26 @@
            <bold>false</bold>
           </font>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
          <property name="keyboardTracking">
           <bool>false</bool>
+         </property>
+         <property name="suffix">
+          <string> ms</string>
          </property>
          <property name="minimum">
           <number>1</number>
          </property>
          <property name="maximum">
-          <number>92</number>
+          <number>500</number>
          </property>
         </widget>
        </item>
@@ -462,7 +474,7 @@
    </widget>
    <widget class="QGroupBox" name="m_spectrometerCtrl">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -478,6 +490,9 @@
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="2" column="1" colspan="4">
       <widget class="QSlider" name="m_wavelengthSlider">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="minimum">
         <number>420</number>
        </property>
@@ -503,6 +518,9 @@
      </item>
      <item row="1" column="0">
       <widget class="QPushButton" name="m_openSpectrometerButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>打开光谱仪</string>
        </property>
@@ -510,6 +528,18 @@
      </item>
      <item row="2" column="5">
       <widget class="QSpinBox" name="m_wavelengthSpinBox">
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="buttonSymbols">
+        <enum>QAbstractSpinBox::NoButtons</enum>
+       </property>
+       <property name="accelerated">
+        <bool>false</bool>
+       </property>
        <property name="keyboardTracking">
         <bool>false</bool>
        </property>
@@ -668,7 +698,7 @@
     <property name="geometry">
      <rect>
       <x>680</x>
-      <y>460</y>
+      <y>380</y>
       <width>191</width>
       <height>181</height>
      </rect>
@@ -806,6 +836,19 @@
     </property>
     <property name="text">
      <string>竖直镜像</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="m_lowIlluminationCheck">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>700</y>
+      <width>91</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>低照度</string>
     </property>
    </widget>
   </widget>

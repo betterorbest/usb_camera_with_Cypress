@@ -33,12 +33,17 @@ public:
 	void dataToImage(unsigned char *data, int bitsPerPixel, int width, int height, unsigned short wavelen);
 
 	void setSavingPath(QString path);
+	QString getSavingPath();
 	void takeOriginalImage(const cv::Mat& image,  const QPixmap& pixmap, unsigned short wavelen);
+	void takeSpectrumImage(const cv::Mat& image, const QPixmap& pixmap, unsigned short wavelen);
 	void takeShowingImage(const QPixmap& pixmap);
 	void setTakingImageFlag(bool flag);
+	void setCapturingSpectrumFlag(bool flag);
 
 	void setHorizontal();
 	void setVertical();
+
+	void setLowIlluminationChecked(bool checked);
 signals:
 	void showImage(QPixmap image);
 
@@ -61,9 +66,12 @@ private:
 	bool m_imageProcessingFlag;
 	bool m_pauseFlag;
 	bool m_isTakingImage;
+	bool m_isCapturingSpectrum;
 
 	bool m_horizontalMirror;
 	bool m_verticalMirror;
+
+	bool m_lowIlluminationChecked;
 };
 
 inline void ImageProcess::setWidth(int width)

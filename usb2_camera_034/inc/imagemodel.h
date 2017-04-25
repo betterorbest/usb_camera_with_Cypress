@@ -33,7 +33,9 @@ public:
 	void sendSettingCommand(uchar u1, uchar u2, uchar u3, uchar u4);
 
 	void setSavingPath(QString path);
+	QString getSavingPath();
 	void takeImage();
+	void takeSpectrumImage();
 
 	void setHorizontalMirror();
 	void setVerticalMirror();
@@ -55,6 +57,8 @@ private:
 public:
 	bool openSpectrometer();
 	bool setWavelength(unsigned short wavelen);
+
+	void setLowIlluminationChecked(bool flag);
 
 
 	

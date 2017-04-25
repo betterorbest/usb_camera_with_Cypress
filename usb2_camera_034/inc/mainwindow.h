@@ -15,7 +15,8 @@ public:
 	~MainWindow();
 
 	void paintEvent(QPaintEvent* event);
-	bool eventFilter(QObject *, QEvent *);
+
+	
 private:
 	void initCameraConfig();
 
@@ -56,6 +57,11 @@ public slots:
 	void setHorizontalMirror();
 	void setVerticalMirror();
 
+	void setIlluminationState(int state);
+
+
+	void showStateOnStatusBar(QString state, int timeOut = 0);
+
 private:
 	Ui::MainWindowClass ui;
 
@@ -63,7 +69,7 @@ private:
 
 	QTimer m_timer;
 
-	QLabel *m_statusBarLabel;
+	//QLabel *m_statusBarLabel;
 
 	int m_frameCount;
 
@@ -90,6 +96,7 @@ private:
 
 	unsigned short m_sliderMinWavelength;
 	unsigned short m_sliderMaxWavelength;
+
 };
 
 #endif // MAINWINDOW_H

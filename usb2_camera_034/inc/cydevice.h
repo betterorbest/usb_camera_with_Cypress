@@ -43,6 +43,7 @@ public:
 signals:
 	//void completeFrameTransmission(unsigned char *data);
 	void completeFrameTransmission();
+	void deviceStateToBeShown(QString state, int timeOut = 0);
 
 public slots:
 	void receiveData();

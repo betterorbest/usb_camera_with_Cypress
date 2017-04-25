@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
@@ -94,6 +95,7 @@ public:
     QLabel *m_rangeOfWavelen;
     QPushButton *m_horizontalMirror;
     QPushButton *m_verticalMirror;
+    QCheckBox *m_lowIlluminationCheck;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindowClass)
@@ -242,7 +244,7 @@ public:
         m_exposureSlider->setSizePolicy(sizePolicy);
         m_exposureSlider->setMaximumSize(QSize(16777215, 16777215));
         m_exposureSlider->setMinimum(1);
-        m_exposureSlider->setMaximum(92);
+        m_exposureSlider->setMaximum(500);
         m_exposureSlider->setSingleStep(1);
         m_exposureSlider->setTracking(false);
         m_exposureSlider->setOrientation(Qt::Horizontal);
@@ -253,9 +255,12 @@ public:
         m_exposureSpinBox->setObjectName(QStringLiteral("m_exposureSpinBox"));
         m_exposureSpinBox->setEnabled(false);
         m_exposureSpinBox->setFont(font2);
+        m_exposureSpinBox->setAlignment(Qt::AlignCenter);
+        m_exposureSpinBox->setReadOnly(true);
+        m_exposureSpinBox->setButtonSymbols(QAbstractSpinBox::NoButtons);
         m_exposureSpinBox->setKeyboardTracking(false);
         m_exposureSpinBox->setMinimum(1);
-        m_exposureSpinBox->setMaximum(92);
+        m_exposureSpinBox->setMaximum(500);
 
         horizontalLayout_12->addWidget(m_exposureSpinBox);
 
@@ -264,7 +269,7 @@ public:
 
         m_spectrometerCtrl = new QGroupBox(centralWidget);
         m_spectrometerCtrl->setObjectName(QStringLiteral("m_spectrometerCtrl"));
-        m_spectrometerCtrl->setEnabled(false);
+        m_spectrometerCtrl->setEnabled(true);
         m_spectrometerCtrl->setGeometry(QRect(10, 740, 781, 121));
         gridLayout_2 = new QGridLayout(m_spectrometerCtrl);
         gridLayout_2->setSpacing(6);
@@ -272,6 +277,7 @@ public:
         gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
         m_wavelengthSlider = new QSlider(m_spectrometerCtrl);
         m_wavelengthSlider->setObjectName(QStringLiteral("m_wavelengthSlider"));
+        m_wavelengthSlider->setEnabled(false);
         m_wavelengthSlider->setMinimum(420);
         m_wavelengthSlider->setMaximum(760);
         m_wavelengthSlider->setSingleStep(10);
@@ -284,11 +290,16 @@ public:
 
         m_openSpectrometerButton = new QPushButton(m_spectrometerCtrl);
         m_openSpectrometerButton->setObjectName(QStringLiteral("m_openSpectrometerButton"));
+        m_openSpectrometerButton->setEnabled(false);
 
         gridLayout_2->addWidget(m_openSpectrometerButton, 1, 0, 1, 1);
 
         m_wavelengthSpinBox = new QSpinBox(m_spectrometerCtrl);
         m_wavelengthSpinBox->setObjectName(QStringLiteral("m_wavelengthSpinBox"));
+        m_wavelengthSpinBox->setAlignment(Qt::AlignCenter);
+        m_wavelengthSpinBox->setReadOnly(true);
+        m_wavelengthSpinBox->setButtonSymbols(QAbstractSpinBox::NoButtons);
+        m_wavelengthSpinBox->setAccelerated(false);
         m_wavelengthSpinBox->setKeyboardTracking(false);
         m_wavelengthSpinBox->setMinimum(420);
         m_wavelengthSpinBox->setMaximum(760);
@@ -367,7 +378,7 @@ public:
         m_captureSpectrumBox = new QGroupBox(centralWidget);
         m_captureSpectrumBox->setObjectName(QStringLiteral("m_captureSpectrumBox"));
         m_captureSpectrumBox->setEnabled(false);
-        m_captureSpectrumBox->setGeometry(QRect(680, 460, 191, 181));
+        m_captureSpectrumBox->setGeometry(QRect(680, 380, 191, 181));
         gridLayout_3 = new QGridLayout(m_captureSpectrumBox);
         gridLayout_3->setSpacing(6);
         gridLayout_3->setContentsMargins(11, 11, 11, 11);
@@ -450,6 +461,9 @@ public:
         m_verticalMirror = new QPushButton(centralWidget);
         m_verticalMirror->setObjectName(QStringLiteral("m_verticalMirror"));
         m_verticalMirror->setGeometry(QRect(710, 300, 93, 28));
+        m_lowIlluminationCheck = new QCheckBox(centralWidget);
+        m_lowIlluminationCheck->setObjectName(QStringLiteral("m_lowIlluminationCheck"));
+        m_lowIlluminationCheck->setGeometry(QRect(680, 700, 91, 19));
         MainWindowClass->setCentralWidget(centralWidget);
         statusBar = new QStatusBar(MainWindowClass);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -466,7 +480,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindowClass)
     {
-        MainWindowClass->setWindowTitle(QApplication::translate("MainWindowClass", "CMOS\346\225\260\345\255\227\347\233\270\346\234\272\346\265\213\350\257\225\350\275\257\344\273\266", 0));
+        MainWindowClass->setWindowTitle(QApplication::translate("MainWindowClass", "\346\210\220\345\203\217\345\205\211\350\260\261\344\273\252\346\265\213\350\257\225\350\275\257\344\273\266", 0));
         m_showLabel->setText(QApplication::translate("MainWindowClass", "\346\230\276\347\244\272", 0));
         m_startButton->setText(QApplication::translate("MainWindowClass", "\346\211\223\345\274\200\347\233\270\346\234\272", 0));
         m_stopButton->setText(QApplication::translate("MainWindowClass", "\345\205\263\351\227\255\347\233\270\346\234\272", 0));
@@ -498,6 +512,7 @@ public:
         m_exposureMode->setTitle(QApplication::translate("MainWindowClass", "\346\233\235\345\205\211\350\256\276\347\275\256", 0));
         m_autoExposure->setText(QApplication::translate("MainWindowClass", "\350\207\252\345\212\250", 0));
         m_manualExposure->setText(QApplication::translate("MainWindowClass", "\346\211\213\345\212\250(\346\233\235\345\205\211\345\200\274)", 0));
+        m_exposureSpinBox->setSuffix(QApplication::translate("MainWindowClass", " ms", 0));
         m_spectrometerCtrl->setTitle(QApplication::translate("MainWindowClass", "\345\205\211\350\260\261\344\273\252\346\223\215\344\275\234", 0));
         m_openSpectrometerButton->setText(QApplication::translate("MainWindowClass", "\346\211\223\345\274\200\345\205\211\350\260\261\344\273\252", 0));
         label_5->setText(QApplication::translate("MainWindowClass", "\346\263\242\351\225\277/nm", 0));
@@ -522,6 +537,7 @@ public:
         m_rangeOfWavelen->setText(QApplication::translate("MainWindowClass", "-", 0));
         m_horizontalMirror->setText(QApplication::translate("MainWindowClass", "\346\260\264\345\271\263\351\225\234\345\203\217", 0));
         m_verticalMirror->setText(QApplication::translate("MainWindowClass", "\347\253\226\347\233\264\351\225\234\345\203\217", 0));
+        m_lowIlluminationCheck->setText(QApplication::translate("MainWindowClass", "\344\275\216\347\205\247\345\272\246", 0));
     } // retranslateUi
 
 };

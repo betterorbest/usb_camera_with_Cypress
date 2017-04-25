@@ -1,6 +1,5 @@
 #include "imagemodel.h"
 #include "imagefifo.h"
-#define FIFO_SIZE 2  //该数值必须大于等于2
 
 ImageModel::ImageModel(QWidget *mainWindow)
 	:m_mainWindow(mainWindow)
@@ -15,11 +14,13 @@ ImageModel::ImageModel(QWidget *mainWindow)
 	connect(&m_imageProcess, SIGNAL(showImage(QPixmap)), m_mainWindow, SLOT(updateImage(QPixmap)));
 	//connect(&m_imageProcess, SIGNAL(showImage(QImage)), m_mainWindow, SLOT(updateImage(QImage)));
 	connect(&m_camera, SIGNAL(completeFrameTransmission()), m_mainWindow, SLOT(countReceiveFrames()));
-	
+	connect(&m_camera, SIGNAL(deviceStateToBeShown(QString, int)), m_mainWindow, SLOT(showStateOnStatusBar(QString, int)));
+
 	connect(this, &ImageModel::wavelengthChanged, &m_camera, static_cast<void (CyDevice::*)(unsigned short)>(&CyDevice::changeWavelength));
 	//connect(&m_camera, SIGNAL(completeFrameTransmission(unsigned char *, bool)), &m_imageProcess, SLOT(dataToImage(unsigned char *, bool)), Qt::DirectConnection);
 	//connect(&m_camera, SIGNAL(completeFrameTransmission(unsigned char *, bool)), &m_imageProcess, SLOT(dataToImage(unsigned char *, bool)));
 
+	
 }
 
 ImageModel::~ImageModel()
@@ -139,6 +140,10 @@ void ImageModel::changeWavelength(unsigned short wavelen)
 		m_camera.disableReceving();
 		emit wavelengthChanged(wavelen);
 	}
+	else
+	{
+		emit m_camera.deviceStateToBeShown(QStringLiteral("波长切换失败，请等待一段时间重新设置"));
+	}
 }
 
 void ImageModel::sendSettingCommand(uchar u1, uchar u2, uchar u3, uchar u4)
@@ -159,7 +164,10 @@ void ImageModel::takeImage()
 	m_imageProcess.setTakingImageFlag(true);
 }
 
-
+void ImageModel::takeSpectrumImage()
+{
+	m_imageProcess.setCapturingSpectrumFlag(true);
+}
 
 bool ImageModel::openSpectrometer()
 {
@@ -181,3 +189,12 @@ void ImageModel::setVerticalMirror()
 	m_imageProcess.setVertical();
 }
 
+QString ImageModel::getSavingPath()
+{
+	return m_imageProcess.getSavingPath();
+}
+
+void ImageModel::setLowIlluminationChecked(bool flag)
+{
+	m_imageProcess.setLowIlluminationChecked(flag);
+}
