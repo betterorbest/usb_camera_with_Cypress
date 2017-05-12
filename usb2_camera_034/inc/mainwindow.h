@@ -5,6 +5,7 @@
 #include "ui_mainwindow.h"
 
 #include "imagemodel.h"
+#include "spectrumanalysis.h"
 
 class MainWindow : public QMainWindow
 {
@@ -62,6 +63,8 @@ public slots:
 
 	void showStateOnStatusBar(QString state, int timeOut = 0);
 
+	void getReferenceLights();
+	void analyzeSpectrum();
 private:
 	Ui::MainWindowClass ui;
 

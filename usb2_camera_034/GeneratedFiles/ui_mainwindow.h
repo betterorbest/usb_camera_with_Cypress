@@ -96,6 +96,8 @@ public:
     QPushButton *m_horizontalMirror;
     QPushButton *m_verticalMirror;
     QCheckBox *m_lowIlluminationCheck;
+    QPushButton *m_spectrumAnalysis;
+    QPushButton *m_getReference;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindowClass)
@@ -464,6 +466,13 @@ public:
         m_lowIlluminationCheck = new QCheckBox(centralWidget);
         m_lowIlluminationCheck->setObjectName(QStringLiteral("m_lowIlluminationCheck"));
         m_lowIlluminationCheck->setGeometry(QRect(680, 700, 91, 19));
+        m_spectrumAnalysis = new QPushButton(centralWidget);
+        m_spectrumAnalysis->setObjectName(QStringLiteral("m_spectrumAnalysis"));
+        m_spectrumAnalysis->setGeometry(QRect(690, 630, 93, 28));
+        m_getReference = new QPushButton(centralWidget);
+        m_getReference->setObjectName(QStringLiteral("m_getReference"));
+        m_getReference->setEnabled(false);
+        m_getReference->setGeometry(QRect(690, 590, 93, 28));
         MainWindowClass->setCentralWidget(centralWidget);
         statusBar = new QStatusBar(MainWindowClass);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -538,6 +547,8 @@ public:
         m_horizontalMirror->setText(QApplication::translate("MainWindowClass", "\346\260\264\345\271\263\351\225\234\345\203\217", 0));
         m_verticalMirror->setText(QApplication::translate("MainWindowClass", "\347\253\226\347\233\264\351\225\234\345\203\217", 0));
         m_lowIlluminationCheck->setText(QApplication::translate("MainWindowClass", "\344\275\216\347\205\247\345\272\246", 0));
+        m_spectrumAnalysis->setText(QApplication::translate("MainWindowClass", "\345\205\211\350\260\261\345\210\206\346\236\220", 0));
+        m_getReference->setText(QApplication::translate("MainWindowClass", "\350\216\267\345\217\226\345\217\202\350\200\203\345\205\211", 0));
     } // retranslateUi
 
 };

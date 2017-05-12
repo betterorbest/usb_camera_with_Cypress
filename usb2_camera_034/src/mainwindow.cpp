@@ -50,6 +50,9 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui.m_horizontalMirror, &QPushButton::clicked, this, &MainWindow::setHorizontalMirror);
 	connect(ui.m_verticalMirror, &QPushButton::clicked, this, &MainWindow::setVerticalMirror);
 	connect(ui.m_lowIlluminationCheck, &QCheckBox::stateChanged, this, &MainWindow::setIlluminationState);
+
+	connect(ui.m_getReference, &QPushButton::clicked, this, &MainWindow::getReferenceLights);
+	connect(ui.m_spectrumAnalysis, &QPushButton::clicked, this, &MainWindow::analyzeSpectrum);
 }
 
 MainWindow::~MainWindow()
@@ -203,6 +206,7 @@ void MainWindow::closeCamera()
 	ui.m_captureSpectrumBox->setEnabled(false);
 	//ui.m_spectrometerCtrl->setEnabled(false);
 	ui.m_wavelengthSlider->setEnabled(false);
+	ui.m_getReference->setEnabled(false);
 
 	m_imageModel.closeUSBCamera();
 	m_timer.stop();
@@ -286,6 +290,7 @@ void MainWindow::pauseCamera()
 		ui.m_pauseButton->setText(QStringLiteral("取消暂停"));
 
 		ui.m_captureSpectrumBox->setEnabled(false);
+		ui.m_getReference->setEnabled(false);
 	}
 	else
 	{
@@ -295,7 +300,11 @@ void MainWindow::pauseCamera()
 
 
 		if (!ui.m_openSpectrometerButton->isEnabled())
+		{
 			ui.m_captureSpectrumBox->setEnabled(true);
+			ui.m_getReference->setEnabled(true);
+		}
+			
 	}
 }
 
@@ -413,6 +422,7 @@ void MainWindow::openSpectrometer()
 
 		ui.m_openSpectrometerButton->setEnabled(false);
 		ui.m_wavelengthSlider->setEnabled(true);
+		ui.m_getReference->setEnabled(true);
 
 		m_imageModel.changeWavelength(m_curWavelength);		
 		ui.m_captureSpectrumBox->setEnabled(true);
@@ -505,4 +515,52 @@ void MainWindow::setIlluminationState(int state)
 	default:
 		break;
 	}
+}
+
+void MainWindow::analyzeSpectrum()
+{
+	QString appPath = QCoreApplication::applicationDirPath();
+	QDir dir(appPath + "/" + "reference");
+	if (!dir.exists())
+	{
+		QMessageBox::about(this, QStringLiteral("提示"), QStringLiteral("请先获取参考光"));
+		return;
+	}
+
+
+
+	SpectrumAnalysisDialog dialog;
+
+	dialog.exec();
+}
+
+void MainWindow::getReferenceLights()
+{
+	m_curWavelength = m_sliderMinWavelength;
+	m_minWavelength = m_sliderMinWavelength;
+	m_maxWavelength = m_sliderMaxWavelength;
+	m_stepOfWavelength = 10;
+	m_countForCapturingSpectrum = 0;
+	m_countForProgressBar = 0;
+
+	int num = (m_maxWavelength - m_minWavelength) / m_stepOfWavelength + 1;
+	QProgressDialog progress(QStringLiteral("捕获参考光谱"), QStringLiteral("停止捕获"), 0, num, this);
+	m_progressDialog = &progress;
+	progress.setWindowModality(Qt::WindowModal);
+
+	// 当前目录下建立频谱文件夹
+	QString path = m_imageModel.getSavingPath();
+	QString appPath = QCoreApplication::applicationDirPath();
+	QDir dir(appPath);
+	QString dirName = "reference";
+	dir.mkdir(dirName);
+	m_imageModel.setSavingPath(appPath + "\\" + dirName);
+
+	m_isCapturingSpectrum = true;
+
+	progress.exec();
+
+	m_isCapturingSpectrum = false;
+
+	m_imageModel.setSavingPath(path);
 }

@@ -851,6 +851,35 @@
      <string>低照度</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="m_spectrumAnalysis">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>630</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>光谱分析</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="m_getReference">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>590</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>获取参考光</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
