@@ -20,6 +20,7 @@ ImageModel::ImageModel(QWidget *mainWindow)
 	//connect(&m_camera, SIGNAL(completeFrameTransmission(unsigned char *, bool)), &m_imageProcess, SLOT(dataToImage(unsigned char *, bool)), Qt::DirectConnection);
 	//connect(&m_camera, SIGNAL(completeFrameTransmission(unsigned char *, bool)), &m_imageProcess, SLOT(dataToImage(unsigned char *, bool)));
 
+	connect(&m_imageProcess, SIGNAL(referenceWavelengthInfo(unsigned short, int)), m_mainWindow, SLOT(changeReferenceParameter(unsigned short, int)));
 	
 }
 
@@ -167,6 +168,11 @@ void ImageModel::takeImage()
 void ImageModel::takeSpectrumImage()
 {
 	m_imageProcess.setCapturingSpectrumFlag(true);
+}
+
+void ImageModel::captureReference(bool flag)
+{
+	m_imageProcess.setCapturingReferenceFlag(flag);
 }
 
 bool ImageModel::openSpectrometer()

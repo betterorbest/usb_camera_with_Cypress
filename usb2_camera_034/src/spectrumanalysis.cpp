@@ -12,7 +12,7 @@ SpectrumAnalysisDialog::SpectrumAnalysisDialog(QWidget* parent)
 	connect(ui.m_clearCurvesButton, &QPushButton::clicked, this, &SpectrumAnalysisDialog::clearGraph);
 	
 
-	ui.m_plot->xAxis->setRange(420, 720);
+	ui.m_plot->xAxis->setRange(410, 730);
 	ui.m_plot->xAxis->setLabel(QStringLiteral("²¨³¤/nm"));
 	ui.m_plot->yAxis->setRange(0, 1);
 	ui.m_plot->yAxis->setLabel(QStringLiteral("·´ÉäÂÊ"));
@@ -33,6 +33,64 @@ void SpectrumAnalysisDialog::calculateReflectivity(int x, int y)
 	}
 
 	QCPGraph *graph = ui.m_plot->addGraph();
+	static int color = 0;
+	QPen pen;
+	switch (color++ % 8)
+	{
+		
+	case 0:
+		graph->setPen(QPen(Qt::red));
+		break;
+	case 1:
+		graph->setPen(QPen(Qt::black));
+		break;
+	case 2:
+		graph->setPen(QPen(Qt::green));
+		break;
+	case 3:
+		graph->setPen(QPen(Qt::blue));
+		break;
+	case 4:
+		graph->setPen(QPen(Qt::cyan));
+		break;
+	case 5:
+		graph->setPen(QPen(Qt::magenta));
+		break;
+	case 6:
+		graph->setPen(QPen(Qt::darkCyan));
+		break;
+	case 7:
+		graph->setPen(QPen(Qt::gray));
+		break;
+	case 8:
+		graph->setPen(QPen(Qt::darkRed));
+		break;
+	case 9:
+		graph->setPen(QPen(Qt::darkGreen));
+		break;
+	case 10:
+		graph->setPen(QPen(Qt::darkBlue));
+		break;
+	case 11:
+		graph->setPen(QPen(Qt::yellow)); 
+		break;
+	case 12:
+		graph->setPen(QPen(Qt::darkMagenta));
+		break;
+	case 13:
+		graph->setPen(QPen(Qt::darkYellow));
+		break;
+	case 14:
+		graph->setPen(QPen(Qt::darkGray));
+		break;
+	case 15:
+		graph->setPen(QPen(Qt::lightGray));
+		break;
+	default:
+		graph->setPen(QPen(Qt::black));
+		break;
+	}
+
 	graph->setData(m_xPlot, m_yPlot);
 	graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 6));
 	ui.m_plot->replot();

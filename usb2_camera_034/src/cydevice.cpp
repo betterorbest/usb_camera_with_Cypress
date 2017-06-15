@@ -380,6 +380,7 @@ void CyDevice::changeWavelength(unsigned short wavelen)
 		emit deviceStateToBeShown(QStringLiteral("波长设置失败，请重新设置"));
 	else
 		emit deviceStateToBeShown("wavelength set succeeded", 2000);
+
 	enableReceving();
 
 	receiveData(m_dataInEndPoint->MaxPktSize * m_packetNum, m_xferQueSize, m_timeOut, wavelen);
@@ -400,7 +401,8 @@ bool CyDevice::configRegister(uchar* buf, int len)
 /********LCTF代码部分*****************/
 bool CyDevice::openLCTF()
 {
-	return sendControlCode(0xd1);
+	//return sendControlCode(0xd1);
+	return true;
 }
 
 bool CyDevice::setWavelength(unsigned short wavelen)

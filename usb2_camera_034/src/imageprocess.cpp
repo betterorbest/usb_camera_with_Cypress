@@ -12,6 +12,7 @@ ImageProcess::ImageProcess()
 	m_path("."),
 	m_isTakingImage(false),
 	m_isCapturingSpectrum(false),
+	m_isCapturingReference(false),
 	m_horizontalMirror(false),
 	m_verticalMirror(false),
 	m_lowIlluminationChecked(false)
@@ -57,7 +58,26 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 		int size = height * width;
 		//unsignd short temp;
 		//DWORD start = GetTickCount();
-		
+
+		//cv::Mat rawDataImage(height, width, CV_16UC1, data16bits);
+		//int pixAvg = cv::mean(rawDataImage)[0];
+		//qDebug() << pixAvg;
+
+		int thresholdLow = 1500;     //1000到2000
+		int thresholdHigh = 4080;
+		if (m_isCapturingReference) 
+		{
+			cv::Mat rawDataImage(height, width, CV_16UC1, data16bits);
+			int pixAvg = cv::mean(rawDataImage)[0];
+			qDebug() << QStringLiteral("波长: ") << wavelen << QStringLiteral("   均值:") << pixAvg;
+			if (pixAvg > thresholdHigh)
+				emit referenceWavelengthInfo(wavelen, -1);
+			else if (pixAvg < thresholdLow)
+				emit referenceWavelengthInfo(wavelen, +1);
+			else 
+				emit referenceWavelengthInfo(wavelen, 0);
+		}
+
 		int x1 = 1024;
 		int y1 = 192;
 		int x2 = 3072;
@@ -265,6 +285,7 @@ void ImageProcess::takeShowingImage(const QPixmap& pixmap)
 
 void ImageProcess::setTakingImageFlag(bool flag)
 {
+	//这样写其实只能设置flag为true,防止连续点击拍照按键，不停赋值flag为true
 	if (m_isTakingImage)
 		return;
 	m_isTakingImage = flag;
@@ -272,9 +293,12 @@ void ImageProcess::setTakingImageFlag(bool flag)
 
 void ImageProcess::setCapturingSpectrumFlag(bool flag)
 {
-	if (m_isCapturingSpectrum)
-		return;
 	m_isCapturingSpectrum = flag;
+}
+
+void ImageProcess::setCapturingReferenceFlag(bool flag)
+{
+	m_isCapturingReference = flag;
 }
 
 void ImageProcess::autoWhiteBalance(cv::Mat &src, cv::Mat &dst)
@@ -362,7 +386,6 @@ void ImageProcess::autoWhiteBalance(cv::Mat &src, cv::Mat &dst)
 	//delete[] RGBSum;
 
 }
-
 
 
 

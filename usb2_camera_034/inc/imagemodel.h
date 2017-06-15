@@ -36,6 +36,7 @@ public:
 	QString getSavingPath();
 	void takeImage();
 	void takeSpectrumImage();
+	void captureReference(bool flag);
 
 	void setHorizontalMirror();
 	void setVerticalMirror();
@@ -51,8 +52,6 @@ private:
 
 	QThread m_receiveThread;
 	QThread m_imageProcessThread;
-
-
 
 public:
 	bool openSpectrometer();

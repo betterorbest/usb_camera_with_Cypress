@@ -39,13 +39,16 @@ public:
 	void takeShowingImage(const QPixmap& pixmap);
 	void setTakingImageFlag(bool flag);
 	void setCapturingSpectrumFlag(bool flag);
+	void setCapturingReferenceFlag(bool flag);
 
 	void setHorizontal();
 	void setVertical();
 
 	void setLowIlluminationChecked(bool checked);
+	
 signals:
 	void showImage(QPixmap image);
+	void referenceWavelengthInfo(unsigned short wavelen, int addOrSub);
 
 public slots:
 	void dataToImage();
@@ -67,6 +70,7 @@ private:
 	bool m_pauseFlag;
 	bool m_isTakingImage;
 	bool m_isCapturingSpectrum;
+	bool m_isCapturingReference;
 
 	bool m_horizontalMirror;
 	bool m_verticalMirror;

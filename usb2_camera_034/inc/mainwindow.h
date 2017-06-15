@@ -7,6 +7,15 @@
 #include "imagemodel.h"
 #include "spectrumanalysis.h"
 
+#include "qhash.h"
+
+class CameraParameter
+{
+public:
+	int m_exposureValue;
+	int m_analogGain;
+};
+
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -17,6 +26,8 @@ public:
 
 	void paintEvent(QPaintEvent* event);
 
+	void saveReferenceParameterToFile(const QString& path);
+	void readReferenceParameterFromFile(const QString& path);
 	
 private:
 	void initCameraConfig();
@@ -65,6 +76,9 @@ public slots:
 
 	void getReferenceLights();
 	void analyzeSpectrum();
+
+	void changeReferenceParameter(unsigned short wavelen, int addOrSub);
+
 private:
 	Ui::MainWindowClass ui;
 
@@ -100,6 +114,17 @@ private:
 	unsigned short m_sliderMinWavelength;
 	unsigned short m_sliderMaxWavelength;
 
+	
+	QHash<int, CameraParameter> m_referenceParameter;
+	int m_exposureVal;
+	int m_lowExposureVal; 
+	int m_highExposureVal;
+	int m_analogGainGroup[5];
+	int m_analogGainNum;
+	bool m_noAdjust;
 };
+
+
+
 
 #endif // MAINWINDOW_H

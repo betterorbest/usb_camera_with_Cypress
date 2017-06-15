@@ -14,7 +14,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 	initCameraConfig();
 
-	
+	m_analogGainGroup[0] = 1;
+	m_analogGainGroup[1] = 2;
+	m_analogGainGroup[2] = 4;
+	m_analogGainGroup[3] = 8;
+	m_analogGainGroup[4] = 10;
+
 	ui.statusBar->showMessage(QStringLiteral("就绪"));
 	//m_statusBarLabel = new QLabel(ui.statusBar);
 	//ui.statusBar->addWidget(m_statusBarLabel);
@@ -151,10 +156,10 @@ void MainWindow::openCamera()
 	//qDebug() << "i have in ";
 	if (m_imageModel.openUSBCamera())
 	{
-
 		//相机配置初始化
 		setAnalogGain(ui.m_analogGainSet->currentIndex());
 		setDigitalGain(ui.m_digitalGainSet->currentIndex());
+
 		if (ui.m_autoExposure->isChecked())
 		{
 			setExposureMode(true);
@@ -164,7 +169,6 @@ void MainWindow::openCamera()
 			setExposureMode(false);
 			setExposureValue(ui.m_exposureSlider->value());
 		}
-
 
 
 		ui.m_startButton->setEnabled(false);
@@ -240,25 +244,175 @@ void MainWindow::updateImage(QPixmap image)
 		{
 			if (m_curWavelength <= m_maxWavelength)
 			{
+				//由于参考光的获取波长及间隔均固定，所以
+				//如果保存的参数没有所选波长，使用下面的简单方法防止程序运行错误
+				//可以通过界面波长的可调值来减少参数缺失的可能，如设置界面用户可调的波长步长为10
+
+				if (m_referenceParameter.count(m_curWavelength) != 0)
+				{
+					setExposureValue(m_referenceParameter[m_curWavelength].m_exposureValue);
+					setAnalogGain(m_referenceParameter[m_curWavelength].m_analogGain);
+				}
+				else
+				{
+					setExposureValue(100);
+					setAnalogGain(1);
+				}
+
 				m_imageModel.changeWavelength(m_curWavelength);
 				m_curWavelength += m_stepOfWavelength;
 				++m_countForProgressBar;
 			}
 		}
-			
+		
 		++m_countForCapturingSpectrum;
-		if (m_countForCapturingSpectrum == 10)
+		if (m_countForCapturingSpectrum == 5)
 		{
 			m_imageModel.takeSpectrumImage();
 		}
 
-		if (m_countForCapturingSpectrum == 20)
+		if (m_countForCapturingSpectrum == 10)
 		{
 			m_countForCapturingSpectrum = 0;
 			m_progressDialog->setValue(m_countForProgressBar);
 		}
 
 	}
+}
+
+void MainWindow::changeReferenceParameter(unsigned short wavelen, int addOrSub)
+{
+	if (wavelen != m_curWavelength)
+		return;
+
+	if (m_noAdjust)
+	{
+		++m_countForCapturingSpectrum;
+
+		if (m_countForCapturingSpectrum == 5)
+		{
+			m_imageModel.takeSpectrumImage();
+
+			CameraParameter temp;
+			temp.m_exposureValue = m_exposureVal;
+			temp.m_analogGain = m_analogGainGroup[m_analogGainNum];
+			m_referenceParameter[m_curWavelength] = temp;
+		}
+
+		if (m_countForCapturingSpectrum == 10)
+		{
+			m_countForCapturingSpectrum = 0;
+
+			m_lowExposureVal = 1;
+			m_highExposureVal = 200;
+			m_analogGainNum = 0;
+			setAnalogGain(m_analogGainGroup[m_analogGainNum]);
+
+			++m_countForProgressBar;
+			m_progressDialog->setValue(m_countForProgressBar);
+			m_curWavelength = wavelen + m_stepOfWavelength;
+			m_imageModel.changeWavelength(m_curWavelength);
+
+		
+			//m_exposureVal = (m_lowExposureVal + m_highExposureVal) / 2;
+			//setExposureValue(m_exposureVal);
+
+			m_noAdjust = false;
+		}
+
+	
+		return;
+	}
+
+	switch (addOrSub)
+	{
+	case 0:
+		++m_countForCapturingSpectrum;
+
+		if (m_countForCapturingSpectrum == 5)
+		{
+			m_imageModel.takeSpectrumImage();
+
+			CameraParameter temp;
+			temp.m_exposureValue = m_exposureVal;
+			temp.m_analogGain = m_analogGainGroup[m_analogGainNum];
+			m_referenceParameter[m_curWavelength] = temp;
+		}
+
+		if (m_countForCapturingSpectrum == 10)
+		{
+			m_countForCapturingSpectrum = 0;
+
+			m_lowExposureVal = 1;
+			m_highExposureVal = 200;
+			m_analogGainNum = 0;
+			setAnalogGain(m_analogGainGroup[m_analogGainNum]);
+			//m_exposureVal = (m_lowExposureVal + m_highExposureVal) / 2;
+			//setExposureValue(m_exposureVal);
+
+			++m_countForProgressBar;
+			m_progressDialog->setValue(m_countForProgressBar);
+			m_curWavelength = wavelen + m_stepOfWavelength;
+			m_imageModel.changeWavelength(m_curWavelength);
+		}
+		break;
+	case -1:
+		++m_countForCapturingSpectrum;
+
+		if (m_countForCapturingSpectrum >= 5)
+		{
+
+			if (m_lowExposureVal < m_highExposureVal)
+			{
+				m_highExposureVal = m_exposureVal - 1;
+				m_exposureVal = (m_lowExposureVal + m_highExposureVal) / 2;
+				setExposureValue(m_exposureVal);
+			}
+			else
+			{
+				if (m_analogGainNum > 0)
+				{
+					setAnalogGain(m_analogGainGroup[--m_analogGainNum]);
+				}
+				else
+				{
+					m_noAdjust = true;
+				}
+			}
+
+			m_countForCapturingSpectrum = 0;
+		}
+		break;
+	case 1:
+		++m_countForCapturingSpectrum;
+
+		if (m_countForCapturingSpectrum >= 5)
+		{
+			if (m_lowExposureVal < m_highExposureVal)
+			{
+				m_lowExposureVal = m_exposureVal + 1;
+				m_exposureVal = (m_lowExposureVal + m_highExposureVal) / 2;
+				setExposureValue(m_exposureVal);
+			}
+			else
+			{
+				if (m_analogGainNum < 4)
+				{
+					setAnalogGain(m_analogGainGroup[++m_analogGainNum]);
+				}
+				else
+				{
+					m_noAdjust = true;
+				}
+			}
+			
+			m_countForCapturingSpectrum = 0;
+		}
+
+		break;
+
+	}
+
 }
 
 void MainWindow::showFrameRate()
@@ -371,6 +525,7 @@ void MainWindow::setExposureMode(bool isAuto)
 	else
 	{
 		m_imageModel.sendSettingCommand(0x31, 0x00, 0x00, 0x1A);
+		setExposureValue(ui.m_exposureSlider->value());
 		ui.m_exposureSlider->setEnabled(true);
 		ui.m_exposureSpinBox->setEnabled(true);
 	}
@@ -424,14 +579,16 @@ void MainWindow::openSpectrometer()
 		ui.m_wavelengthSlider->setEnabled(true);
 		ui.m_getReference->setEnabled(true);
 
-		m_imageModel.changeWavelength(m_curWavelength);		
+		changeWavelength();
+		//m_imageModel.changeWavelength(700);
 		ui.m_captureSpectrumBox->setEnabled(true);
-
 
 	}
 	else
 	{
+
 		showStateOnStatusBar("Open LCTF failed, please try again");
+
 	}
 
 	
@@ -439,6 +596,23 @@ void MainWindow::openSpectrometer()
 
 void MainWindow::captureSpectrumImg()
 {
+	if (m_referenceParameter.empty())
+	{
+		readReferenceParameterFromFile(QApplication::applicationDirPath() + "\\reference");
+	}
+
+
+	int sliderExpVal;
+	if (ui.m_autoExposure->isChecked())
+	{
+		m_imageModel.sendSettingCommand(0x31, 0x00, 0x00, 0x1A);
+	}
+	else
+	{
+		sliderExpVal = ui.m_exposureSlider->value();
+	}
+
+
 	m_curWavelength = ui.m_capMinWavelen->value();
 	m_minWavelength = ui.m_capMinWavelen->value();
 	m_maxWavelength = ui.m_capMaxWavelen->value();
@@ -467,6 +641,19 @@ void MainWindow::captureSpectrumImg()
 
 	m_imageModel.setSavingPath(path);
 
+
+	if (ui.m_autoExposure->isChecked())
+	{
+		m_imageModel.sendSettingCommand(0x31, 0x00, 0x00, 0x1B);
+	}
+	else
+	{
+		setExposureValue(sliderExpVal);
+	}
+
+	setAnalogGain(ui.m_analogGainSet->currentIndex());
+	if (ui.m_wavelengthSlider->isEnabled())
+		m_imageModel.changeWavelength(ui.m_wavelengthSlider->value());
 }
 
 
@@ -527,8 +714,6 @@ void MainWindow::analyzeSpectrum()
 		return;
 	}
 
-
-
 	SpectrumAnalysisDialog dialog;
 
 	dialog.exec();
@@ -536,6 +721,23 @@ void MainWindow::analyzeSpectrum()
 
 void MainWindow::getReferenceLights()
 {
+	int sliderExpVal;
+	//判断是否自动曝光，如果是，变手动曝光,如果不是，备份此时slider的曝光值
+	if (ui.m_autoExposure->isChecked())
+	{
+		m_imageModel.sendSettingCommand(0x31, 0x00, 0x00, 0x1A);
+	}
+	else
+	{
+		sliderExpVal = ui.m_exposureSlider->value();
+	}
+
+	//设置自动调节曝光值的上下限
+	m_lowExposureVal = 1;
+	m_highExposureVal = 200;
+	m_exposureVal = (m_lowExposureVal + m_highExposureVal) / 2;
+	setExposureValue(m_exposureVal);
+
 	m_curWavelength = m_sliderMinWavelength;
 	m_minWavelength = m_sliderMinWavelength;
 	m_maxWavelength = m_sliderMaxWavelength;
@@ -548,7 +750,7 @@ void MainWindow::getReferenceLights()
 	m_progressDialog = &progress;
 	progress.setWindowModality(Qt::WindowModal);
 
-	// 当前目录下建立频谱文件夹
+	// 应用程序exe所在目录下建立频谱文件夹
 	QString path = m_imageModel.getSavingPath();
 	QString appPath = QCoreApplication::applicationDirPath();
 	QDir dir(appPath);
@@ -556,11 +758,60 @@ void MainWindow::getReferenceLights()
 	dir.mkdir(dirName);
 	m_imageModel.setSavingPath(appPath + "\\" + dirName);
 
-	m_isCapturingSpectrum = true;
+	// 设置初始波长，开始捕获参考光
+	m_imageModel.changeWavelength(m_curWavelength);
+	m_noAdjust = false;
+	m_analogGainNum = 0;
+	m_imageModel.captureReference(true);
 
-	progress.exec();
+	int retVal = progress.exec();
 
-	m_isCapturingSpectrum = false;
+	//捕获完成之后的一些设置
+	m_imageModel.captureReference(false);
+
+	saveReferenceParameterToFile(appPath + "\\" + dirName);
 
 	m_imageModel.setSavingPath(path);
+
+	if (ui.m_autoExposure->isChecked())
+	{
+		m_imageModel.sendSettingCommand(0x31, 0x00, 0x00, 0x1B);
+	}
+	else
+	{
+		setExposureValue(sliderExpVal);
+	}
+
+	setAnalogGain(ui.m_analogGainSet->currentIndex());
+	if (ui.m_wavelengthSlider->isEnabled())
+		m_imageModel.changeWavelength(ui.m_wavelengthSlider->value());
+}
+
+void MainWindow::saveReferenceParameterToFile(const QString& path)
+{
+	QSettings settings(path + "\\reference.ini", QSettings::IniFormat);
+	QHash<int, CameraParameter>::const_iterator i = m_referenceParameter.constBegin();
+	while (i != m_referenceParameter.constEnd())
+	{
+		settings.setValue(QString::number(i.key()) + "/exposureVal", i->m_exposureValue);
+		settings.setValue(QString::number(i.key()) + "/analogGain", i->m_analogGain);
+		++i;
+	}
+}
+
+void MainWindow::readReferenceParameterFromFile(const QString& path)
+{
+	QSettings settings(path + "\\reference.ini", QSettings::IniFormat);
+	QStringList wavelengths = settings.childGroups();
+
+	QStringList::const_iterator i = wavelengths.constBegin();
+	while (i != wavelengths.constEnd())
+	{
+		CameraParameter temp;
+		temp.m_exposureValue = settings.value(*i + "/exposureVal").toInt();
+		temp.m_analogGain = settings.value(*i + "/analogGain").toInt();
+		m_referenceParameter[(*i).toInt()] = temp;
+
+		++i;
+	}
 }
