@@ -6,8 +6,7 @@ usb camera with Cypress是一款简单的相机软件，该软件专用于基于
 opencv需要自行下载，并配置，主要是修改opencv.props和opecv_release.props两个配置文件
 ## test_for_hardware分支用于与硬件开发人员协同开发
 
-1. .ini文件中有传输控制的域，方便调试
-
+1. camconfig.ini文件中有传输控制的域，方便调试
 >     [Camera034]
 >     width=1280
 >     height=960
@@ -19,10 +18,9 @@ opencv需要自行下载，并配置，主要是修改opencv.props和opecv_relea
 >     xferquesize=2
 >     timeout=1000
 >     buffernum=2
-
- - packetnum：每个传输事务接收packet的数目，当前packetSize = 1024，每次事务接收
-sizePerXfer=packetnum*packetSize字节大小的数据，图像一帧数据大小应当是sizePerXfer的倍数
- - xferquesize：传输事务队列大小，表示接收一帧图像过程中，人为分配的异步进行传输事务的个数
- - buffernum：图像接收缓冲区的大小
-
-2. 在界面增加配置cmos寄存器的功能，删除一些测试不需要的界面逻辑
+- packetnum：每个传输事务接收packet的数目，当前packetSize = 1024，每次事务接收
+sizePerXfer=packetnum*packetSize字节大小的数据，图像一帧数据大小应当是sizePerXfer的
+- xferquesize：传输事务队列大小，表示接收一帧图像过程中，人为分配的异步进行传输事务的个数
+- buffernum：图像接收缓冲区的大小
+ 
+2. 在界面增加配置cmos寄存器的功能，删除一些测试不需要的界面逻辑 
