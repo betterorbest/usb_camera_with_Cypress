@@ -40,26 +40,6 @@ public:
     QFrame *m_showFrame;
     QGridLayout *gridLayout;
     QLabel *m_showLabel;
-    QPushButton *m_startButton;
-    QPushButton *m_stopButton;
-    QPushButton *m_pauseButton;
-    QGroupBox *groupBox_5;
-    QVBoxLayout *verticalLayout_6;
-    QPushButton *m_pathChoosingButton;
-    QPushButton *m_imageTakingButton;
-    QGroupBox *groupBox_3;
-    QHBoxLayout *horizontalLayout_6;
-    QComboBox *m_analogGainSet;
-    QGroupBox *groupBox;
-    QVBoxLayout *verticalLayout_3;
-    QComboBox *m_digitalGainSet;
-    QGroupBox *m_exposureMode;
-    QVBoxLayout *verticalLayout_4;
-    QRadioButton *m_autoExposure;
-    QRadioButton *m_manualExposure;
-    QHBoxLayout *horizontalLayout_12;
-    QSlider *m_exposureSlider;
-    QSpinBox *m_exposureSpinBox;
     QGroupBox *m_spectrometerCtrl;
     QGridLayout *gridLayout_2;
     QSlider *m_wavelengthSlider;
@@ -68,16 +48,32 @@ public:
     QLabel *label_5;
     QSpacerItem *horizontalSpacer;
     QLabel *m_labelForPos;
-    QGroupBox *groupBox_6;
-    QHBoxLayout *horizontalLayout_13;
-    QGroupBox *groupBox_2;
-    QHBoxLayout *horizontalLayout_2;
-    QLabel *m_receiveRateLabel;
-    QLabel *label_4;
-    QGroupBox *groupBox_7;
-    QHBoxLayout *horizontalLayout_14;
-    QLabel *label_6;
-    QLabel *label_3;
+    QWidget *layoutWidget;
+    QHBoxLayout *horizontalLayout;
+    QGridLayout *gridLayout_5;
+    QPushButton *m_startButton;
+    QPushButton *m_stopButton;
+    QPushButton *m_pauseButton;
+    QGroupBox *m_exposureMode;
+    QVBoxLayout *verticalLayout_4;
+    QRadioButton *m_autoExposure;
+    QRadioButton *m_manualExposure;
+    QHBoxLayout *horizontalLayout_12;
+    QSlider *m_exposureSlider;
+    QSpinBox *m_exposureSpinBox;
+    QGridLayout *gridLayout_4;
+    QGroupBox *groupBox_3;
+    QHBoxLayout *horizontalLayout_6;
+    QComboBox *m_analogGainSet;
+    QPushButton *m_horizontalMirror;
+    QPushButton *m_verticalMirror;
+    QWidget *layoutWidget1;
+    QVBoxLayout *verticalLayout;
+    QCheckBox *m_lowIlluminationCheck;
+    QGroupBox *groupBox_5;
+    QVBoxLayout *verticalLayout_6;
+    QPushButton *m_pathChoosingButton;
+    QPushButton *m_imageTakingButton;
     QGroupBox *m_captureSpectrumBox;
     QGridLayout *gridLayout_3;
     QLabel *label_8;
@@ -93,26 +89,31 @@ public:
     QLabel *label_13;
     QLabel *label_14;
     QLabel *m_rangeOfWavelen;
-    QPushButton *m_horizontalMirror;
-    QPushButton *m_verticalMirror;
-    QCheckBox *m_lowIlluminationCheck;
-    QPushButton *m_spectrumAnalysis;
     QPushButton *m_getReference;
+    QPushButton *m_spectrumAnalysis;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindowClass)
     {
         if (MainWindowClass->objectName().isEmpty())
             MainWindowClass->setObjectName(QStringLiteral("MainWindowClass"));
-        MainWindowClass->resize(921, 896);
+        MainWindowClass->resize(931, 831);
+        QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(MainWindowClass->sizePolicy().hasHeightForWidth());
+        MainWindowClass->setSizePolicy(sizePolicy);
         QIcon icon;
         icon.addFile(QStringLiteral(":/MainWindow/camera.ico"), QSize(), QIcon::Normal, QIcon::Off);
         MainWindowClass->setWindowIcon(icon);
+        MainWindowClass->setToolButtonStyle(Qt::ToolButtonIconOnly);
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
+        sizePolicy.setHeightForWidth(centralWidget->sizePolicy().hasHeightForWidth());
+        centralWidget->setSizePolicy(sizePolicy);
         m_showFrame = new QFrame(centralWidget);
         m_showFrame->setObjectName(QStringLiteral("m_showFrame"));
-        m_showFrame->setGeometry(QRect(20, 240, 640, 480));
+        m_showFrame->setGeometry(QRect(30, 170, 640, 480));
         m_showFrame->setStyleSheet(QStringLiteral("background-color: rgb(130, 130, 130)"));
         m_showFrame->setFrameShape(QFrame::StyledPanel);
         m_showFrame->setFrameShadow(QFrame::Raised);
@@ -129,150 +130,10 @@ public:
 
         gridLayout->addWidget(m_showLabel, 0, 0, 1, 1);
 
-        m_startButton = new QPushButton(centralWidget);
-        m_startButton->setObjectName(QStringLiteral("m_startButton"));
-        m_startButton->setGeometry(QRect(40, 30, 121, 28));
-        QFont font;
-        font.setPointSize(11);
-        font.setBold(true);
-        font.setWeight(75);
-        m_startButton->setFont(font);
-        m_startButton->setFlat(false);
-        m_stopButton = new QPushButton(centralWidget);
-        m_stopButton->setObjectName(QStringLiteral("m_stopButton"));
-        m_stopButton->setEnabled(false);
-        m_stopButton->setGeometry(QRect(40, 70, 121, 28));
-        m_stopButton->setFont(font);
-        m_pauseButton = new QPushButton(centralWidget);
-        m_pauseButton->setObjectName(QStringLiteral("m_pauseButton"));
-        m_pauseButton->setEnabled(false);
-        m_pauseButton->setGeometry(QRect(40, 110, 121, 28));
-        m_pauseButton->setFont(font);
-        groupBox_5 = new QGroupBox(centralWidget);
-        groupBox_5->setObjectName(QStringLiteral("groupBox_5"));
-        groupBox_5->setGeometry(QRect(250, 30, 171, 105));
-        QFont font1;
-        font1.setFamily(QStringLiteral("Aharoni"));
-        font1.setPointSize(11);
-        font1.setBold(true);
-        font1.setItalic(false);
-        font1.setWeight(75);
-        groupBox_5->setFont(font1);
-        verticalLayout_6 = new QVBoxLayout(groupBox_5);
-        verticalLayout_6->setSpacing(6);
-        verticalLayout_6->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
-        m_pathChoosingButton = new QPushButton(groupBox_5);
-        m_pathChoosingButton->setObjectName(QStringLiteral("m_pathChoosingButton"));
-        QFont font2;
-        font2.setPointSize(9);
-        font2.setBold(false);
-        font2.setWeight(50);
-        m_pathChoosingButton->setFont(font2);
-
-        verticalLayout_6->addWidget(m_pathChoosingButton);
-
-        m_imageTakingButton = new QPushButton(groupBox_5);
-        m_imageTakingButton->setObjectName(QStringLiteral("m_imageTakingButton"));
-        m_imageTakingButton->setEnabled(false);
-        m_imageTakingButton->setFont(font2);
-
-        verticalLayout_6->addWidget(m_imageTakingButton);
-
-        groupBox_3 = new QGroupBox(centralWidget);
-        groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
-        groupBox_3->setEnabled(true);
-        groupBox_3->setGeometry(QRect(200, 160, 251, 63));
-        groupBox_3->setFont(font);
-        horizontalLayout_6 = new QHBoxLayout(groupBox_3);
-        horizontalLayout_6->setSpacing(6);
-        horizontalLayout_6->setContentsMargins(11, 11, 11, 11);
-        horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
-        m_analogGainSet = new QComboBox(groupBox_3);
-        m_analogGainSet->setObjectName(QStringLiteral("m_analogGainSet"));
-        m_analogGainSet->setEnabled(false);
-        m_analogGainSet->setFont(font2);
-
-        horizontalLayout_6->addWidget(m_analogGainSet);
-
-        groupBox = new QGroupBox(centralWidget);
-        groupBox->setObjectName(QStringLiteral("groupBox"));
-        groupBox->setEnabled(true);
-        groupBox->setGeometry(QRect(490, 160, 271, 66));
-        groupBox->setFont(font);
-        verticalLayout_3 = new QVBoxLayout(groupBox);
-        verticalLayout_3->setSpacing(6);
-        verticalLayout_3->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
-        m_digitalGainSet = new QComboBox(groupBox);
-        m_digitalGainSet->setObjectName(QStringLiteral("m_digitalGainSet"));
-        m_digitalGainSet->setEnabled(false);
-        m_digitalGainSet->setFont(font2);
-
-        verticalLayout_3->addWidget(m_digitalGainSet);
-
-        m_exposureMode = new QGroupBox(centralWidget);
-        m_exposureMode->setObjectName(QStringLiteral("m_exposureMode"));
-        m_exposureMode->setEnabled(false);
-        m_exposureMode->setGeometry(QRect(490, 30, 311, 118));
-        m_exposureMode->setFont(font);
-        verticalLayout_4 = new QVBoxLayout(m_exposureMode);
-        verticalLayout_4->setSpacing(6);
-        verticalLayout_4->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
-        m_autoExposure = new QRadioButton(m_exposureMode);
-        m_autoExposure->setObjectName(QStringLiteral("m_autoExposure"));
-        m_autoExposure->setFont(font2);
-        m_autoExposure->setChecked(true);
-
-        verticalLayout_4->addWidget(m_autoExposure);
-
-        m_manualExposure = new QRadioButton(m_exposureMode);
-        m_manualExposure->setObjectName(QStringLiteral("m_manualExposure"));
-        m_manualExposure->setFont(font2);
-
-        verticalLayout_4->addWidget(m_manualExposure);
-
-        horizontalLayout_12 = new QHBoxLayout();
-        horizontalLayout_12->setSpacing(6);
-        horizontalLayout_12->setObjectName(QStringLiteral("horizontalLayout_12"));
-        m_exposureSlider = new QSlider(m_exposureMode);
-        m_exposureSlider->setObjectName(QStringLiteral("m_exposureSlider"));
-        m_exposureSlider->setEnabled(false);
-        QSizePolicy sizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(m_exposureSlider->sizePolicy().hasHeightForWidth());
-        m_exposureSlider->setSizePolicy(sizePolicy);
-        m_exposureSlider->setMaximumSize(QSize(16777215, 16777215));
-        m_exposureSlider->setMinimum(1);
-        m_exposureSlider->setMaximum(500);
-        m_exposureSlider->setSingleStep(1);
-        m_exposureSlider->setTracking(false);
-        m_exposureSlider->setOrientation(Qt::Horizontal);
-
-        horizontalLayout_12->addWidget(m_exposureSlider);
-
-        m_exposureSpinBox = new QSpinBox(m_exposureMode);
-        m_exposureSpinBox->setObjectName(QStringLiteral("m_exposureSpinBox"));
-        m_exposureSpinBox->setEnabled(false);
-        m_exposureSpinBox->setFont(font2);
-        m_exposureSpinBox->setAlignment(Qt::AlignCenter);
-        m_exposureSpinBox->setReadOnly(true);
-        m_exposureSpinBox->setButtonSymbols(QAbstractSpinBox::NoButtons);
-        m_exposureSpinBox->setKeyboardTracking(false);
-        m_exposureSpinBox->setMinimum(1);
-        m_exposureSpinBox->setMaximum(500);
-
-        horizontalLayout_12->addWidget(m_exposureSpinBox);
-
-
-        verticalLayout_4->addLayout(horizontalLayout_12);
-
         m_spectrometerCtrl = new QGroupBox(centralWidget);
         m_spectrometerCtrl->setObjectName(QStringLiteral("m_spectrometerCtrl"));
         m_spectrometerCtrl->setEnabled(true);
-        m_spectrometerCtrl->setGeometry(QRect(10, 740, 781, 121));
+        m_spectrometerCtrl->setGeometry(QRect(30, 670, 871, 121));
         gridLayout_2 = new QGridLayout(m_spectrometerCtrl);
         gridLayout_2->setSpacing(6);
         gridLayout_2->setContentsMargins(11, 11, 11, 11);
@@ -324,63 +185,188 @@ public:
 
         gridLayout_2->addWidget(m_labelForPos, 3, 0, 1, 6);
 
-        groupBox_6 = new QGroupBox(centralWidget);
-        groupBox_6->setObjectName(QStringLiteral("groupBox_6"));
-        groupBox_6->setGeometry(QRect(20, 150, 151, 81));
-        horizontalLayout_13 = new QHBoxLayout(groupBox_6);
-        horizontalLayout_13->setSpacing(3);
-        horizontalLayout_13->setContentsMargins(11, 11, 11, 11);
-        horizontalLayout_13->setObjectName(QStringLiteral("horizontalLayout_13"));
-        horizontalLayout_13->setContentsMargins(0, 0, 0, 0);
-        groupBox_2 = new QGroupBox(groupBox_6);
-        groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
-        groupBox_2->setFont(font);
-        horizontalLayout_2 = new QHBoxLayout(groupBox_2);
-        horizontalLayout_2->setSpacing(6);
-        horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
-        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
-        m_receiveRateLabel = new QLabel(groupBox_2);
-        m_receiveRateLabel->setObjectName(QStringLiteral("m_receiveRateLabel"));
-        m_receiveRateLabel->setLayoutDirection(Qt::LeftToRight);
-        m_receiveRateLabel->setTextFormat(Qt::AutoText);
-        m_receiveRateLabel->setAlignment(Qt::AlignCenter);
+        layoutWidget = new QWidget(centralWidget);
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
+        layoutWidget->setGeometry(QRect(40, 20, 861, 120));
+        horizontalLayout = new QHBoxLayout(layoutWidget);
+        horizontalLayout->setSpacing(6);
+        horizontalLayout->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        horizontalLayout->setContentsMargins(0, 0, 0, 0);
+        gridLayout_5 = new QGridLayout();
+        gridLayout_5->setSpacing(6);
+        gridLayout_5->setObjectName(QStringLiteral("gridLayout_5"));
+        m_startButton = new QPushButton(layoutWidget);
+        m_startButton->setObjectName(QStringLiteral("m_startButton"));
+        QFont font;
+        font.setPointSize(11);
+        font.setBold(true);
+        font.setWeight(75);
+        m_startButton->setFont(font);
+        m_startButton->setFlat(false);
 
-        horizontalLayout_2->addWidget(m_receiveRateLabel);
+        gridLayout_5->addWidget(m_startButton, 0, 0, 1, 1);
 
-        label_4 = new QLabel(groupBox_2);
-        label_4->setObjectName(QStringLiteral("label_4"));
-        label_4->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+        m_stopButton = new QPushButton(layoutWidget);
+        m_stopButton->setObjectName(QStringLiteral("m_stopButton"));
+        m_stopButton->setEnabled(false);
+        m_stopButton->setFont(font);
 
-        horizontalLayout_2->addWidget(label_4);
+        gridLayout_5->addWidget(m_stopButton, 1, 0, 1, 1);
 
+        m_pauseButton = new QPushButton(layoutWidget);
+        m_pauseButton->setObjectName(QStringLiteral("m_pauseButton"));
+        m_pauseButton->setEnabled(false);
+        m_pauseButton->setFont(font);
 
-        horizontalLayout_13->addWidget(groupBox_2);
-
-        groupBox_7 = new QGroupBox(groupBox_6);
-        groupBox_7->setObjectName(QStringLiteral("groupBox_7"));
-        groupBox_7->setFont(font);
-        horizontalLayout_14 = new QHBoxLayout(groupBox_7);
-        horizontalLayout_14->setSpacing(6);
-        horizontalLayout_14->setContentsMargins(11, 11, 11, 11);
-        horizontalLayout_14->setObjectName(QStringLiteral("horizontalLayout_14"));
-        label_6 = new QLabel(groupBox_7);
-        label_6->setObjectName(QStringLiteral("label_6"));
-        label_6->setAlignment(Qt::AlignCenter);
-
-        horizontalLayout_14->addWidget(label_6);
-
-        label_3 = new QLabel(groupBox_7);
-        label_3->setObjectName(QStringLiteral("label_3"));
-
-        horizontalLayout_14->addWidget(label_3);
+        gridLayout_5->addWidget(m_pauseButton, 2, 0, 1, 1);
 
 
-        horizontalLayout_13->addWidget(groupBox_7);
+        horizontalLayout->addLayout(gridLayout_5);
 
-        m_captureSpectrumBox = new QGroupBox(centralWidget);
+        m_exposureMode = new QGroupBox(layoutWidget);
+        m_exposureMode->setObjectName(QStringLiteral("m_exposureMode"));
+        m_exposureMode->setEnabled(false);
+        m_exposureMode->setFont(font);
+        verticalLayout_4 = new QVBoxLayout(m_exposureMode);
+        verticalLayout_4->setSpacing(6);
+        verticalLayout_4->setContentsMargins(11, 11, 11, 11);
+        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
+        m_autoExposure = new QRadioButton(m_exposureMode);
+        m_autoExposure->setObjectName(QStringLiteral("m_autoExposure"));
+        QFont font1;
+        font1.setPointSize(9);
+        font1.setBold(false);
+        font1.setWeight(50);
+        m_autoExposure->setFont(font1);
+        m_autoExposure->setChecked(true);
+
+        verticalLayout_4->addWidget(m_autoExposure);
+
+        m_manualExposure = new QRadioButton(m_exposureMode);
+        m_manualExposure->setObjectName(QStringLiteral("m_manualExposure"));
+        m_manualExposure->setFont(font1);
+
+        verticalLayout_4->addWidget(m_manualExposure);
+
+        horizontalLayout_12 = new QHBoxLayout();
+        horizontalLayout_12->setSpacing(6);
+        horizontalLayout_12->setObjectName(QStringLiteral("horizontalLayout_12"));
+        m_exposureSlider = new QSlider(m_exposureMode);
+        m_exposureSlider->setObjectName(QStringLiteral("m_exposureSlider"));
+        m_exposureSlider->setEnabled(false);
+        QSizePolicy sizePolicy1(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(m_exposureSlider->sizePolicy().hasHeightForWidth());
+        m_exposureSlider->setSizePolicy(sizePolicy1);
+        m_exposureSlider->setMaximumSize(QSize(16777215, 16777215));
+        m_exposureSlider->setMinimum(1);
+        m_exposureSlider->setMaximum(500);
+        m_exposureSlider->setSingleStep(1);
+        m_exposureSlider->setTracking(false);
+        m_exposureSlider->setOrientation(Qt::Horizontal);
+
+        horizontalLayout_12->addWidget(m_exposureSlider);
+
+        m_exposureSpinBox = new QSpinBox(m_exposureMode);
+        m_exposureSpinBox->setObjectName(QStringLiteral("m_exposureSpinBox"));
+        m_exposureSpinBox->setEnabled(false);
+        m_exposureSpinBox->setFont(font1);
+        m_exposureSpinBox->setAlignment(Qt::AlignCenter);
+        m_exposureSpinBox->setReadOnly(true);
+        m_exposureSpinBox->setButtonSymbols(QAbstractSpinBox::NoButtons);
+        m_exposureSpinBox->setKeyboardTracking(false);
+        m_exposureSpinBox->setMinimum(1);
+        m_exposureSpinBox->setMaximum(500);
+
+        horizontalLayout_12->addWidget(m_exposureSpinBox);
+
+
+        verticalLayout_4->addLayout(horizontalLayout_12);
+
+
+        horizontalLayout->addWidget(m_exposureMode);
+
+        gridLayout_4 = new QGridLayout();
+        gridLayout_4->setSpacing(6);
+        gridLayout_4->setObjectName(QStringLiteral("gridLayout_4"));
+        groupBox_3 = new QGroupBox(layoutWidget);
+        groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
+        groupBox_3->setEnabled(true);
+        groupBox_3->setFont(font);
+        horizontalLayout_6 = new QHBoxLayout(groupBox_3);
+        horizontalLayout_6->setSpacing(6);
+        horizontalLayout_6->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
+        m_analogGainSet = new QComboBox(groupBox_3);
+        m_analogGainSet->setObjectName(QStringLiteral("m_analogGainSet"));
+        m_analogGainSet->setEnabled(false);
+        m_analogGainSet->setFont(font1);
+
+        horizontalLayout_6->addWidget(m_analogGainSet);
+
+
+        gridLayout_4->addWidget(groupBox_3, 0, 0, 1, 2);
+
+        m_horizontalMirror = new QPushButton(layoutWidget);
+        m_horizontalMirror->setObjectName(QStringLiteral("m_horizontalMirror"));
+
+        gridLayout_4->addWidget(m_horizontalMirror, 1, 0, 1, 1);
+
+        m_verticalMirror = new QPushButton(layoutWidget);
+        m_verticalMirror->setObjectName(QStringLiteral("m_verticalMirror"));
+
+        gridLayout_4->addWidget(m_verticalMirror, 1, 1, 1, 1);
+
+
+        horizontalLayout->addLayout(gridLayout_4);
+
+        layoutWidget1 = new QWidget(centralWidget);
+        layoutWidget1->setObjectName(QStringLiteral("layoutWidget1"));
+        layoutWidget1->setGeometry(QRect(700, 180, 209, 461));
+        verticalLayout = new QVBoxLayout(layoutWidget1);
+        verticalLayout->setSpacing(20);
+        verticalLayout->setContentsMargins(11, 11, 11, 11);
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        verticalLayout->setContentsMargins(0, 0, 0, 0);
+        m_lowIlluminationCheck = new QCheckBox(layoutWidget1);
+        m_lowIlluminationCheck->setObjectName(QStringLiteral("m_lowIlluminationCheck"));
+
+        verticalLayout->addWidget(m_lowIlluminationCheck);
+
+        groupBox_5 = new QGroupBox(layoutWidget1);
+        groupBox_5->setObjectName(QStringLiteral("groupBox_5"));
+        QFont font2;
+        font2.setFamily(QStringLiteral("Aharoni"));
+        font2.setPointSize(11);
+        font2.setBold(true);
+        font2.setItalic(false);
+        font2.setWeight(75);
+        groupBox_5->setFont(font2);
+        verticalLayout_6 = new QVBoxLayout(groupBox_5);
+        verticalLayout_6->setSpacing(6);
+        verticalLayout_6->setContentsMargins(11, 11, 11, 11);
+        verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
+        m_pathChoosingButton = new QPushButton(groupBox_5);
+        m_pathChoosingButton->setObjectName(QStringLiteral("m_pathChoosingButton"));
+        m_pathChoosingButton->setFont(font1);
+
+        verticalLayout_6->addWidget(m_pathChoosingButton);
+
+        m_imageTakingButton = new QPushButton(groupBox_5);
+        m_imageTakingButton->setObjectName(QStringLiteral("m_imageTakingButton"));
+        m_imageTakingButton->setEnabled(false);
+        m_imageTakingButton->setFont(font1);
+
+        verticalLayout_6->addWidget(m_imageTakingButton);
+
+
+        verticalLayout->addWidget(groupBox_5);
+
+        m_captureSpectrumBox = new QGroupBox(layoutWidget1);
         m_captureSpectrumBox->setObjectName(QStringLiteral("m_captureSpectrumBox"));
         m_captureSpectrumBox->setEnabled(false);
-        m_captureSpectrumBox->setGeometry(QRect(680, 380, 191, 181));
         gridLayout_3 = new QGridLayout(m_captureSpectrumBox);
         gridLayout_3->setSpacing(6);
         gridLayout_3->setContentsMargins(11, 11, 11, 11);
@@ -393,6 +379,7 @@ public:
         m_capMinWavelen = new QSpinBox(m_captureSpectrumBox);
         m_capMinWavelen->setObjectName(QStringLiteral("m_capMinWavelen"));
         m_capMinWavelen->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
+        m_capMinWavelen->setSingleStep(10);
 
         gridLayout_3->addWidget(m_capMinWavelen, 0, 1, 1, 1);
 
@@ -404,6 +391,7 @@ public:
         m_capMaxWavelen = new QSpinBox(m_captureSpectrumBox);
         m_capMaxWavelen->setObjectName(QStringLiteral("m_capMaxWavelen"));
         m_capMaxWavelen->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
+        m_capMaxWavelen->setSingleStep(10);
 
         gridLayout_3->addWidget(m_capMaxWavelen, 1, 1, 1, 1);
 
@@ -422,6 +410,7 @@ public:
         m_stepOfWavelen->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
         m_stepOfWavelen->setMinimum(0);
         m_stepOfWavelen->setMaximum(99);
+        m_stepOfWavelen->setSingleStep(10);
         m_stepOfWavelen->setValue(0);
 
         gridLayout_3->addWidget(m_stepOfWavelen, 2, 1, 1, 1);
@@ -457,22 +446,20 @@ public:
 
         gridLayout_3->addWidget(m_rangeOfWavelen, 3, 1, 1, 1);
 
-        m_horizontalMirror = new QPushButton(centralWidget);
-        m_horizontalMirror->setObjectName(QStringLiteral("m_horizontalMirror"));
-        m_horizontalMirror->setGeometry(QRect(710, 250, 93, 28));
-        m_verticalMirror = new QPushButton(centralWidget);
-        m_verticalMirror->setObjectName(QStringLiteral("m_verticalMirror"));
-        m_verticalMirror->setGeometry(QRect(710, 300, 93, 28));
-        m_lowIlluminationCheck = new QCheckBox(centralWidget);
-        m_lowIlluminationCheck->setObjectName(QStringLiteral("m_lowIlluminationCheck"));
-        m_lowIlluminationCheck->setGeometry(QRect(680, 700, 91, 19));
-        m_spectrumAnalysis = new QPushButton(centralWidget);
-        m_spectrumAnalysis->setObjectName(QStringLiteral("m_spectrumAnalysis"));
-        m_spectrumAnalysis->setGeometry(QRect(690, 630, 93, 28));
-        m_getReference = new QPushButton(centralWidget);
+
+        verticalLayout->addWidget(m_captureSpectrumBox);
+
+        m_getReference = new QPushButton(layoutWidget1);
         m_getReference->setObjectName(QStringLiteral("m_getReference"));
         m_getReference->setEnabled(false);
-        m_getReference->setGeometry(QRect(690, 590, 93, 28));
+
+        verticalLayout->addWidget(m_getReference);
+
+        m_spectrumAnalysis = new QPushButton(layoutWidget1);
+        m_spectrumAnalysis->setObjectName(QStringLiteral("m_spectrumAnalysis"));
+
+        verticalLayout->addWidget(m_spectrumAnalysis);
+
         MainWindowClass->setCentralWidget(centralWidget);
         statusBar = new QStatusBar(MainWindowClass);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -481,7 +468,6 @@ public:
         retranslateUi(MainWindowClass);
 
         m_analogGainSet->setCurrentIndex(0);
-        m_digitalGainSet->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindowClass);
@@ -491,12 +477,17 @@ public:
     {
         MainWindowClass->setWindowTitle(QApplication::translate("MainWindowClass", "\346\210\220\345\203\217\345\205\211\350\260\261\344\273\252\346\265\213\350\257\225\350\275\257\344\273\266", 0));
         m_showLabel->setText(QApplication::translate("MainWindowClass", "\346\230\276\347\244\272", 0));
+        m_spectrometerCtrl->setTitle(QApplication::translate("MainWindowClass", "\345\205\211\350\260\261\344\273\252\346\223\215\344\275\234", 0));
+        m_openSpectrometerButton->setText(QApplication::translate("MainWindowClass", "\346\211\223\345\274\200\345\205\211\350\260\261\344\273\252", 0));
+        label_5->setText(QApplication::translate("MainWindowClass", "\346\263\242\351\225\277/nm", 0));
+        m_labelForPos->setText(QString());
         m_startButton->setText(QApplication::translate("MainWindowClass", "\346\211\223\345\274\200\347\233\270\346\234\272", 0));
         m_stopButton->setText(QApplication::translate("MainWindowClass", "\345\205\263\351\227\255\347\233\270\346\234\272", 0));
         m_pauseButton->setText(QApplication::translate("MainWindowClass", "\346\232\202\345\201\234", 0));
-        groupBox_5->setTitle(QApplication::translate("MainWindowClass", "\344\277\235\345\255\230", 0));
-        m_pathChoosingButton->setText(QApplication::translate("MainWindowClass", "\351\200\211\346\213\251\345\255\230\345\202\250\350\267\257\345\276\204", 0));
-        m_imageTakingButton->setText(QApplication::translate("MainWindowClass", "\346\213\215\347\205\247", 0));
+        m_exposureMode->setTitle(QApplication::translate("MainWindowClass", "\346\233\235\345\205\211\350\256\276\347\275\256", 0));
+        m_autoExposure->setText(QApplication::translate("MainWindowClass", "\350\207\252\345\212\250", 0));
+        m_manualExposure->setText(QApplication::translate("MainWindowClass", "\346\211\213\345\212\250(\346\233\235\345\205\211\345\200\274)", 0));
+        m_exposureSpinBox->setSuffix(QApplication::translate("MainWindowClass", " ms", 0));
         groupBox_3->setTitle(QApplication::translate("MainWindowClass", "\346\250\241\346\213\237\345\242\236\347\233\212", 0));
         m_analogGainSet->clear();
         m_analogGainSet->insertItems(0, QStringList()
@@ -506,33 +497,12 @@ public:
          << QApplication::translate("MainWindowClass", "8\345\200\215", 0)
          << QApplication::translate("MainWindowClass", "10\345\200\215", 0)
         );
-        groupBox->setTitle(QApplication::translate("MainWindowClass", "\346\225\260\345\255\227\345\242\236\347\233\212", 0));
-        m_digitalGainSet->clear();
-        m_digitalGainSet->insertItems(0, QStringList()
-         << QApplication::translate("MainWindowClass", "1\345\200\215", 0)
-         << QApplication::translate("MainWindowClass", "2\345\200\215", 0)
-         << QApplication::translate("MainWindowClass", "3\345\200\215", 0)
-         << QApplication::translate("MainWindowClass", "4\345\200\215", 0)
-         << QApplication::translate("MainWindowClass", "5\345\200\215", 0)
-         << QApplication::translate("MainWindowClass", "6\345\200\215", 0)
-         << QApplication::translate("MainWindowClass", "7\345\200\215", 0)
-         << QApplication::translate("MainWindowClass", "8\345\200\215", 0)
-        );
-        m_exposureMode->setTitle(QApplication::translate("MainWindowClass", "\346\233\235\345\205\211\350\256\276\347\275\256", 0));
-        m_autoExposure->setText(QApplication::translate("MainWindowClass", "\350\207\252\345\212\250", 0));
-        m_manualExposure->setText(QApplication::translate("MainWindowClass", "\346\211\213\345\212\250(\346\233\235\345\205\211\345\200\274)", 0));
-        m_exposureSpinBox->setSuffix(QApplication::translate("MainWindowClass", " ms", 0));
-        m_spectrometerCtrl->setTitle(QApplication::translate("MainWindowClass", "\345\205\211\350\260\261\344\273\252\346\223\215\344\275\234", 0));
-        m_openSpectrometerButton->setText(QApplication::translate("MainWindowClass", "\346\211\223\345\274\200\345\205\211\350\260\261\344\273\252", 0));
-        label_5->setText(QApplication::translate("MainWindowClass", "\346\263\242\351\225\277/nm", 0));
-        m_labelForPos->setText(QString());
-        groupBox_6->setTitle(QString());
-        groupBox_2->setTitle(QApplication::translate("MainWindowClass", "\345\270\247\347\216\207", 0));
-        m_receiveRateLabel->setText(QApplication::translate("MainWindowClass", "0", 0));
-        label_4->setText(QApplication::translate("MainWindowClass", "fps", 0));
-        groupBox_7->setTitle(QApplication::translate("MainWindowClass", "\346\270\251\345\272\246", 0));
-        label_6->setText(QApplication::translate("MainWindowClass", "0", 0));
-        label_3->setText(QApplication::translate("MainWindowClass", "\342\204\203", 0));
+        m_horizontalMirror->setText(QApplication::translate("MainWindowClass", "\346\260\264\345\271\263\351\225\234\345\203\217", 0));
+        m_verticalMirror->setText(QApplication::translate("MainWindowClass", "\347\253\226\347\233\264\351\225\234\345\203\217", 0));
+        m_lowIlluminationCheck->setText(QApplication::translate("MainWindowClass", "\344\275\216\347\205\247\345\272\246", 0));
+        groupBox_5->setTitle(QApplication::translate("MainWindowClass", "\344\277\235\345\255\230", 0));
+        m_pathChoosingButton->setText(QApplication::translate("MainWindowClass", "\351\200\211\346\213\251\345\255\230\345\202\250\350\267\257\345\276\204", 0));
+        m_imageTakingButton->setText(QApplication::translate("MainWindowClass", "\346\213\215\347\205\247", 0));
         m_captureSpectrumBox->setTitle(QApplication::translate("MainWindowClass", "\346\212\223\345\217\226\345\205\211\350\260\261\345\233\276\345\203\217", 0));
         label_8->setText(QApplication::translate("MainWindowClass", "\347\273\210\346\255\242\346\263\242\351\225\277", 0));
         label_7->setText(QApplication::translate("MainWindowClass", "\350\265\267\345\247\213\346\263\242\351\225\277", 0));
@@ -544,11 +514,8 @@ public:
         label_13->setText(QApplication::translate("MainWindowClass", "\346\263\242\351\225\277\350\214\203\345\233\264", 0));
         label_14->setText(QApplication::translate("MainWindowClass", "nm", 0));
         m_rangeOfWavelen->setText(QApplication::translate("MainWindowClass", "-", 0));
-        m_horizontalMirror->setText(QApplication::translate("MainWindowClass", "\346\260\264\345\271\263\351\225\234\345\203\217", 0));
-        m_verticalMirror->setText(QApplication::translate("MainWindowClass", "\347\253\226\347\233\264\351\225\234\345\203\217", 0));
-        m_lowIlluminationCheck->setText(QApplication::translate("MainWindowClass", "\344\275\216\347\205\247\345\272\246", 0));
-        m_spectrumAnalysis->setText(QApplication::translate("MainWindowClass", "\345\205\211\350\260\261\345\210\206\346\236\220", 0));
         m_getReference->setText(QApplication::translate("MainWindowClass", "\350\216\267\345\217\226\345\217\202\350\200\203\345\205\211", 0));
+        m_spectrumAnalysis->setText(QApplication::translate("MainWindowClass", "\345\205\211\350\260\261\345\210\206\346\236\220", 0));
     } // retranslateUi
 
 };

@@ -226,6 +226,9 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="camera.rc" />
+  </ItemGroup>
+  <ItemGroup>
     <CustomBuild Include="mainwindow.ui">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Identity)...</Message>
@@ -236,9 +239,6 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="camera.rc" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="spectrumanalysisdialog.ui">

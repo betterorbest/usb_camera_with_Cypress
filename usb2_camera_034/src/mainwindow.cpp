@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
 	m_isCapturingSpectrum(false)
 {
  	ui.setupUi(this);
-
+	this->setFixedSize(this->size());
 	initCameraConfig();
 
 	m_analogGainGroup[0] = 1;
@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
 	//Qt5的重载信号与槽连接的使用方式
 	
 	connect(ui.m_analogGainSet, static_cast<void (QComboBox:: *)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::setAnalogGain);
-	connect(ui.m_digitalGainSet, static_cast<void (QComboBox:: *)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::setDigitalGain);
+	//connect(ui.m_digitalGainSet, static_cast<void (QComboBox:: *)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::setDigitalGain);
 
 	connect(ui.m_autoExposure, &QRadioButton::toggled, this, &MainWindow::setExposureMode);
 	connect(ui.m_exposureSlider, &QSlider::valueChanged, this, &MainWindow::setExposureValue);
@@ -158,7 +158,7 @@ void MainWindow::openCamera()
 	{
 		//相机配置初始化
 		setAnalogGain(ui.m_analogGainSet->currentIndex());
-		setDigitalGain(ui.m_digitalGainSet->currentIndex());
+		//setDigitalGain(ui.m_digitalGainSet->currentIndex());
 
 		if (ui.m_autoExposure->isChecked())
 		{
@@ -182,7 +182,7 @@ void MainWindow::openCamera()
 
 		ui.m_imageTakingButton->setEnabled(true);
 		ui.m_analogGainSet->setEnabled(true);
-		ui.m_digitalGainSet->setEnabled(true);
+		//ui.m_digitalGainSet->setEnabled(true);
 		ui.m_exposureMode->setEnabled(true);
 
 		//ui.m_spectrometerCtrl->setEnabled(true);
@@ -204,7 +204,7 @@ void MainWindow::closeCamera()
 
 	ui.m_imageTakingButton->setEnabled(false);
 	ui.m_analogGainSet->setEnabled(false);
-	ui.m_digitalGainSet->setEnabled(false);
+//	ui.m_digitalGainSet->setEnabled(false);
 	ui.m_exposureMode->setEnabled(false);
 
 	ui.m_captureSpectrumBox->setEnabled(false);
@@ -228,7 +228,7 @@ void MainWindow::closeCamera()
 	m_receiveFramesCount = 0;
 	m_isClosed = true;
 	ui.m_showLabel->clear();
-	ui.m_receiveRateLabel->setText(QString::number(0));
+//	ui.m_receiveRateLabel->setText(QString::number(0));
 }
 
 void MainWindow::updateImage(QPixmap image)
@@ -419,7 +419,8 @@ void MainWindow::showFrameRate()
 {
 	//QString receiveFrameRate = QString::number(m_receiveFramesCount);
 	//m_statusBarLabel->setText(receiveFrameRate + "fps");
-	ui.m_receiveRateLabel->setText(QString::number(m_frameCount));
+//	ui.m_receiveRateLabel->setText(QString::number(m_frameCount));
+	qDebug() << QStringLiteral("the current frame rate is： ") << m_frameCount << " fps";
 	m_frameCount = 0;
 	//m_receiveFramesCount = 0;
 }

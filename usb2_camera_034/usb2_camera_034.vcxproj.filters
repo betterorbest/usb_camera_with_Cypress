@@ -124,20 +124,20 @@
     <CustomBuild Include="inc\mainwindow.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="mainwindow.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="inc\qcustomplot.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="inc\spectrumanalysis.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="spectrumanalysisdialog.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="inc\mylabel.h">
       <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="mainwindow.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="spectrumanalysisdialog.ui">
+      <Filter>Form Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

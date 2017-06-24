@@ -181,6 +181,7 @@ void SpectrumAnalysisDialog::loadImamges()
 	}
 
 	ui.m_listImg->show();
+
 }
 
 void SpectrumAnalysisDialog::clearGraph()
