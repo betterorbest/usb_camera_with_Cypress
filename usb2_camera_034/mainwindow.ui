@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>921</width>
+    <width>1006</width>
     <height>896</height>
    </rect>
   </property>
@@ -698,7 +698,7 @@
     <property name="geometry">
      <rect>
       <x>680</x>
-      <y>380</y>
+      <y>350</y>
       <width>191</width>
       <height>181</height>
      </rect>
@@ -815,7 +815,7 @@
    <widget class="QPushButton" name="m_horizontalMirror">
     <property name="geometry">
      <rect>
-      <x>710</x>
+      <x>680</x>
       <y>250</y>
       <width>93</width>
       <height>28</height>
@@ -828,7 +828,7 @@
    <widget class="QPushButton" name="m_verticalMirror">
     <property name="geometry">
      <rect>
-      <x>710</x>
+      <x>680</x>
       <y>300</y>
       <width>93</width>
       <height>28</height>
@@ -854,8 +854,8 @@
    <widget class="QPushButton" name="m_spectrumAnalysis">
     <property name="geometry">
      <rect>
-      <x>690</x>
-      <y>630</y>
+      <x>790</x>
+      <y>300</y>
       <width>93</width>
       <height>28</height>
      </rect>
@@ -870,8 +870,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>690</x>
-      <y>590</y>
+      <x>790</x>
+      <y>250</y>
       <width>93</width>
       <height>28</height>
      </rect>
@@ -879,6 +879,56 @@
     <property name="text">
      <string>获取参考光</string>
     </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>550</y>
+      <width>201</width>
+      <height>123</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>参考光上下界</string>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_4">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>下界</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSpinBox" name="m_lowRef">
+       <property name="maximum">
+        <number>4096</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>上界</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="m_highRef">
+       <property name="maximum">
+        <number>4096</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QPushButton" name="m_boundaryRefSet">
+       <property name="text">
+        <string>确定</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>

@@ -40,6 +40,8 @@ public:
 
 	void setHorizontalMirror();
 	void setVerticalMirror();
+
+	void setRefBoundary(int low, int high);
 signals:
 	void wavelengthChanged(unsigned short wavelen);
 

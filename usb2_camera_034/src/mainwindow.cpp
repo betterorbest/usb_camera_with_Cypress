@@ -58,6 +58,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 	connect(ui.m_getReference, &QPushButton::clicked, this, &MainWindow::getReferenceLights);
 	connect(ui.m_spectrumAnalysis, &QPushButton::clicked, this, &MainWindow::analyzeSpectrum);
+
+	connect(ui.m_boundaryRefSet, &QPushButton::clicked, this, &MainWindow::setRefBoundary);
 }
 
 MainWindow::~MainWindow()
@@ -149,6 +151,8 @@ void MainWindow::initCameraConfig()
 	ui.m_rangeOfWavelen->setText(QString::number(m_sliderMinWavelength) + "-" + QString::number(m_sliderMaxWavelength));
 
 	//ui.m_showLabel->installEventFilter(this);
+
+	m_imageModel.setRefBoundary(1500, 4080);
 }
 
 void MainWindow::openCamera()
@@ -814,4 +818,11 @@ void MainWindow::readReferenceParameterFromFile(const QString& path)
 
 		++i;
 	}
+}
+
+void MainWindow::setRefBoundary()
+{
+	int low = ui.m_lowRef->value();
+	int high = ui.m_highRef->value();
+	m_imageModel.setRefBoundary(low, high);
 }

@@ -204,3 +204,8 @@ void ImageModel::setLowIlluminationChecked(bool flag)
 {
 	m_imageProcess.setLowIlluminationChecked(flag);
 }
+
+void ImageModel::setRefBoundary(int low, int high)
+{
+	m_imageProcess.setRefBoundary(low, high);
+}

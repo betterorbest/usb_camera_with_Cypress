@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'mainwindow.ui'
+** Form generated from reading UI file 'mainwindowqHp152.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.5.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef UI_MAINWINDOW_H
-#define UI_MAINWINDOW_H
+#ifndef MAINWINDOWQHP152_H
+#define MAINWINDOWQHP152_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -98,13 +98,20 @@ public:
     QCheckBox *m_lowIlluminationCheck;
     QPushButton *m_spectrumAnalysis;
     QPushButton *m_getReference;
+    QGroupBox *groupBox_4;
+    QGridLayout *gridLayout_4;
+    QLabel *label;
+    QSpinBox *m_lowRef;
+    QLabel *label_2;
+    QSpinBox *m_highRef;
+    QPushButton *m_boundaryRefSet;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindowClass)
     {
         if (MainWindowClass->objectName().isEmpty())
             MainWindowClass->setObjectName(QStringLiteral("MainWindowClass"));
-        MainWindowClass->resize(921, 896);
+        MainWindowClass->resize(1006, 896);
         QIcon icon;
         icon.addFile(QStringLiteral(":/MainWindow/camera.ico"), QSize(), QIcon::Normal, QIcon::Off);
         MainWindowClass->setWindowIcon(icon);
@@ -380,7 +387,7 @@ public:
         m_captureSpectrumBox = new QGroupBox(centralWidget);
         m_captureSpectrumBox->setObjectName(QStringLiteral("m_captureSpectrumBox"));
         m_captureSpectrumBox->setEnabled(false);
-        m_captureSpectrumBox->setGeometry(QRect(680, 380, 191, 181));
+        m_captureSpectrumBox->setGeometry(QRect(680, 350, 191, 181));
         gridLayout_3 = new QGridLayout(m_captureSpectrumBox);
         gridLayout_3->setSpacing(6);
         gridLayout_3->setContentsMargins(11, 11, 11, 11);
@@ -459,20 +466,54 @@ public:
 
         m_horizontalMirror = new QPushButton(centralWidget);
         m_horizontalMirror->setObjectName(QStringLiteral("m_horizontalMirror"));
-        m_horizontalMirror->setGeometry(QRect(710, 250, 93, 28));
+        m_horizontalMirror->setGeometry(QRect(680, 250, 93, 28));
         m_verticalMirror = new QPushButton(centralWidget);
         m_verticalMirror->setObjectName(QStringLiteral("m_verticalMirror"));
-        m_verticalMirror->setGeometry(QRect(710, 300, 93, 28));
+        m_verticalMirror->setGeometry(QRect(680, 300, 93, 28));
         m_lowIlluminationCheck = new QCheckBox(centralWidget);
         m_lowIlluminationCheck->setObjectName(QStringLiteral("m_lowIlluminationCheck"));
         m_lowIlluminationCheck->setGeometry(QRect(680, 700, 91, 19));
         m_spectrumAnalysis = new QPushButton(centralWidget);
         m_spectrumAnalysis->setObjectName(QStringLiteral("m_spectrumAnalysis"));
-        m_spectrumAnalysis->setGeometry(QRect(690, 630, 93, 28));
+        m_spectrumAnalysis->setGeometry(QRect(790, 300, 93, 28));
         m_getReference = new QPushButton(centralWidget);
         m_getReference->setObjectName(QStringLiteral("m_getReference"));
         m_getReference->setEnabled(false);
-        m_getReference->setGeometry(QRect(690, 590, 93, 28));
+        m_getReference->setGeometry(QRect(790, 250, 93, 28));
+        groupBox_4 = new QGroupBox(centralWidget);
+        groupBox_4->setObjectName(QStringLiteral("groupBox_4"));
+        groupBox_4->setGeometry(QRect(680, 550, 201, 123));
+        gridLayout_4 = new QGridLayout(groupBox_4);
+        gridLayout_4->setSpacing(6);
+        gridLayout_4->setContentsMargins(11, 11, 11, 11);
+        gridLayout_4->setObjectName(QStringLiteral("gridLayout_4"));
+        label = new QLabel(groupBox_4);
+        label->setObjectName(QStringLiteral("label"));
+
+        gridLayout_4->addWidget(label, 0, 0, 1, 1);
+
+        m_lowRef = new QSpinBox(groupBox_4);
+        m_lowRef->setObjectName(QStringLiteral("m_lowRef"));
+        m_lowRef->setMaximum(4096);
+
+        gridLayout_4->addWidget(m_lowRef, 0, 1, 1, 1);
+
+        label_2 = new QLabel(groupBox_4);
+        label_2->setObjectName(QStringLiteral("label_2"));
+
+        gridLayout_4->addWidget(label_2, 1, 0, 1, 1);
+
+        m_highRef = new QSpinBox(groupBox_4);
+        m_highRef->setObjectName(QStringLiteral("m_highRef"));
+        m_highRef->setMaximum(4096);
+
+        gridLayout_4->addWidget(m_highRef, 1, 1, 1, 1);
+
+        m_boundaryRefSet = new QPushButton(groupBox_4);
+        m_boundaryRefSet->setObjectName(QStringLiteral("m_boundaryRefSet"));
+
+        gridLayout_4->addWidget(m_boundaryRefSet, 2, 0, 1, 1);
+
         MainWindowClass->setCentralWidget(centralWidget);
         statusBar = new QStatusBar(MainWindowClass);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -549,6 +590,10 @@ public:
         m_lowIlluminationCheck->setText(QApplication::translate("MainWindowClass", "\344\275\216\347\205\247\345\272\246", 0));
         m_spectrumAnalysis->setText(QApplication::translate("MainWindowClass", "\345\205\211\350\260\261\345\210\206\346\236\220", 0));
         m_getReference->setText(QApplication::translate("MainWindowClass", "\350\216\267\345\217\226\345\217\202\350\200\203\345\205\211", 0));
+        groupBox_4->setTitle(QApplication::translate("MainWindowClass", "\345\217\202\350\200\203\345\205\211\344\270\212\344\270\213\347\225\214", 0));
+        label->setText(QApplication::translate("MainWindowClass", "\344\270\213\347\225\214", 0));
+        label_2->setText(QApplication::translate("MainWindowClass", "\344\270\212\347\225\214", 0));
+        m_boundaryRefSet->setText(QApplication::translate("MainWindowClass", "\347\241\256\345\256\232", 0));
     } // retranslateUi
 
 };
@@ -559,4 +604,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // UI_MAINWINDOW_H
+#endif // MAINWINDOWQHP152_H

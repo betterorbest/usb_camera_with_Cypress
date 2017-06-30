@@ -63,8 +63,8 @@ void ImageProcess::dataToImage(unsigned char *data, int bitsPerPixel, int width,
 		//int pixAvg = cv::mean(rawDataImage)[0];
 		//qDebug() << pixAvg;
 
-		int thresholdLow = 1500;     //1000µ½2000
-		int thresholdHigh = 4080;
+		int thresholdLow = m_refLow;     //1000µ½2000
+		int thresholdHigh = m_refHigh;
 		if (m_isCapturingReference) 
 		{
 			cv::Mat rawDataImage(height, width, CV_16UC1, data16bits);
@@ -387,7 +387,11 @@ void ImageProcess::autoWhiteBalance(cv::Mat &src, cv::Mat &dst)
 
 }
 
-
+void ImageProcess::setRefBoundary(int low, int high)
+{
+	m_refHigh = high;
+	m_refLow = low;
+}
 
 
 

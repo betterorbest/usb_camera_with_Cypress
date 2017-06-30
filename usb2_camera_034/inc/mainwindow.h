@@ -28,7 +28,7 @@ public:
 
 	void saveReferenceParameterToFile(const QString& path);
 	void readReferenceParameterFromFile(const QString& path);
-	
+
 private:
 	void initCameraConfig();
 
@@ -79,6 +79,7 @@ public slots:
 
 	void changeReferenceParameter(unsigned short wavelen, int addOrSub);
 
+	void setRefBoundary();
 private:
 	Ui::MainWindowClass ui;
 

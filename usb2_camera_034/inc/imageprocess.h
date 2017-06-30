@@ -46,6 +46,7 @@ public:
 
 	void setLowIlluminationChecked(bool checked);
 	
+	void setRefBoundary(int low, int high);
 signals:
 	void showImage(QPixmap image);
 	void referenceWavelengthInfo(unsigned short wavelen, int addOrSub);
@@ -76,6 +77,9 @@ private:
 	bool m_verticalMirror;
 
 	bool m_lowIlluminationChecked;
+
+	int m_refLow;
+	int m_refHigh;
 };
 
 inline void ImageProcess::setWidth(int width)
