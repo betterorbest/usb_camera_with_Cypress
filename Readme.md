@@ -6,3 +6,6 @@ usb camera with Cypress是一款简单的相机软件，该软件专用于基于
 opencv需要自行下载，并配置，主要是修改opencv.props和opecv_release.props两个配置文件
 ## release_spectrometer分支， 光谱仪的发行分支
 1. 在光谱仪开发分支基础上，修改界面布局，去掉数字增益、帧率、温度显示
+2. 对项目文件夹重新命名，使其更适配成像光谱仪项目
+3. 修复了模拟增益值相关的逻辑错误
+4. 添加了帧率显示
