@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1381</width>
-    <height>690</height>
+    <width>1356</width>
+    <height>615</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>80</y>
+     <y>60</y>
      <width>640</width>
      <height>480</height>
     </rect>
@@ -47,8 +47,8 @@
   <widget class="QCustomPlot" name="m_plot" native="true">
    <property name="geometry">
     <rect>
-     <x>700</x>
-     <y>80</y>
+     <x>690</x>
+     <y>60</y>
      <width>640</width>
      <height>480</height>
     </rect>
@@ -60,8 +60,8 @@
   <widget class="QPushButton" name="m_loadImagesButton">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>30</y>
+     <x>40</x>
+     <y>20</y>
      <width>93</width>
      <height>28</height>
     </rect>
@@ -76,10 +76,10 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>580</y>
-     <width>641</width>
-     <height>61</height>
+     <x>110</x>
+     <y>550</y>
+     <width>561</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="flow">
@@ -99,13 +99,27 @@
    <property name="geometry">
     <rect>
      <x>700</x>
-     <y>30</y>
+     <y>20</y>
      <width>93</width>
      <height>28</height>
     </rect>
    </property>
    <property name="text">
     <string>清空曲线</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>550</y>
+     <width>71</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>   预览
+波长选择/nm</string>
    </property>
   </widget>
  </widget>

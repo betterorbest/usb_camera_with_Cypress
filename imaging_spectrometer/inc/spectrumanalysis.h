@@ -27,6 +27,9 @@ private:
 	std::vector<cv::Mat> m_referenceMat;
 	std::vector<cv::Mat> m_sceneMat;
 
+	std::vector<cv::Mat> m_darkReferenceMat; 
+	std::vector<cv::Mat> m_darkSceneMat;
+
 	QVector<double> m_xPlot;
 	QVector<double> m_yPlot;
 

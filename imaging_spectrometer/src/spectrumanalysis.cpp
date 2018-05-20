@@ -12,7 +12,7 @@ SpectrumAnalysisDialog::SpectrumAnalysisDialog(QWidget* parent)
 	connect(ui.m_clearCurvesButton, &QPushButton::clicked, this, &SpectrumAnalysisDialog::clearGraph);
 	
 
-	ui.m_plot->xAxis->setRange(410, 730);
+	ui.m_plot->xAxis->setRange(410, 760);
 	ui.m_plot->xAxis->setLabel(QStringLiteral("波长/nm"));
 	ui.m_plot->yAxis->setRange(0, 1);
 	ui.m_plot->yAxis->setLabel(QStringLiteral("反射率"));
@@ -28,68 +28,70 @@ void SpectrumAnalysisDialog::calculateReflectivity(int x, int y)
 
 	for (int i = 0; i < m_sceneMat.size(); ++i)
 	{
-		double val = m_sceneMat[i].at<unsigned short>(y, x) * 1.0 / m_referenceMat[i].at<unsigned short>(y, x);
+		//double val = m_sceneMat[i].at<unsigned short>(y, x) * 1.0 / m_referenceMat[i].at<unsigned short>(y, x);
+		double val = (m_sceneMat[i].at<unsigned short>(y, x) - m_darkSceneMat[i].at<unsigned short>(y, x)) * 1.0 
+			/ (m_referenceMat[i].at<unsigned short>(y, x) - m_darkReferenceMat[i].at<unsigned short>(y, x));
 		m_yPlot.push_back(val);
 	}
 
 	QCPGraph *graph = ui.m_plot->addGraph();
 	static int color = 0;
 	QPen pen;
-	switch (color++ % 8)
-	{
-		
-	case 0:
-		graph->setPen(QPen(Qt::red));
-		break;
-	case 1:
-		graph->setPen(QPen(Qt::black));
-		break;
-	case 2:
-		graph->setPen(QPen(Qt::green));
-		break;
-	case 3:
-		graph->setPen(QPen(Qt::blue));
-		break;
-	case 4:
-		graph->setPen(QPen(Qt::cyan));
-		break;
-	case 5:
-		graph->setPen(QPen(Qt::magenta));
-		break;
-	case 6:
-		graph->setPen(QPen(Qt::darkCyan));
-		break;
-	case 7:
-		graph->setPen(QPen(Qt::gray));
-		break;
-	case 8:
-		graph->setPen(QPen(Qt::darkRed));
-		break;
-	case 9:
-		graph->setPen(QPen(Qt::darkGreen));
-		break;
-	case 10:
-		graph->setPen(QPen(Qt::darkBlue));
-		break;
-	case 11:
-		graph->setPen(QPen(Qt::yellow)); 
-		break;
-	case 12:
-		graph->setPen(QPen(Qt::darkMagenta));
-		break;
-	case 13:
-		graph->setPen(QPen(Qt::darkYellow));
-		break;
-	case 14:
-		graph->setPen(QPen(Qt::darkGray));
-		break;
-	case 15:
-		graph->setPen(QPen(Qt::lightGray));
-		break;
-	default:
-		graph->setPen(QPen(Qt::black));
-		break;
-	}
+	//switch (color++ % 8)
+	//{
+	//	
+	//case 0:
+	//	graph->setPen(QPen(Qt::red));
+	//	break;
+	//case 1:
+	//	graph->setPen(QPen(Qt::black));
+	//	break;
+	//case 2:
+	//	graph->setPen(QPen(Qt::green));
+	//	break;
+	//case 3:
+	//	graph->setPen(QPen(Qt::blue));
+	//	break;
+	//case 4:
+	//	graph->setPen(QPen(Qt::cyan));
+	//	break;
+	//case 5:
+	//	graph->setPen(QPen(Qt::magenta));
+	//	break;
+	//case 6:
+	//	graph->setPen(QPen(Qt::darkCyan));
+	//	break;
+	//case 7:
+	//	graph->setPen(QPen(Qt::gray));
+	//	break;
+	//case 8:
+	//	graph->setPen(QPen(Qt::darkRed));
+	//	break;
+	//case 9:
+	//	graph->setPen(QPen(Qt::darkGreen));
+	//	break;
+	//case 10:
+	//	graph->setPen(QPen(Qt::darkBlue));
+	//	break;
+	//case 11:
+	//	graph->setPen(QPen(Qt::yellow)); 
+	//	break;
+	//case 12:
+	//	graph->setPen(QPen(Qt::darkMagenta));
+	//	break;
+	//case 13:
+	//	graph->setPen(QPen(Qt::darkYellow));
+	//	break;
+	//case 14:
+	//	graph->setPen(QPen(Qt::darkGray));
+	//	break;
+	//case 15:
+	//	graph->setPen(QPen(Qt::lightGray));
+	//	break;
+	//default:
+	//	graph->setPen(QPen(Qt::black));
+	//	break;
+	//}
 
 	graph->setData(m_xPlot, m_yPlot);
 	graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 6));
@@ -134,16 +136,35 @@ void SpectrumAnalysisDialog::loadImamges()
 	refDir.setNameFilters(QStringList() << "*.png");
 	QStringList refList = refDir.entryList();
 
+	//参考下的暗光谱
+	QString darkRefPath = QCoreApplication::applicationDirPath();
+	darkRefPath += "/darkreference";
+	QDir darkRefDir(darkRefPath);
+	darkRefPath += "/";
+	darkRefDir.setNameFilters(QStringList() << "*.png");
+	QStringList darkRefList = darkRefDir.entryList();
+	//场景下的暗光谱
+	QString darkScenePath = QCoreApplication::applicationDirPath();
+	darkScenePath += "/darkscene";
+	QDir darkSceneDir(darkScenePath);
+	darkScenePath += "/";
+	darkSceneDir.setNameFilters(QStringList() << "*.png");
+	QStringList darkSceneList = darkSceneDir.entryList();
+
+
 	QStringList showList;
 	for (auto ele : sceneList)
 	{
-		if (refList.contains(ele))
+		if (refList.contains(ele) && darkRefList.contains(ele)
+			&& darkSceneList.contains(ele))
 		{
 			if (showList.size() == 0)
 			{
 				m_wavelength.clear();
 				m_referenceMat.clear();
 				m_sceneMat.clear();
+				m_darkReferenceMat.clear();
+				m_darkSceneMat.clear();
 			}
 			
 			QString wavelen(ele);
@@ -152,8 +173,12 @@ void SpectrumAnalysisDialog::loadImamges()
 			showList.push_back(wavelen);
 			cv::Mat scene = cv::imread((m_scenePath + ele).toLocal8Bit().toStdString(), cv::IMREAD_ANYDEPTH);
 			cv::Mat ref = cv::imread((refPath + ele).toLocal8Bit().toStdString(), cv::IMREAD_ANYDEPTH);
+			cv::Mat darkRef = cv::imread((darkRefPath + ele).toLocal8Bit().toStdString(), cv::IMREAD_ANYDEPTH);
+			cv::Mat darkScene = cv::imread((darkScenePath + ele).toLocal8Bit().toStdString(), cv::IMREAD_ANYDEPTH);
 			m_referenceMat.push_back(ref);
 			m_sceneMat.push_back(scene);
+			m_darkReferenceMat.push_back(darkRef);
+			m_darkSceneMat.push_back(darkScene);
 		}
 	}
 
@@ -181,7 +206,6 @@ void SpectrumAnalysisDialog::loadImamges()
 	}
 
 	ui.m_listImg->show();
-
 }
 
 void SpectrumAnalysisDialog::clearGraph()
